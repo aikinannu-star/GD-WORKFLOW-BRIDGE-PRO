@@ -1,0 +1,320 @@
+[
+    {
+        "id": "c5b458679eee2d9bc474ad099ff6e024",
+        "tenant_id": "ci-tenant",
+        "email": "ci@example.com",
+        "password_hash": "$2y$10$sDaaiUl5gDYncjeB54WGTuJmLs.2jNr0t8Yh1u27KX1HhIAq8/gXi",
+        "role": "admin",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:20:54+00:00"
+    },
+    {
+        "id": "7437a35cefbae69266e8289b964a748a",
+        "tenant_id": "ci-tenant",
+        "email": "quota-run@example.com",
+        "password_hash": "$2y$10$LI3PFMSnPypX/URwUcIX5.E98S9sy.bM12egjWJe/eJrMjs46P.KK",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:44:42+00:00"
+    },
+    {
+        "id": "7b708a8a8695a935b772d4075dd093ca",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494326@example.com",
+        "password_hash": "$2y$10$0N4yfKk05q0TUOiJCk4nTeTPnbG.o7Lh7x27EB00BI47S.3hTqYDe",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:45:27+00:00"
+    },
+    {
+        "id": "1222193b55a8e352b6d808751217cf52",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494349@example.com",
+        "password_hash": "$2y$10$121K4hbHQRTG5feekg7lVuPMGoFxx50pQzkf0vaBYAbGnRkT5wOT2",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:45:49+00:00"
+    },
+    {
+        "id": "c162f57edb83528f1e8ce42b9a823977",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494368@example.com",
+        "password_hash": "$2y$10$RV8nJZ/RX6CrOqadrEJpNOclpPVlfdhaIWS/2.9zL.zuwf15i1dvu",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:46:09+00:00"
+    },
+    {
+        "id": "13fc2b78b7bc9eba93c155df7aaba7f6",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494394@example.com",
+        "password_hash": "$2y$10$4yNwWZ3tensVzQyKokYaQeLvU9rJMsQk88c0y/168csl5j7ZnQzOi",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:46:34+00:00"
+    },
+    {
+        "id": "0c6020904c5c40f893098aece3e9adb9",
+        "tenant_id": "ci-tenant",
+        "email": "local-debug@example.com",
+        "password_hash": "$2y$10$QvIp1UIsSTm161IqDJAqVOJdiCUWi92QIENVOd4izvfNdGpt51azi",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:47:34+00:00"
+    },
+    {
+        "id": "5fbfba6907bd190be2b16418c49749a7",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494498@example.com",
+        "password_hash": "$2y$10$M2LF/9ZcxhJ9y5Xnbn11wulw7C54izaov98CaLmBe142cZUJHTcJe",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:48:18+00:00"
+    },
+    {
+        "id": "2c742a9f72eb03a5f59c8c03709203e8",
+        "tenant_id": "ci-tenant",
+        "email": "step-debug@example.com",
+        "password_hash": "$2y$10$uXIvsWXdHSUSZG1Va1Lx4.bb1fYHRjOGJtZsoqB/OoJp6oLXLl9Q6",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:48:58+00:00"
+    },
+    {
+        "id": "c79d62b5ead6ecb612584c3f1b8af3a5",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494548@example.com",
+        "password_hash": "$2y$10$znvNgN34Eg/XXxqPi9DZZ.JLrXXXydjEqZD/Bd06tCdGQrOxR1Vkm",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:49:08+00:00"
+    },
+    {
+        "id": "f6324d51a64f4affa3e7e3897c2b2ac9",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494672@example.com",
+        "password_hash": "$2y$10$JvGfPtKl4D.YBpkwl/eXt.EMlw0x14HgEULu3figiOXi1TU7loqe2",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:51:12+00:00"
+    },
+    {
+        "id": "0c933ea20f6eecfd96fe44d14d5f5dfa",
+        "tenant_id": "ci-tenant",
+        "email": "manual-debug@example.com",
+        "password_hash": "$2y$10$UDnRMtAPZBb801Kxmimcr./yuazs4L65IdF/a9608Yj/evRUe/k1i",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:51:43+00:00"
+    },
+    {
+        "id": "6638191ac677062047465c2eddaa4a3c",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494720@example.com",
+        "password_hash": "$2y$10$wmXWwrCeWArxyPfzgtn/qeSEtHZcRtb6Rldjj/Vj7hYh2quBUdkj.",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:52:01+00:00"
+    },
+    {
+        "id": "c3168d202f2b48ed8fa864708179fe88",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494759@example.com",
+        "password_hash": "$2y$10$DM8RVd/lJIiGKBazQoq9L.GIN83zWVhPKJeNKvMBRhLi80WvNrtHa",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:52:39+00:00"
+    },
+    {
+        "id": "ab2c2fa9804582b9afc1f11d38c42cee",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494797@example.com",
+        "password_hash": "$2y$10$i7PsGcx8i1GKri9XsY47Au/fb9RoItvSYEGeE/cSGocyqUfY30LLi",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:53:18+00:00"
+    },
+    {
+        "id": "02c2b7185ff2238f22ce51252132ec0c",
+        "tenant_id": "ci-tenant",
+        "email": "quota-ci-1780494844@example.com",
+        "password_hash": "$2y$10$m8vXEfWV9go1vGZmn8H2neP0tkIY76rAXN2DTEAKyNnFu0IR5x2M.",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:54:04+00:00"
+    },
+    {
+        "id": "78e823c2db432fe643c2ca61e887e29c",
+        "tenant_id": "ci-tenant",
+        "email": "x-debug@example.com",
+        "password_hash": "$2y$10$a59f/ctjLPO7mgpHhdtzPe8Pn5DvuT2C9PmlHZhadtSO3OX7UVNWW",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:54:45+00:00"
+    },
+    {
+        "id": "f1777b1773c0172a5a11b9a3721b8ad8",
+        "tenant_id": "ci-tenant",
+        "email": "direct-introspect@example.com",
+        "password_hash": "$2y$10$byaGOFfAR3o1gGTzBm9T8eu2NOjH0gWXto/Stm8L5fsljmyYM5i7W",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-03T13:55:47+00:00"
+    },
+    {
+        "id": "0790891a7fa92718fc2464b748e6d626",
+        "tenant_id": "default",
+        "email": "12syde100@gmail.com",
+        "password_hash": "$2y$10$SDRQO5/eLe0l9DLmwYs0VenGuNYJOFnOeqTtNk/fEsqwr9qfiZp/.",
+        "role": "admin",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-12T00:33:44+00:00"
+    },
+    {
+        "id": "58d85bbab87f218663907556e3b161e8",
+        "tenant_id": "default",
+        "email": "test.user+1@example.com",
+        "password_hash": "$2y$10$ycGUQqj61tQMVyLiAOBf7OV7Q.yJm9GPTaaq7WiCdhaqXk2SXmEMi",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-12T01:59:31+00:00"
+    },
+    {
+        "id": "8d7f8af5ed7658a79cd93d42b205810b",
+        "tenant_id": "local",
+        "email": "test+gw@example.com",
+        "password_hash": "$2y$10$uPWnsuG22sWWGi3AeO47PunIKnv7xsJREEEQwg96xDsIG7zyugU5a",
+        "role": "admin",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-14T11:26:57+00:00"
+    },
+    {
+        "id": "405a0f2fbe94bb1606b0fe96ced87928",
+        "tenant_id": "local",
+        "email": "newuser@example.com",
+        "password_hash": "$2y$10$GwmK7Y4qDgQ5uWY.yhjErek7LOe0ykBGwrykyyUjXkjyCWFrn/qMu",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-14T18:01:32+00:00",
+        "license_key": "GDWB-A4DB210E28516E81",
+        "seats": 1
+    },
+    {
+        "id": "72712d5bfcd94de6d5bf4c1434019929",
+        "tenant_id": "local",
+        "email": "autouser+aimvp14@example.com",
+        "password_hash": "$2y$10$CJAyOKZqFor5wm.n0Eczd.LW5NdXmVtRwk3buDg97b9n6pAqLVQFe",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-14T18:05:41+00:00",
+        "license_key": "GDWB-245C9C092AFEBF50",
+        "seats": 1
+    },
+    {
+        "id": "682817badd6b0b78a399645c7a8e10f4",
+        "tenant_id": "default",
+        "email": "dev+local@example.com",
+        "password_hash": "$2y$10$WLl87IrD/lTSOcRvA3rtc.QETlppfwqURPjM//OfFbFwxZMGNkjRS",
+        "role": "editor",
+        "permissions": [
+            "read",
+            "write",
+            "deploy"
+        ],
+        "created_at": "2026-06-15T00:02:25+00:00",
+        "license_key": "GDWB-1E9FA316C72C94C1",
+        "seats": 1
+    }
+]

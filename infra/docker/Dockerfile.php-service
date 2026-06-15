@@ -1,0 +1,18 @@
+FROM php:8.2-cli
+
+WORKDIR /app
+
+# Install build dependencies and the PHP Redis extension (pecl)
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends autoconf build-essential pkg-config libssl-dev unzip libzip-dev zlib1g-dev; \
+	pecl install redis && docker-php-ext-enable redis; \
+	apt-get purge -y --auto-remove autoconf build-essential pkg-config; \
+	rm -rf /var/lib/apt/lists/*;
+
+# Copy full repository context so service files, helpers, and data folders are available.
+COPY . .
+
+EXPOSE 8000
+
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "services/gateway", "services/gateway/server.php"]

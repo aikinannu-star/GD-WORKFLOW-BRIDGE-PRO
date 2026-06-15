@@ -1,0 +1,1 @@
+{"type":"invoice.payment_succeeded","data":{"object":{"id":"in_test_sdk_1","amount_paid":2999,"currency":"usd","metadata":{"license_key":"GDWB-SDK-TEST-1"}}}}

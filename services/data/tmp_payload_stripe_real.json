@@ -1,0 +1,14 @@
+{
+  "id": "evt_eb226cf1-85aa-45d4-b9eb-0f107830541f",
+  "type": "invoice.payment_succeeded",
+  "data": {
+    "object": {
+      "amount_paid": 2999,
+      "metadata": {
+        "license_key": "GDWB-82CDF2C81484D56A"
+      },
+      "id": "in_8b4afb41-8e54-4336-8fe7-2f6eb99eb60a",
+      "currency": "usd"
+    }
+  }
+}

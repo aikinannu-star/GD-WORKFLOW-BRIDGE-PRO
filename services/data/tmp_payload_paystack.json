@@ -1,0 +1,11 @@
+{
+  "event": "charge.success",
+  "data": {
+    "currency": "NGN",
+    "amount": 299900,
+    "metadata": {
+      "license_key": "GDWB-EEA3EBAF69CC6731"
+    },
+    "reference": "PS-1dbf07ba-577d-4ebd-a557-3ec3360d7495"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "email": "test+stripe-sim@example.com",
+  "site": "http://localhost:8082/License",
+  "simulate": true,
+  "gateway": "stripe",
+  "plan": "pro"
+}

@@ -1,0 +1,246 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: gdwb_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+  postgres:
+    image: postgres:15-alpine
+    container_name: gdwb_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gdwb_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-gdwb_app}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./license-server/migrations/postgres.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+
+  migrate:
+    image: postgres:15-alpine
+    container_name: gdwb_migrate
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gdwb_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-gdwb_app}
+    volumes:
+      - ./license-server/migrations:/migrations:ro
+    entrypoint: ["sh","-c"]
+    command: "until pg_isready -h postgres -p 5432; do sleep 1; done; PGPASSWORD=\"$POSTGRES_PASSWORD\" psql -h postgres -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\" -f /migrations/postgres.sql || true"
+
+  pushgateway:
+    image: prom/pushgateway:1.5.0
+    container_name: gdwb_pushgateway
+    restart: unless-stopped
+    ports:
+      - "9091:9091"
+    environment:
+      PUSHGATEWAY_RETENTION: "14d"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: gdwb_prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    depends_on:
+      - pushgateway
+      - billing-service
+      - gateway-service
+      - license-server
+
+  license-server:
+    build:
+      context: .
+      dockerfile: license-server/Dockerfile
+    container_name: gdwb_license_server
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+      - pushgateway
+    ports:
+      - "8001:8001"
+    environment:
+      LICENSE_SERVER_PORT: "8001"
+      # Use the internal `postgres` service host so the license server connects to Postgres in this compose network
+      LICENSE_DB_DSN: "pgsql:host=postgres;port=5432;dbname=${POSTGRES_DB:-gdwb_app}"
+      LICENSE_DB_USER: ${POSTGRES_USER:-gdwb_user}
+      LICENSE_DB_PASSWORD: ${POSTGRES_PASSWORD}
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.php-service
+    container_name: gdwb_auth_service
+    restart: unless-stopped
+    ports:
+      - "8005:8005"
+    volumes:
+      - ./services/auth:/app/services/auth
+      - ./services/lib:/app/services/lib
+      - ./services/data:/app/services/data
+    environment:
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET}
+      BILLING_CURRENCY: ${BILLING_CURRENCY:-USD}
+      PGHOST: ${PGHOST:-postgres}
+      PGPORT: ${PGPORT:-5432}
+      PGDATABASE: ${POSTGRES_DB:-gdwb_app}
+      PGUSER: ${POSTGRES_USER:-gdwb_user}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: ${GATEWAY_REDIS_HOST:-redis}
+      REDIS_PORT: ${GATEWAY_REDIS_PORT:-6379}
+      PUSHGATEWAY_URL: ${PUSHGATEWAY_URL:-http://pushgateway:9091}
+      BILLING_ADMIN_TOKEN: ${BILLING_ADMIN_TOKEN}
+      PUSHGATEWAY_ENABLED: ${PUSHGATEWAY_ENABLED:-true}
+    healthcheck:
+      test: ["CMD-SHELL", "php -r \"$r=@file_get_contents('http://127.0.0.1:8002/health'); if (!$r) exit(1);\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  tenant-service:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.php-service
+    container_name: gdwb_tenant_service
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./services/tenant:/app/services/tenant
+      - ./services/lib:/app/services/lib
+      - ./services/data:/app/services/data
+    environment:
+      TENANT_DEFAULT_PLAN: ${TENANT_DEFAULT_PLAN:-starter}
+    command: ["php", "-S", "0.0.0.0:8003", "-t", "services/tenant", "services/tenant/server.php"]
+
+  cms-service:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.php-service
+    container_name: gdwb_cms_service
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./services/cms:/app/services/cms
+      - ./services/lib:/app/services/lib
+      - ./services/data:/app/services/data
+    environment:
+      CMS_DEFAULT_LOCALE: ${CMS_DEFAULT_LOCALE:-en_US}
+    command: ["php", "-S", "0.0.0.0:8004", "-t", "services/cms", "services/cms/server.php"]
+
+  billing-service:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.php-service
+    container_name: gdwb_billing_service
+    restart: unless-stopped
+    ports:
+      - "8005:8005"
+    volumes:
+      - ./services/billing:/app/services/billing
+      - ./services/lib:/app/services/lib
+      - ./services/data:/app/services/data
+      - ./integrations/payments:/app/integrations/payments
+    environment:
+      BILLING_CURRENCY: ${BILLING_CURRENCY:-USD}
+    command: ["php", "-S", "0.0.0.0:8005", "-t", "services/billing", "services/billing/server.php"]
+
+  usage-service:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.php-service
+    container_name: gdwb_usage_service
+    restart: unless-stopped
+    ports:
+      - "8007:8007"
+    volumes:
+      - ./services/usage:/app/services/usage
+      - ./services/lib:/app/services/lib
+      - ./services/data:/app/services/data
+    environment:
+      USAGE_DEFAULT_LIMITS: ${USAGE_DEFAULT_LIMITS:-{"api_calls_per_day":10000,"workflows":20,"storage_gb":5}}
+    command: ["php", "-S", "0.0.0.0:8007", "-t", "services/usage", "services/usage/server.php"]
+
+  gateway-service:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.php-service
+    container_name: gdwb_gateway_service
+    restart: unless-stopped
+    depends_on:
+      - auth-service
+      - tenant-service
+      - cms-service
+      - billing-service
+      - usage-service
+      - redis
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./services/gateway:/app/services/gateway
+      - ./services/lib:/app/services/lib
+      - ./services/data:/app/services/data
+    environment:
+      GATEWAY_CORS_ORIGIN: ${GATEWAY_CORS_ORIGIN:-'*'}
+      GATEWAY_REDIS_HOST: ${GATEWAY_REDIS_HOST:-redis}
+      GATEWAY_REDIS_PORT: ${GATEWAY_REDIS_PORT:-6379}
+    command: ["php", "-S", "0.0.0.0:8000", "-t", "services/gateway", "services/gateway/server.php"]
+    healthcheck:
+      test: ["CMD-SHELL", "php -r \"$r=@file_get_contents('http://127.0.0.1:8000/health'); if (!$r) exit(1);\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  myapp-backend:
+    build:
+      context: ${MYAPP_BACKEND_PATH:-C:/Users/USER/Desktop/Software Programming/godemars-empire4/myApp-backend}
+      dockerfile: Dockerfile
+    container_name: gdwb_myapp_backend
+    restart: unless-stopped
+    ports:
+      - "${MYAPP_BACKEND_PORT:-8010}:8000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${MYAPP_BACKEND_PORT:-8000}
+      GATEWAY_BASE: ${GATEWAY_BASE:-http://gateway-service:8000}
+      LICENSE_SERVER_BASE: ${LICENSE_SERVER_BASE:-http://license-server:8001}
+    depends_on:
+      - gateway-service
+      - license-server
+    volumes:
+      - ${MYAPP_BACKEND_PATH:-C:/Users/USER/Desktop/Software Programming/godemars-empire4/myApp-backend}:/usr/src/app:rw
+
+  ci-runner:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.ci-runner
+    container_name: gdwb_ci_runner
+    restart: 'no'
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace
+    depends_on:
+      - gateway-service
+
+volumes:
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local

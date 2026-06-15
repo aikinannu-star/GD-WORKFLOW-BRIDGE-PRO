@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'pushgateway'
+    static_configs:
+      - targets: ['pushgateway:9091']
+
+  - job_name: 'billing'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['billing-service:8005']
+
+  - job_name: 'gateway'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['gateway-service:8000']
+
+  - job_name: 'license'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['license-server:8001']
+
+  - job_name: 'pushgateway_metrics'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['pushgateway:9091']

@@ -1,0 +1,585 @@
+name: JWKS Rotation and Prune Orchestration (Canary + Staged Rollout)
+
+on:
+  schedule:
+    - cron: '0 3 * * 0' # weekly on Sunday at 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Optional single target name to run (matrix name). If omitted runs all targets.'
+        required: false
+        default: ''
+      delay_minutes:
+        description: 'Optional delay (minutes) between canary success and rollout.'
+        required: false
+        default: '0'
+      percentage:
+        description: 'Optional progressive rollout percentage (1-100). When set, an orchestrator job will pick that percent of targets to rotate.'
+        required: false
+        default: ''
+      canary_samples:
+        description: 'Number of synthetic requests to run for canary health checks.'
+        required: false
+        default: '5'
+      canary_success_rate_threshold:
+        description: 'Minimum percent success required for canary to pass.'
+        required: false
+        default: '95'
+      canary_max_latency_ms:
+        description: 'Maximum average latency in ms allowed for canary (token+introspect).' 
+        required: false
+        default: '1000'
+      region_delay_minutes:
+        description: 'Delay in minutes between regional stages during staged-region sequencing.'
+        required: false
+        default: '5'
+
+jobs:
+  rotate-prune-canary:
+    name: Canary Rotate + Prune (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    env:
+      PUSHGATEWAY_URL: ${{ secrets.PUSHGATEWAY_URL }}
+      PUSHGATEWAY_JOB: ${{ secrets.PUSHGATEWAY_JOB }}
+      PUSHGATEWAY_INSTANCE: ${{ secrets.PUSHGATEWAY_INSTANCE }}
+    strategy:
+      matrix:
+        include:
+          # Add canary targets here — secrets must be configured if you enable canary runs
+          - name: staging-canary
+            stage: canary
+            url: ${{ secrets.STAGING_CANARY_LICENSE_SERVER_URL }}
+            admin_token: ${{ secrets.STAGING_CANARY_ADMIN_TOKEN }}
+            license_test_key: ${{ secrets.STAGING_CANARY_LICENSE_TEST_KEY }}
+    if: ${{ inputs.target == '' || matrix.name == inputs.target }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y curl jq
+
+      - name: Rotate and verify JWKS (canary)
+        env:
+          TARGET_NAME: ${{ matrix.name }}
+          TARGET_URL: ${{ matrix.url }}
+          TARGET_PUSHGATEWAY_URL: ${{ matrix.pushgateway_url }}
+          TARGET_PUSHGATEWAY_JOB: ${{ matrix.pushgateway_job }}
+          TARGET_PUSHGATEWAY_INSTANCE: ${{ matrix.pushgateway_instance }}
+          ADMIN_TOKEN: ${{ matrix.admin_token }}
+          LICENSE_TEST_KEY: ${{ matrix.license_test_key }}
+        run: |
+          set -euo pipefail
+          echo "Target: $TARGET_NAME"
+          if [ -z "$TARGET_URL" ]; then echo "No TARGET_URL provided for $TARGET_NAME; skipping canary."; exit 0; fi
+          if [ -z "$ADMIN_TOKEN" ]; then echo "No ADMIN_TOKEN provided for $TARGET_NAME; skipping canary."; exit 0; fi
+
+          echo "Issuing test token before rotation (if LICENSE_TEST_KEY present)..."
+          if [ -n "$LICENSE_TEST_KEY" ]; then
+            OLD_RESP=$(curl -sS -X POST "$TARGET_URL/api/v1/validate" -d "license_key=$LICENSE_TEST_KEY" -d "site=ci" || true)
+            TOKEN_OLD=$(echo "$OLD_RESP" | jq -r '.token // empty')
+            if [ -z "$TOKEN_OLD" ]; then echo "Failed to issue old token: $OLD_RESP"; exit 1; fi
+            echo "Introspecting old token..."
+            IN_RESP=$(curl -sS -X POST "$TARGET_URL/api/v1/introspect" -d "token=$TOKEN_OLD" || true)
+            OK=$(echo "$IN_RESP" | jq -r '.success // false')
+            if [ "$OK" != "true" ]; then echo "Old token introspect failed: $IN_RESP"; exit 1; fi
+          else
+            echo "No LICENSE_TEST_KEY for $TARGET_NAME; skipping issue/introspect pre-check"
+          fi
+
+          echo "Rotating keys via JWKS endpoint..."
+          # helper: URL-encode using jq (@uri) and fetch metrics from Pushgateway when available
+          encode() { echo -n "$1" | jq -s -R -r @uri; }
+          get_metrics_for_target() {
+            # prefer explicit target Pushgateway config, then workflow secrets, else target /metrics
+            if [ -n "${TARGET_PUSHGATEWAY_URL:-}" ]; then
+              PG_URL="${TARGET_PUSHGATEWAY_URL%/}"
+              PG_JOB="${TARGET_PUSHGATEWAY_JOB:-license_server}"
+              PG_INSTANCE="${TARGET_PUSHGATEWAY_INSTANCE:-$TARGET_NAME}"
+              JOB_ENC=$(encode "$PG_JOB")
+              INST_ENC=$(encode "$PG_INSTANCE")
+              curl -sS "${PG_URL}/metrics/job/${JOB_ENC}/instance/${INST_ENC}" || true
+            elif [ -n "${PUSHGATEWAY_URL:-}" ]; then
+              PG_URL="${PUSHGATEWAY_URL%/}"
+              PG_JOB="${PUSHGATEWAY_JOB:-license_server}"
+              PG_INSTANCE="${PUSHGATEWAY_INSTANCE:-$TARGET_NAME}"
+              JOB_ENC=$(encode "$PG_JOB")
+              INST_ENC=$(encode "$PG_INSTANCE")
+              curl -sS "${PG_URL}/metrics/job/${JOB_ENC}/instance/${INST_ENC}" || true
+            else
+              curl -sS "$TARGET_URL/metrics" || true
+            fi
+          }
+
+          ROT=$(curl -sS -X POST "$TARGET_URL/api/v1/jwks/rotate" -H "Authorization: Bearer $ADMIN_TOKEN" -d '' || true)
+          # fetch metrics snapshot before rotation (Pushgateway-aware)
+          MET_BEFORE=$(get_metrics_for_target)
+          NEW_KID=$(echo "$ROT" | jq -r '.kid // empty')
+          if [ -z "$NEW_KID" ]; then echo "Rotation failed: $ROT"; exit 1; fi
+          echo "Rotated to new kid: $NEW_KID"
+
+          # verify metrics show rotation delta (retry briefly to allow metric propagation)
+          ATTEMPTS=6
+          SLEEP_SEC=1
+          BEFORE_ROT=$(echo "$MET_BEFORE" | grep '^jwks_rotations_total' | tail -n1 | awk '{print $2}' || echo '')
+          AFTER_ROT=''
+          for a in $(seq 1 $ATTEMPTS); do
+            MET_AFTER=$(get_metrics_for_target)
+            AFTER_ROT=$(echo "$MET_AFTER" | grep '^jwks_rotations_total' | tail -n1 | awk '{print $2}' || echo '')
+            if [ -n "$BEFORE_ROT" ] && [ -n "$AFTER_ROT" ] && [ "$AFTER_ROT" -gt "$BEFORE_ROT" ]; then break; fi
+            sleep $SLEEP_SEC
+          done
+          if [ -n "$BEFORE_ROT" ] && [ -n "$AFTER_ROT" ]; then
+            if [ "$AFTER_ROT" -le "$BEFORE_ROT" ]; then echo "Metrics did not increment jwks_rotations_total"; exit 1; fi
+          fi
+
+          echo "Confirming JWKS includes new kid..."
+          JWKS=$(curl -sS "$TARGET_URL/api/v1/jwks" || true)
+          echo "$JWKS" | jq -e ".keys[] | select(.kid == \"$NEW_KID\")" >/dev/null 2>&1 || (echo "New kid not present in JWKS" && exit 1)
+
+          echo "Issuing token after rotation (if LICENSE_TEST_KEY present)..."
+          if [ -n "$LICENSE_TEST_KEY" ]; then
+              NEW_RESP=$(curl -sS -X POST "$TARGET_URL/api/v1/validate" -d "license_key=$LICENSE_TEST_KEY" -d "site=ci" || true)
+              TOKEN_NEW=$(echo "$NEW_RESP" | jq -r '.token // empty')
+              if [ -z "$TOKEN_NEW" ]; then echo "Failed to issue new token: $NEW_RESP"; exit 1; fi
+              IN_NEW=$(curl -sS -X POST "$TARGET_URL/api/v1/introspect" -d "token=$TOKEN_NEW" || true)
+              OK2=$(echo "$IN_NEW" | jq -r '.success // false')
+              if [ "$OK2" != "true" ]; then echo "New token introspect failed: $IN_NEW"; exit 1; fi
+          else
+              echo "No LICENSE_TEST_KEY for $TARGET_NAME; skipping issue/introspect post-check"
+          fi
+
+          echo "Triggering prune endpoint..."
+          PRUNE=$(curl -sS -X POST "$TARGET_URL/api/v1/jwks/prune" -H "Authorization: Bearer $ADMIN_TOKEN" -d '' || true)
+          echo "Prune response: $PRUNE"
+
+      - name: Canary health thresholds
+        env:
+          TARGET_URL: ${{ matrix.url }}
+          LICENSE_TEST_KEY: ${{ matrix.license_test_key }}
+          SAMPLES: ${{ github.event.inputs.canary_samples }}
+          CANARY_THRESHOLD: ${{ github.event.inputs.canary_success_rate_threshold }}
+          CANARY_MAX_LAT: ${{ github.event.inputs.canary_max_latency_ms }}
+        run: |
+          set -euo pipefail
+          if [ -z "$LICENSE_TEST_KEY" ]; then echo "No LICENSE_TEST_KEY for $TARGET_NAME; skipping canary health thresholds"; exit 0; fi
+          SAMPLES=${SAMPLES:-5}
+          SUCCESS=0
+          TOT_LAT=0.0
+          for i in $(seq 1 $SAMPLES); do
+            echo "canary sample $i"
+            TIME1=$(curl -sS -w '%{time_total}' -o /tmp/resp.$i -X POST "$TARGET_URL/api/v1/validate" -d "license_key=$LICENSE_TEST_KEY" -d "site=ci" || true)
+            TOKEN=$(jq -r '.token // empty' /tmp/resp.$i || echo '')
+            if [ -z "$TOKEN" ]; then echo "sample $i: token_issue_failed"; continue; fi
+            TIME2=$(curl -sS -w '%{time_total}' -o /tmp/int.$i -X POST "$TARGET_URL/api/v1/introspect" -d "token=$TOKEN" || true)
+            OK=$(jq -r '.success // false' /tmp/int.$i || echo 'false')
+            # accumulate
+            TOT_LAT=$(awk -v a="$TOT_LAT" -v b="$TIME1" -v c="$TIME2" 'BEGIN{printf "%.6f", a + b + c}')
+            if [ "$OK" = "true" ]; then SUCCESS=$((SUCCESS+1)); fi
+          done
+
+          success_rate=$(awk -v s="$SUCCESS" -v n="$SAMPLES" 'BEGIN{printf "%.2f", (s/n)*100}')
+          if [ "$SUCCESS" -gt 0 ]; then avg_latency_ms=$(awk -v t="$TOT_LAT" -v s="$SUCCESS" 'BEGIN{printf "%.2f", (t/s)*1000}'); else avg_latency_ms="inf"; fi
+          echo "canary success_rate=$success_rate% avg_latency_ms=$avg_latency_ms"
+
+          pass_rate=$(awk -v a="$success_rate" -v b="$CANARY_THRESHOLD" 'BEGIN{print (a+0) >= (b+0) ? 1 : 0}')
+          pass_lat=$(awk -v a="$avg_latency_ms" -v b="$CANARY_MAX_LAT" 'BEGIN{ if(a=="inf") print 0; else print (a+0) <= (b+0) ? 1 : 0 }')
+          if [ "$pass_rate" -ne 1 ] || [ "$pass_lat" -ne 1 ]; then
+            echo "Canary health thresholds failed: rate_ok=$pass_rate lat_ok=$pass_lat"
+            exit 1
+          fi
+          echo "Canary health thresholds passed"
+
+      - name: Notify Slack on failure (rollout)
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "${SLACK_WEBHOOK_URL:-}" ]; then
+            MSG="Rollout rotation failed for $TARGET_NAME at $TARGET_URL in workflow $GITHUB_WORKFLOW run $GITHUB_RUN_ID"
+            curl -sS -X POST -H 'Content-type: application/json' --data "{\"text\": \"$MSG\"}" "$SLACK_WEBHOOK_URL" || true
+          else
+            echo "No SLACK_WEBHOOK_URL configured; skipping Slack notify"
+          fi
+
+      - name: Send email on failure (rollout)
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Rollout rotation failed: ${{ matrix.name }}"
+          to: ${{ secrets.NOTIFY_EMAIL_TO }}
+          from: ${{ secrets.NOTIFY_EMAIL_FROM }}
+          body: "Rollout rotation failed for $TARGET_NAME at $TARGET_URL. See Actions run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
+      - name: Notify Slack on failure (canary)
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "${SLACK_WEBHOOK_URL:-}" ]; then
+            MSG="Canary rotation failed for $TARGET_NAME at $TARGET_URL in workflow $GITHUB_WORKFLOW run $GITHUB_RUN_ID"
+            curl -sS -X POST -H 'Content-type: application/json' --data "{\"text\": \"$MSG\"}" "$SLACK_WEBHOOK_URL" || true
+          else
+            echo "No SLACK_WEBHOOK_URL configured; skipping Slack notify"
+          fi
+
+      - name: Send email on failure (canary)
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Canary rotation failed: ${{ matrix.name }}"
+          to: ${{ secrets.NOTIFY_EMAIL_TO }}
+          from: ${{ secrets.NOTIFY_EMAIL_FROM }}
+          body: "Canary rotation failed for $TARGET_NAME at $TARGET_URL. See Actions run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
+  progressive-rollout:
+    name: Progressive Percentage Rollout
+    runs-on: ubuntu-latest
+    needs: rotate-prune-canary
+    if: ${{ github.event.inputs.percentage != '' }}
+    env:
+      ROLLOUT_JSON: ${{ secrets.ROLLOUT_TARGETS_JSON }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y curl jq
+
+      - name: Prepare targets list
+        run: |
+          set -euo pipefail
+          if [ -n "${ROLLOUT_JSON:-}" ]; then
+            echo "$ROLLOUT_JSON" | jq . > /tmp/targets.json
+          elif [ -f deploy/targets.json ]; then
+            cp deploy/targets.json /tmp/targets.json
+          else
+            echo "No rollout targets configured (deploy/targets.json or secret ROLLOUT_TARGETS_JSON). Skipping."; exit 0
+          fi
+          COUNT=$(jq 'length' /tmp/targets.json)
+          if [ "$COUNT" -eq 0 ]; then echo "No targets to rollout"; exit 0; fi
+          PCT=${{ github.event.inputs.percentage }}
+          N=$(jq -nr --arg c "$COUNT" --arg p "$PCT" 'ceil(($c|tonumber) * ($p|tonumber) / 100)')
+          echo "Selected $N of $COUNT targets for $PCT% rollout"
+
+      - name: Perform progressive rollout
+        run: |
+          set -euo pipefail
+          if [ ! -f /tmp/targets.json ]; then echo "No targets file"; exit 0; fi
+          COUNT=$(jq 'length' /tmp/targets.json)
+          PCT=${{ github.event.inputs.percentage }}
+          N=$(jq -nr --arg c "$COUNT" --arg p "$PCT" 'ceil(($c|tonumber) * ($p|tonumber) / 100)')
+          echo "Rolling out to first $N targets"
+          for i in $(seq 0 $((N-1))); do
+            entry=$(jq -r ".[$i] | @base64" /tmp/targets.json)
+            name=$(echo "$entry" | base64 --decode | jq -r '.name')
+            url=$(echo "$entry" | base64 --decode | jq -r '.url')
+            admin_token=$(echo "$entry" | base64 --decode | jq -r '.admin_token')
+            license_key=$(echo "$entry" | base64 --decode | jq -r '.license_test_key // empty')
+            echo "==> Rotating $name at $url"
+            # Pushgateway-aware metric fetch: per-target override or workflow-level defaults
+            TARGET_PG_URL=$(echo "$entry" | base64 --decode | jq -r '.pushgateway_url // empty')
+            TARGET_PG_JOB=$(echo "$entry" | base64 --decode | jq -r '.pushgateway_job // empty')
+            TARGET_PG_INSTANCE=$(echo "$entry" | base64 --decode | jq -r '.pushgateway_instance // empty')
+            encode() { echo -n "$1" | jq -s -R -r @uri; }
+            get_metrics_for_entry() {
+              if [ -n "$TARGET_PG_URL" ]; then
+                PG_URL="${TARGET_PG_URL%/}"
+                PG_JOB="${TARGET_PG_JOB:-license_server}"
+                PG_INSTANCE="${TARGET_PG_INSTANCE:-$name}"
+                JOB_ENC=$(encode "$PG_JOB")
+                INST_ENC=$(encode "$PG_INSTANCE")
+                curl -sS "${PG_URL}/metrics/job/${JOB_ENC}/instance/${INST_ENC}" || true
+              elif [ -n "${PUSHGATEWAY_URL:-}" ]; then
+                PG_URL="${PUSHGATEWAY_URL%/}"
+                PG_JOB="${PUSHGATEWAY_JOB:-license_server}"
+                PG_INSTANCE="${PUSHGATEWAY_INSTANCE:-$name}"
+                JOB_ENC=$(encode "$PG_JOB")
+                INST_ENC=$(encode "$PG_INSTANCE")
+                curl -sS "${PG_URL}/metrics/job/${JOB_ENC}/instance/${INST_ENC}" || true
+              else
+                curl -sS "$url/metrics" || true
+              fi
+            }
+
+            ROT=$(curl -sS -X POST "$url/api/v1/jwks/rotate" -H "Authorization: Bearer $admin_token" -d '' || true)
+            NEW_KID=$(echo "$ROT" | jq -r '.kid // empty')
+            OLD_KID=$(echo "$ROT" | jq -r '.old_kid // empty')
+            if [ -z "$NEW_KID" ]; then
+              echo "Rotation failed for $name: $ROT"
+              if [ -n "$OLD_KID" ]; then
+                echo "Attempting activate rollback for $name to $OLD_KID"
+                curl -sS -X POST "$url/api/v1/jwks/activate" -H "Authorization: Bearer $admin_token" -H "Content-Type: application/json" -d '{"kid":"'$OLD_KID'"}' || true
+              else
+                echo "Attempting generic rollback for $name"
+                curl -sS -X POST "$url/api/v1/jwks/rollback" -H "Authorization: Bearer $admin_token" -d '' || true
+              fi
+              if [ -n "${SLACK_WEBHOOK_URL:-}" ]; then
+                MSG="Rotation failed for $name at $url. Attempted rollback. See workflow run for details."
+                curl -sS -X POST -H 'Content-type: application/json' --data "{\"text\": \"$MSG\"}" "$SLACK_WEBHOOK_URL" || true
+              fi
+              echo "Aborting progressive rollout due to failure on $name"
+              exit 1
+            fi
+
+            echo "Confirming JWKS includes new kid for $name..."
+            JWKS=$(curl -sS "$url/api/v1/jwks" || true)
+            echo "$JWKS" | jq -e ".keys[] | select(.kid == \"$NEW_KID\")" >/dev/null 2>&1 || (echo "New kid not present in JWKS for $name" && exit 1)
+
+            if [ -n "$license_key" ]; then
+              echo "Issuing token for $name and introspecting..."
+              NEW_RESP=$(curl -sS -X POST "$url/api/v1/validate" -d "license_key=$license_key" -d "site=ci" || true)
+              TOKEN_NEW=$(echo "$NEW_RESP" | jq -r '.token // empty')
+              if [ -z "$TOKEN_NEW" ]; then echo "Failed to issue new token for $name: $NEW_RESP"; exit 1; fi
+              IN_NEW=$(curl -sS -X POST "$url/api/v1/introspect" -d "token=$TOKEN_NEW" || true)
+              OK2=$(echo "$IN_NEW" | jq -r '.success // false')
+              if [ "$OK2" != "true" ]; then echo "New token introspect failed for $name: $IN_NEW"; exit 1; fi
+            fi
+
+            # verify metrics increment for this target (Pushgateway-aware)
+            BEFORE_MET=$(get_metrics_for_entry)
+            BEFORE_ROT=$(echo "$BEFORE_MET" | grep '^jwks_rotations_total' | tail -n1 | awk '{print $2}' || echo '')
+            ATTEMPTS=6
+            SLEEP_SEC=1
+            for a in $(seq 1 $ATTEMPTS); do
+              AFTER_MET=$(get_metrics_for_entry)
+              AFTER_ROT=$(echo "$AFTER_MET" | grep '^jwks_rotations_total' | tail -n1 | awk '{print $2}' || echo '')
+              if [ -n "$BEFORE_ROT" ] && [ -n "$AFTER_ROT" ] && [ "$AFTER_ROT" -gt "$BEFORE_ROT" ]; then break; fi
+              sleep $SLEEP_SEC
+            done
+
+            echo "Triggering prune endpoint for $name..."
+            PRUNE=$(curl -sS -X POST "$url/api/v1/jwks/prune" -H "Authorization: Bearer $admin_token" -d '' || true)
+            echo "Prune response for $name: $PRUNE"
+
+          done
+
+          echo "Progressive rollout completed for $PCT% of targets"
+
+  region-sequencer:
+    name: Staged-Region Sequenced Rollout
+    runs-on: ubuntu-latest
+    needs: rotate-prune-canary
+    env:
+      ROLLOUT_JSON: ${{ secrets.ROLLOUT_TARGETS_JSON }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y curl jq
+
+      - name: Prepare targets list
+        run: |
+          set -euo pipefail
+          if [ -n "${ROLLOUT_JSON:-}" ]; then
+            echo "$ROLLOUT_JSON" | jq . > /tmp/targets.json
+          elif [ -f deploy/targets.json ]; then
+            cp deploy/targets.json /tmp/targets.json
+          else
+            echo "No rollout targets configured (deploy/targets.json or secret ROLLOUT_TARGETS_JSON). Skipping."; exit 0
+          fi
+
+      - name: Sequence by region and rollout
+        env:
+          REGION_DELAY: ${{ github.event.inputs.region_delay_minutes }}
+        run: |
+          set -euo pipefail
+          if [ ! -f /tmp/targets.json ]; then echo "No targets file"; exit 0; fi
+          # determine sequence: top-level region_sequence if present, else infer unique regions
+          if jq 'has("region_sequence")' /tmp/targets.json >/dev/null 2>&1; then
+            seq=$(jq -r '.region_sequence[]' /tmp/targets.json | jq -R . | jq -s .)
+          else
+            seq=$(jq -r '.[].region' /tmp/targets.json | awk '!x[$0]++' | jq -R . | jq -s .)
+          fi
+          regions_count=$(echo "$seq" | jq 'length')
+          echo "Regions to process: $regions_count"
+          for i in $(seq 0 $((regions_count-1))); do
+            region=$(echo "$seq" | jq -r ".[$i]")
+            echo "Starting rollout for region: $region"
+            targets=$(jq -c ".[] | select(.region == \"$region\")" /tmp/targets.json)
+            if [ -z "$targets" ]; then echo "No targets for region $region; skipping"; continue; fi
+            echo "$targets" | while read -r t; do
+              name=$(echo "$t" | jq -r '.name')
+              url=$(echo "$t" | jq -r '.url')
+              admin_token=$(echo "$t" | jq -r '.admin_token')
+              license_key=$(echo "$t" | jq -r '.license_test_key // empty')
+              echo "--> Rotating $name at $url"
+              ROT=$(curl -sS -X POST "$url/api/v1/jwks/rotate" -H "Authorization: Bearer $admin_token" -d '' || true)
+              NEW_KID=$(echo "$ROT" | jq -r '.kid // empty')
+              OLD_KID=$(echo "$ROT" | jq -r '.old_kid // empty')
+              if [ -z "$NEW_KID" ]; then
+                echo "Rotation failed for $name: $ROT"
+                if [ -n "$OLD_KID" ]; then
+                  echo "Attempting activate rollback for $name to $OLD_KID"
+                  curl -sS -X POST "$url/api/v1/jwks/activate" -H "Authorization: Bearer $admin_token" -H "Content-Type: application/json" -d '{"kid":"'$OLD_KID'"}' || true
+                else
+                  echo "Attempting generic rollback for $name"
+                  curl -sS -X POST "$url/api/v1/jwks/rollback" -H "Authorization: Bearer $admin_token" -d '' || true
+                fi
+                if [ -n "${SLACK_WEBHOOK_URL:-}" ]; then
+                  MSG="Region rollout failed for $name in region $region. Attempted rollback. See workflow run for details."
+                  curl -sS -X POST -H 'Content-type: application/json' --data "{\"text\": \"$MSG\"}" "$SLACK_WEBHOOK_URL" || true
+                fi
+                echo "Aborting region sequence due to failure on $name"
+                exit 1
+              fi
+              echo "Confirming JWKS includes new kid for $name..."
+              JWKS=$(curl -sS "$url/api/v1/jwks" || true)
+              echo "$JWKS" | jq -e ".keys[] | select(.kid == \"$NEW_KID\")" >/dev/null 2>&1 || (echo "New kid not present in JWKS for $name" && exit 1)
+              if [ -n "$license_key" ]; then
+                NEW_RESP=$(curl -sS -X POST "$url/api/v1/validate" -d "license_key=$license_key" -d "site=ci" || true)
+                TOKEN_NEW=$(echo "$NEW_RESP" | jq -r '.token // empty')
+                if [ -z "$TOKEN_NEW" ]; then echo "Failed to issue new token for $name: $NEW_RESP"; exit 1; fi
+                IN_NEW=$(curl -sS -X POST "$url/api/v1/introspect" -d "token=$TOKEN_NEW" || true)
+                OK2=$(echo "$IN_NEW" | jq -r '.success // false')
+                if [ "$OK2" != "true" ]; then echo "New token introspect failed for $name: $IN_NEW"; exit 1; fi
+              fi
+              PRUNE=$(curl -sS -X POST "$url/api/v1/jwks/prune" -H "Authorization: Bearer $admin_token" -d '' || true)
+              echo "Prune response for $name: $PRUNE"
+            done
+
+            # inter-region delay
+            DELAY=${REGION_DELAY:-5}
+            if [ -n "$DELAY" ] && [ "$DELAY" -gt 0 ]; then
+              echo "Waiting $DELAY minutes before next region..."
+              sleep $((DELAY * 60))
+            fi
+          done
+          echo "Staged-region sequenced rollout completed"
+
+  rotate-prune-rollout:
+    name: Staged Rollout Rotate + Prune
+    runs-on: ubuntu-latest
+    env:
+      PUSHGATEWAY_URL: ${{ secrets.PUSHGATEWAY_URL }}
+      PUSHGATEWAY_JOB: ${{ secrets.PUSHGATEWAY_JOB }}
+      PUSHGATEWAY_INSTANCE: ${{ secrets.PUSHGATEWAY_INSTANCE }}
+    needs: rotate-prune-canary
+    # Optional environment here can require manual approval if configured in the repo
+    environment: staged-rollout
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - name: staging
+            stage: rollout
+            url: ${{ secrets.STAGING_LICENSE_SERVER_URL }}
+            admin_token: ${{ secrets.STAGING_ADMIN_TOKEN }}
+            license_test_key: ${{ secrets.STAGING_LICENSE_TEST_KEY }}
+          - name: production
+            stage: rollout
+            url: ${{ secrets.PROD_LICENSE_SERVER_URL }}
+            admin_token: ${{ secrets.PROD_ADMIN_TOKEN }}
+            license_test_key: ${{ secrets.PROD_LICENSE_TEST_KEY }}
+    if: ${{ inputs.target == '' || matrix.name == inputs.target }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y curl jq
+
+      - name: Optional delay after canary
+        run: |
+          set -euo pipefail
+          DELAY_MIN=${{ github.event.inputs.delay_minutes || '0' }}
+          if [ -z "$DELAY_MIN" ]; then DELAY_MIN=0; fi
+          if [ "$DELAY_MIN" -gt 0 ]; then
+            echo "Waiting $DELAY_MIN minutes before rollout..."
+            sleep $((DELAY_MIN * 60))
+          fi
+
+      - name: Rotate and verify JWKS (rollout)
+        env:
+          TARGET_NAME: ${{ matrix.name }}
+          TARGET_URL: ${{ matrix.url }}
+          ADMIN_TOKEN: ${{ matrix.admin_token }}
+          LICENSE_TEST_KEY: ${{ matrix.license_test_key }}
+        run: |
+          set -euo pipefail
+          echo "Target: $TARGET_NAME"
+          if [ -z "$TARGET_URL" ]; then echo "No TARGET_URL provided for $TARGET_NAME; skipping."; exit 0; fi
+          if [ -z "$ADMIN_TOKEN" ]; then echo "No ADMIN_TOKEN provided for $TARGET_NAME; skipping."; exit 0; fi
+
+          echo "Rotating keys via JWKS endpoint..."
+          # helper: URL-encode and Pull metrics from Pushgateway when available
+          encode() { echo -n "$1" | jq -s -R -r @uri; }
+          get_metrics_for_target() {
+            if [ -n "${TARGET_PUSHGATEWAY_URL:-}" ]; then
+              PG_URL="${TARGET_PUSHGATEWAY_URL%/}"
+              PG_JOB="${TARGET_PUSHGATEWAY_JOB:-license_server}"
+              PG_INSTANCE="${TARGET_PUSHGATEWAY_INSTANCE:-$TARGET_NAME}"
+              JOB_ENC=$(encode "$PG_JOB")
+              INST_ENC=$(encode "$PG_INSTANCE")
+              curl -sS "${PG_URL}/metrics/job/${JOB_ENC}/instance/${INST_ENC}" || true
+            elif [ -n "${PUSHGATEWAY_URL:-}" ]; then
+              PG_URL="${PUSHGATEWAY_URL%/}"
+              PG_JOB="${PUSHGATEWAY_JOB:-license_server}"
+              PG_INSTANCE="${PUSHGATEWAY_INSTANCE:-$TARGET_NAME}"
+              JOB_ENC=$(encode "$PG_JOB")
+              INST_ENC=$(encode "$PG_INSTANCE")
+              curl -sS "${PG_URL}/metrics/job/${JOB_ENC}/instance/${INST_ENC}" || true
+            else
+              curl -sS "$TARGET_URL/metrics" || true
+            fi
+          }
+
+          ROT=$(curl -sS -X POST "$TARGET_URL/api/v1/jwks/rotate" -H "Authorization: Bearer $ADMIN_TOKEN" -d '' || true)
+          MET_BEFORE=$(get_metrics_for_target)
+          NEW_KID=$(echo "$ROT" | jq -r '.kid // empty')
+          if [ -z "$NEW_KID" ]; then echo "Rotation failed: $ROT"; exit 1; fi
+          echo "Rotated to new kid: $NEW_KID"
+
+          # verify metrics show rotation delta (allow brief propagation)
+          BEFORE_ROT=$(echo "$MET_BEFORE" | grep '^jwks_rotations_total' | tail -n1 | awk '{print $2}' || echo '')
+          AFTER_ROT=''
+          for a in $(seq 1 6); do
+            MET_AFTER=$(get_metrics_for_target)
+            AFTER_ROT=$(echo "$MET_AFTER" | grep '^jwks_rotations_total' | tail -n1 | awk '{print $2}' || echo '')
+            if [ -n "$BEFORE_ROT" ] && [ -n "$AFTER_ROT" ] && [ "$AFTER_ROT" -gt "$BEFORE_ROT" ]; then break; fi
+            sleep 1
+          done
+          if [ -n "$BEFORE_ROT" ] && [ -n "$AFTER_ROT" ]; then
+            if [ "$AFTER_ROT" -le "$BEFORE_ROT" ]; then echo "Metrics did not increment jwks_rotations_total"; exit 1; fi
+          fi
+
+          echo "Confirming JWKS includes new kid..."
+          JWKS=$(curl -sS "$TARGET_URL/api/v1/jwks" || true)
+          echo "$JWKS" | jq -e ".keys[] | select(.kid == \"$NEW_KID\")" >/dev/null 2>&1 || (echo "New kid not present in JWKS" && exit 1)
+
+          echo "Issuing token after rotation (if LICENSE_TEST_KEY present)..."
+          if [ -n "$LICENSE_TEST_KEY" ]; then
+              NEW_RESP=$(curl -sS -X POST "$TARGET_URL/api/v1/validate" -d "license_key=$LICENSE_TEST_KEY" -d "site=ci" || true)
+              TOKEN_NEW=$(echo "$NEW_RESP" | jq -r '.token // empty')
+              if [ -z "$TOKEN_NEW" ]; then echo "Failed to issue new token: $NEW_RESP"; exit 1; fi
+              IN_NEW=$(curl -sS -X POST "$TARGET_URL/api/v1/introspect" -d "token=$TOKEN_NEW" || true)
+              OK2=$(echo "$IN_NEW" | jq -r '.success // false')
+              if [ "$OK2" != "true" ]; then echo "New token introspect failed: $IN_NEW"; exit 1; fi
+          else
+              echo "No LICENSE_TEST_KEY for $TARGET_NAME; skipping issue/introspect post-check"
+          fi
+
+          echo "Triggering prune endpoint..."
+          PRUNE=$(curl -sS -X POST "$TARGET_URL/api/v1/jwks/prune" -H "Authorization: Bearer $ADMIN_TOKEN" -d '' || true)
+          echo "Prune response: $PRUNE"

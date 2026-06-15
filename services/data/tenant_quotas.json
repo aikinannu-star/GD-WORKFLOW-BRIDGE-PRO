@@ -1,0 +1,4 @@
+{
+  "ci-tenant": { "limit": 60 },
+  "default": { "limit": 120 }
+}

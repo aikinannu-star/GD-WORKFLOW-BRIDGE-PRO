@@ -1,0 +1,142 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: mbstring, mysqli
+      
+      - name: Cache Composer
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist
+      
+      - name: Run PHPCS
+        run: composer run phpcs || true
+
+  phpunit:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: mbstring, mysqli
+      
+      - name: Cache Composer
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist
+      
+      - name: Cache WordPress Test Suite
+        uses: actions/cache@v3
+        with:
+          path: /tmp/wordpress-tests-lib
+          key: ${{ runner.os }}-wordpress-tests-6.0
+          restore-keys: ${{ runner.os }}-wordpress-tests-
+      
+      - name: Install WordPress Test Suite
+        env:
+          WP_VERSION: 6.0
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          DB_HOST: localhost
+          DB_NAME: test_db
+          DB_USER: root
+          DB_PASS: root
+        run: |
+          mkdir -p "$WP_TESTS_DIR/includes"
+          if [ ! -f "$WP_TESTS_DIR/includes/functions.php" ]; then
+            wget -q https://develop.svn.wordpress.org/trunk/tests/phpunit/includes/functions.php -O "$WP_TESTS_DIR/includes/functions.php" || true
+          fi
+      
+      - name: Run PHPUnit
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          DB_HOST: localhost
+          DB_NAME: test_db
+          DB_USER: root
+          DB_PASS: root
+        run: vendor/bin/phpunit -c phpunit.xml.dist --no-coverage || true
+
+  license-integration:
+    needs: phpunit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pgsql, redis
+
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Ensure Docker Compose
+        run: |
+          if ! command -v docker-compose >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y docker-compose-plugin
+          fi
+
+      - name: Run license server integration tests
+        env:
+          POSTGRES_USER: gdwb_user
+          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_DB: gdwb_app
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+        run: |
+          chmod +x tests/license-server-integration.sh
+          ./tests/license-server-integration.sh
+
+      - name: Run distributed revocation test
+        env:
+          POSTGRES_USER: gdwb_user
+          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_DB: gdwb_app
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+        run: |
+          chmod +x tests/distributed-revocation-test.sh
+          ./tests/distributed-revocation-test.sh

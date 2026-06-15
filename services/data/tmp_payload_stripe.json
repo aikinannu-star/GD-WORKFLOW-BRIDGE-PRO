@@ -1,0 +1,13 @@
+{
+  "type": "invoice.payment_succeeded",
+  "data": {
+    "object": {
+      "id": "in_1aee8dc9-790b-4f85-923f-f5933a492d76",
+      "currency": "usd",
+      "amount_paid": 2999,
+      "metadata": {
+        "license_key": "GDWB-B3D51289C13D2A58"
+      }
+    }
+  }
+}

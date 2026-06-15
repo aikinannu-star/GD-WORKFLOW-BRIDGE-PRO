@@ -1,0 +1,29 @@
+{
+  "name": "GDWB Codespace",
+  "dockerComposeFile": [
+    "../docker-compose.yml"
+  ],
+  "service": "gateway-service",
+  "workspaceFolder": "/workspace",
+  "runServices": [
+    "postgres",
+    "redis",
+    "license-server",
+    "gateway-service",
+    "auth-service",
+    "billing-service",
+    "usage-service"
+  ],
+  "shutdownAction": "stopCompose",
+  "forwardPorts": [8000, 8001, 8010, 5432, 6379, 9090, 9091],
+  "postCreateCommand": "cp .env.example .env || true && echo 'Please edit .env (set secrets) and update MYAPP_BACKEND_PATH if you want the Node backend included.'",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "mhutchie.git-graph"
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+FROM php:8.2-fpm-alpine
+
+WORKDIR /app
+
+# Install PHP extensions
+RUN apk add --no-cache \
+    postgresql-dev \
+    && docker-php-ext-install pdo pdo_pgsql
+
+# Copy application
+COPY . .
+
+# Install dependencies
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer install --no-dev
+
+EXPOSE 8002
+
+CMD ["php", "-S", "0.0.0.0:8002", "-t", "services/auth", "services/auth/server.php"]

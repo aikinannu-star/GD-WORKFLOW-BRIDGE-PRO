@@ -1,0 +1,100 @@
+name: PR Smoke Tests
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: gdwb_user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: gdwb_app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gdwb_user -d gdwb_app"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping || exit 1"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v4
+        with:
+          php-version: '8.2'
+          extensions: openssl
+          ini-values: date.timezone=UTC
+
+      - name: Generate keys and admin token (license-server)
+        run: |
+          php license-server/generate_keys.php
+          php license-server/generate_admin_token.php || true
+
+      - name: Start license server (PHP built-in)
+        run: |
+          nohup php -S 127.0.0.1:8001 license-server/server.php >/tmp/php-server.log 2>&1 &
+          for i in {1..30}; do
+            if curl -sSf http://127.0.0.1:8001/health >/dev/null 2>&1; then
+              echo "license server up"; break; fi
+            sleep 1
+          done
+
+      - name: Setup Node for API Gateway
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node dependencies (api-gateway)
+        working-directory: GodemarsEmpire2/server
+        run: |
+          npm ci
+
+      - name: Start API Gateway
+        working-directory: GodemarsEmpire2/server
+        env:
+          PORT: 3000
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_USER: gdwb_user
+          DB_PASSWORD: password
+          DB_NAME: gdwb_app
+          LICENSE_SERVER_URL: http://127.0.0.1:8001
+          JWT_SECRET: ci_test_secret_change_me
+          COOKIE_SECURE: 'false'
+          CORS_ORIGIN: http://localhost:3001
+        run: |
+          nohup npm run dev >/tmp/node-server.log 2>&1 &
+          for i in {1..30}; do
+            if curl -sSf http://127.0.0.1:3000/health >/dev/null 2>&1; then
+              echo "api gateway up"; break; fi
+            sleep 1
+          done
+
+      - name: Run Node integration tests
+        working-directory: GodemarsEmpire2/server
+        run: |
+          node test_integration.js
+
+      - name: Run PHP smoke test (register → userinfo)
+        run: |
+          php license-server/tests/smoke_register.php
+      - name: Run PHP smoke revoke test (validate → revoke → introspect)
+        run: |
+          php license-server/tests/smoke_revoke.php

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Billing Events Admin</title>
+  <link rel="stylesheet" href="/admin/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Billing Events Admin</h1>
+    <div class="controls">
+      <label>Admin token: <input id="token" placeholder="Paste X-Admin-Token here" /></label>
+      <button id="load">Load Events</button>
+    </div>
+    <div id="status"></div>
+    <table id="events">
+      <thead>
+        <tr><th>Event Key</th><th>Provider</th><th>Reference</th><th>Status</th><th>Attempts</th><th>Created</th><th>Last Attempt</th><th>Next Retry</th><th>Actions</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script src="/admin/app.js"></script>
+</body>
+</html>

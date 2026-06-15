@@ -1,0 +1,14 @@
+{
+  "id": "WH-PP-4aad8f16-8e17-4675-88c5-5921ace93721",
+  "resource": {
+    "id": "PAYID-d3080f94-dbee-4c71-9801-a954cb9e0eef",
+    "metadata": {
+      "license_key": "GDWB-40FD9B322113A0D8"
+    },
+    "amount": {
+      "currency_code": "USD",
+      "value": "29.99"
+    }
+  },
+  "event_type": "PAYMENT.CAPTURE.COMPLETED"
+}

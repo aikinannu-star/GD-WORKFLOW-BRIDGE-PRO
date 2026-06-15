@@ -1,0 +1,100 @@
+name: PHP Integration Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: gdwb_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d gdwb_ci -h localhost" --health-interval 10s --health-timeout 5s --health-retries 5
+      minio:
+        image: minio/minio:latest
+        env:
+          MINIO_ROOT_USER: minio
+          MINIO_ROOT_PASSWORD: minio123
+        ports:
+          - 9000:9000
+        options: >-
+          --health-cmd "curl -s http://localhost:9000/minio/health/ready || exit 1" --health-interval 10s --health-timeout 5s --health-retries 5
+        command: ["server", "/data"]
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping || exit 1" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, pdo_pgsql, fileinfo, curl
+          ini-values: post_max_size=256M, upload_max_filesize=256M
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Wait for MinIO
+        run: |
+          for i in $(seq 1 30); do
+            curl -sSf http://localhost:9000/minio/health/ready && break || sleep 2
+          done
+
+      - name: Run migrations
+        env:
+          DB_ADAPTER: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_NAME: gdwb_ci
+          DB_USER: ci
+          DB_PASS: ci
+          PHINX_ENV: ci
+        run: vendor/bin/phinx migrate -e ci
+
+      - name: Start media service
+        env:
+          DB_ADAPTER: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_NAME: gdwb_ci
+          DB_USER: ci
+          DB_PASS: ci
+          S3_ENDPOINT: http://localhost:9000
+          S3_KEY: minio
+          S3_SECRET: minio123
+          S3_REGION: us-east-1
+          S3_BUCKET: gdwb-media
+        run: php -S 0.0.0.0:8010 -t services/media services/media/server.php > media.log 2>&1 &
+
+      - name: Wait for media service
+        run: |
+          for i in $(seq 1 15); do
+            curl -sSf http://127.0.0.1:8010/health && break || sleep 1
+          done
+
+      - name: Run integration tests
+        run: vendor/bin/phpunit --colors=always tests/integration

@@ -1,0 +1,1 @@
+{"id":"WH-PP-TEST","event_type":"PAYMENT.CAPTURE.COMPLETED","resource":{"id":"PAYID-999","amount":{"value":"49.99","currency_code":"USD"},"metadata":{"license_key":"GDWB-STRICT-PP-0001"}}}

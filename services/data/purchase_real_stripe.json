@@ -1,0 +1,8 @@
+{
+  "email": "test+stripe-real@example.com",
+  "plan": "pro",
+  "cancel_url": "http://localhost:8082/License?canceled=1",
+  "success_url": "http://localhost:8082/License?session_id={CHECKOUT_SESSION_ID}",
+  "site": "http://localhost:8082/License",
+  "gateway": "stripe"
+}

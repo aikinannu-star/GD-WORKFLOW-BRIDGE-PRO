@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>License Server Observability</title>
+  <style>body{font-family:system-ui,Arial;margin:20px} pre{background:#f7f7f7;padding:10px;border-radius:6px}</style>
+</head>
+<body>
+  <h1>License Server Observability</h1>
+  <div>
+    <button id="refresh">Refresh</button>
+    <label style="margin-left:12px">Admin token: <input id="adminToken" style="width:420px" placeholder="paste admin bearer token for audit access" /></label>
+    <button id="loadAudit" style="margin-left:8px">Load Audit</button>
+  </div>
+  <h2>JWKS Status</h2>
+  <pre id="status">loading...</pre>
+  <h2>Metrics (/metrics)</h2>
+  <pre id="metrics">loading...</pre>
+  <canvas id="metricsChart" width="800" height="200"></canvas>
+  <h2>Metrics History</h2>
+  <canvas id="historyChart" width="900" height="240"></canvas>
+  <h2>Recent Admin Audit</h2>
+  <pre id="audit">(paste admin token and click Load Audit)</pre>
+  <script>
+    const chartCtx = document.getElementById('metricsChart').getContext('2d');
+    let chart = null;
+    async function load() {
+      try {
+        const s = await fetch('/api/v1/jwks/status');
+        const js = await s.json();
+        document.getElementById('status').textContent = JSON.stringify(js, null, 2);
+      } catch (e) { document.getElementById('status').textContent = 'error: '+e }
+      try {
+        const m = await fetch('/metrics');
+        const text = await m.text();
+        document.getElementById('metrics').textContent = text;
+        renderMetricsChart(text);
+        loadMetricsHistory();
+      } catch (e) { document.getElementById('metrics').textContent = 'error: '+e }
+    }
+    async function loadMetricsHistory() {
+      try {
+        const resp = await fetch('/api/v1/metrics/history?n=50');
+        const js = await resp.json();
+        // js is array of { ts, metrics }
+        const labels = js.map(x => (new Date(x.ts)).toLocaleTimeString());
+        const rotations = js.map(x => x.metrics['jwks_rotations_total'] || 0);
+        const prunes = js.map(x => x.metrics['jwks_prunes_total'] || 0);
+        const rollbacks = js.map(x => x.metrics['jwks_rollbacks_total'] || 0);
+        const activates = js.map(x => x.metrics['jwks_activates_total'] || 0);
+        const ctx2 = document.getElementById('historyChart').getContext('2d');
+        if (window.historyChartObj) window.historyChartObj.destroy();
+        window.historyChartObj = new Chart(ctx2, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              { label: 'rotations', data: rotations, borderColor: '#3e95cd', fill: false },
+              { label: 'prunes', data: prunes, borderColor: '#8e5ea2', fill: false },
+              { label: 'rollbacks', data: rollbacks, borderColor: '#3cba9f', fill: false },
+              { label: 'activates', data: activates, borderColor: '#e8c3b9', fill: false }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      } catch (e) { console.error('history load error', e); }
+    }
+    function renderMetricsChart(text) {
+      // parse simple prometheus text for our metrics
+      const lines = text.split(/\r?\n/);
+      const vals = {};
+      for (const l of lines) {
+        if (!l || l.startsWith('#')) continue;
+        const m = l.match(/^([a-zA-Z0-9_:]+)\s+([0-9eE+\-.]+)$/);
+        if (m) vals[m[1]] = Number(m[2]);
+      }
+      const labels = ['rotations','prunes','rollbacks','activates'];
+      const data = [
+        vals['jwks_rotations_total'] || 0,
+        vals['jwks_prunes_total'] || 0,
+        vals['jwks_rollbacks_total'] || 0,
+        vals['jwks_activates_total'] || 0
+      ];
+      if (chart) chart.destroy();
+      chart = new Chart(chartCtx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{ label: 'Count', data: data, backgroundColor: ['#3e95cd','#8e5ea2','#3cba9f','#e8c3b9'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    async function loadAudit() {
+      const token = document.getElementById('adminToken').value.trim();
+      if (!token) { alert('Paste admin bearer token to fetch audit logs'); return; }
+      try {
+        const resp = await fetch('/api/v1/admin/audit/recent?n=50', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (!resp.ok) { document.getElementById('audit').textContent = 'Failed to fetch audit: ' + resp.status; return; }
+        const js = await resp.json();
+        document.getElementById('audit').textContent = JSON.stringify(js, null, 2);
+      } catch (e) { document.getElementById('audit').textContent = 'error: '+e }
+    }
+    document.getElementById('refresh').addEventListener('click', load);
+    document.getElementById('loadAudit').addEventListener('click', loadAudit);
+    load();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

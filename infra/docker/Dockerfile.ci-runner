@@ -1,0 +1,16 @@
+FROM php:8.2-cli
+
+# Lightweight CI runner image with tools preinstalled
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends bash curl jq redis-tools ca-certificates; \
+    rm -rf /var/lib/apt/lists/*;
+
+WORKDIR /workspace
+
+# Copy repo for optional image-local usage (bind-mounts override in dev)
+COPY . /workspace
+
+RUN chmod +x /workspace/scripts/ci-runner-entrypoint.sh || true
+
+ENTRYPOINT ["/workspace/scripts/ci-runner-entrypoint.sh"]

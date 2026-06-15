@@ -1,0 +1,16 @@
+[Unit]
+Description=GDWB License Server
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/gdwb
+EnvironmentFile=-/etc/gdwb/license-server.env
+ExecStartPre=/usr/local/bin/gdwb-fetch-secrets.sh
+ExecStart=/usr/bin/php -S 127.0.0.1:8001 -t /opt/gdwb/license-server
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

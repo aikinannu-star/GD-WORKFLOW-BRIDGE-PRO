@@ -1,0 +1,67 @@
+name: Revocation Smoke Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  revocation-smoke:
+    name: Distributed Revocation Smoke
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: gdwb_user
+          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_DB: gdwb_app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gdwb_user -d gdwb_app"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping || exit 1"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v4
+        with:
+          php-version: '8.2'
+          extensions: openssl, pdo_pgsql
+          ini-values: date.timezone=UTC
+
+      - name: Install DB tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client redis-tools
+
+      - name: Generate keys and admin token
+        run: |
+          php license-server/generate_keys.php || true
+          php license-server/generate_admin_token.php || true
+
+      - name: Run distributed revocation test
+        env:
+          POSTGRES_USER: gdwb_user
+          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_DB: gdwb_app
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+        run: |
+          chmod +x tests/distributed-revocation-test.sh
+          ./tests/distributed-revocation-test.sh

@@ -1,0 +1,320 @@
+name: License Server CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v4
+        with:
+          php-version: '8.2'
+          extensions: openssl
+          ini-values: date.timezone=UTC
+
+      - name: Install Composer dependencies
+        run: |
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" 
+          php composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer || true
+          composer install --no-interaction || true
+
+      - name: Run PHPUnit (license-server)
+        run: |
+          if [ -f vendor/bin/phpunit ]; then
+            vendor/bin/phpunit -c phpunit-license.xml || (echo "PHPUnit failed, falling back to CLI tests" && chmod +x ./tests/run_unit_tests.sh && ./tests/run_unit_tests.sh)
+          else
+            chmod +x ./tests/run_unit_tests.sh
+            ./tests/run_unit_tests.sh
+          fi
+
+    # allow other jobs to run independently
+
+  token-tests:
+    name: Token issuance tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v4
+        with:
+          php-version: '8.2'
+          extensions: openssl, pdo_pgsql
+          ini-values: date.timezone=UTC
+
+      - name: Fetch Vault secrets (optional)
+        if: ${{ secrets.VAULT_ADDR && secrets.VAULT_TOKEN }}
+        env:
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+          VAULT_SECRET_PATH: ${{ secrets.VAULT_SECRET_PATH }}
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq
+          VAULT_PATH=${VAULT_SECRET_PATH:-secret/data/gdwb}
+          echo "Fetching Vault secrets from $VAULT_ADDR/v1/$VAULT_PATH"
+          res=$(curl -sS -H "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/$VAULT_PATH")
+          if [ -z "$res" ]; then echo "No response from Vault"; exit 0; fi
+          # KV v2 structure: .data.data
+          if echo "$res" | jq -e '.data.data' >/dev/null 2>&1; then
+            echo "Mapping KV v2 keys to environment variables"
+            echo "$res" | jq -r '.data.data | to_entries[] | "\(.key)::::\(.value|@base64)"' | while IFS='::::' read -r key b64; do
+              val=$(echo "$b64" | base64 --decode)
+              printf '%s<<EOF
+%s
+EOF
+' "$key" "$val" >> $GITHUB_ENV
+            done
+          elif echo "$res" | jq -e '.data' >/dev/null 2>&1; then
+            echo "$res" | jq -r '.data | to_entries[] | "\(.key)::::\(.value|@base64)"' | while IFS='::::' read -r key b64; do
+              val=$(echo "$b64" | base64 --decode)
+              printf '%s<<EOF
+%s
+EOF
+' "$key" "$val" >> $GITHUB_ENV
+            done
+          else
+            echo "No structured KV data found; exporting raw response as VAULT_SECRET_JSON"
+            printf 'VAULT_SECRET_JSON<<EOF
+%s
+EOF
+' "$res" >> $GITHUB_ENV
+          fi
+
+      - name: Fetch AWS Secrets (optional)
+        if: ${{ secrets.AWS_SECRET_ID && secrets.AWS_REGION && secrets.AWS_ACCESS_KEY_ID && secrets.AWS_SECRET_ACCESS_KEY }}
+        env:
+          AWS_SECRET_ID: ${{ secrets.AWS_SECRET_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y awscli jq
+          SECRET=$(aws secretsmanager get-secret-value --secret-id "$AWS_SECRET_ID" --region "$AWS_REGION" --query SecretString --output text)
+          if [ -z "$SECRET" ]; then echo "No secret from AWS"; exit 0; fi
+          if echo "$SECRET" | jq -e . >/dev/null 2>&1; then
+            echo "$SECRET" | jq -r 'to_entries[] | "\(.key)::::\(.value|@base64)"' | while IFS='::::' read -r key b64; do
+              val=$(echo "$b64" | base64 --decode)
+              printf '%s<<EOF
+%s
+EOF
+' "$key" "$val" >> $GITHUB_ENV
+            done
+          else
+            printf 'AWS_SECRET_JSON<<EOF
+%s
+EOF
+' "$SECRET" >> $GITHUB_ENV
+          fi
+
+      - name: Generate keys and admin token
+        run: |
+          php license-server/generate_keys.php
+          php license-server/generate_admin_token.php
+
+      - name: Run token issuance tests
+        run: |
+          chmod +x ./tests/token-issuance-test.sh
+          ./tests/token-issuance-test.sh
+
+  integration-tests:
+    name: Integration tests (Postgres + Redis)
+    runs-on: ubuntu-latest
+    needs: token-tests
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: gdwb_user
+          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_DB: gdwb_app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gdwb_user -d gdwb_app"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping || exit 1"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+      pushgateway:
+        image: prom/pushgateway:1.5.0
+        ports:
+          - 9091:9091
+        options: >-
+          --health-cmd "curl -sS http://localhost:9091/ || exit 1"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+
+    steps:
+    env:
+      PUSHGATEWAY_URL: http://localhost:9091
+      PUSHGATEWAY_JOB: license_server
+      PUSHGATEWAY_INSTANCE: ci-${{ github.run_id }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v4
+        with:
+          php-version: '8.2'
+          extensions: openssl, pdo_pgsql
+          ini-values: date.timezone=UTC
+
+      - name: Fetch Vault secrets (optional)
+        if: ${{ secrets.VAULT_ADDR && secrets.VAULT_TOKEN }}
+        env:
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+          VAULT_SECRET_PATH: ${{ secrets.VAULT_SECRET_PATH }}
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq
+          VAULT_PATH=${VAULT_SECRET_PATH:-secret/data/gdwb}
+          echo "Fetching Vault secrets from $VAULT_ADDR/v1/$VAULT_PATH"
+          res=$(curl -sS -H "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/$VAULT_PATH")
+          if [ -z "$res" ]; then echo "No response from Vault"; exit 0; fi
+          if echo "$res" | jq -e '.data.data' >/dev/null 2>&1; then
+            echo "Mapping KV v2 keys to environment variables"
+            echo "$res" | jq -r '.data.data | to_entries[] | "\(.key)::::\(.value|@base64)"' | while IFS='::::' read -r key b64; do
+              val=$(echo "$b64" | base64 --decode)
+              printf '%s<<EOF
+%s
+EOF
+' "$key" "$val" >> $GITHUB_ENV
+            done
+          elif echo "$res" | jq -e '.data' >/dev/null 2>&1; then
+            echo "$res" | jq -r '.data | to_entries[] | "\(.key)::::\(.value|@base64)"' | while IFS='::::' read -r key b64; do
+              val=$(echo "$b64" | base64 --decode)
+              printf '%s<<EOF
+%s
+EOF
+' "$key" "$val" >> $GITHUB_ENV
+            done
+          else
+            echo "No structured KV data found; exporting raw response as VAULT_SECRET_JSON"
+            printf 'VAULT_SECRET_JSON<<EOF
+%s
+EOF
+' "$res" >> $GITHUB_ENV
+          fi
+
+      - name: Install DB tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client redis-tools
+
+      - name: Generate keys and admin token
+        run: |
+          php license-server/generate_keys.php
+          php license-server/generate_admin_token.php
+
+      - name: Run integration tests
+        env:
+          POSTGRES_USER: gdwb_user
+          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_DB: gdwb_app
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: 5432
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+        run: |
+          chmod +x ./tests/ci-integration.sh
+          ./tests/ci-integration.sh
+
+  rotate-keys:
+    name: Rotate signing keys (CI smoke)
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: gdwb_user
+          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_DB: gdwb_app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gdwb_user -d gdwb_app"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping || exit 1"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+      pushgateway:
+        image: prom/pushgateway:1.5.0
+        ports:
+          - 9091:9091
+        options: >-
+          --health-cmd "curl -sS http://localhost:9091/ || exit 1"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v4
+        with:
+          php-version: '8.2'
+          extensions: openssl, pdo_pgsql
+          ini-values: date.timezone=UTC
+
+      - name: Install DB tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client redis-tools
+
+      - name: Generate keys and admin token
+        run: |
+          php license-server/generate_keys.php
+          php license-server/generate_admin_token.php
+
+      - name: Run rotation smoke test
+        env:
+          POSTGRES_USER: gdwb_user
+          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_DB: gdwb_app
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: 5432
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+          PUSHGATEWAY_URL: http://localhost:9091
+          PUSHGATEWAY_JOB: license_server
+          PUSHGATEWAY_INSTANCE: ci-${{ github.run_id }}
+        run: |
+          chmod +x ./tests/rotate-keys-ci.sh
+          ./tests/rotate-keys-ci.sh

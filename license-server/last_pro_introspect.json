@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "payload": {
+    "iss": "gdwb-license-server",
+    "sub": "STAGING-PRO-000000000000002",
+    "aud": "gd-workflow-bridge-pro",
+    "iat": 1780240596,
+    "exp": 1811776596,
+    "jti": "ktFZS-f7MSTPvT5kTGM0sw",
+    "features": [
+      "files_vault",
+      "analytics",
+      "webhooks"
+    ],
+    "site": "http://localhost:3001"
+  }
+}

@@ -1,0 +1,156 @@
+{
+    "4013a8011c1ceadfd2f8eac1e8fc4abf": {
+        "expires": 1780787800,
+        "data": {
+            "items": [
+                {
+                    "id": "d2624159bf0b2f3bffa45e3b7153612c",
+                    "user_id": "test-user-1",
+                    "tenant_id": "tenant-1",
+                    "content": "Hello from smoke test",
+                    "media": [],
+                    "likes_count": 1,
+                    "comments_count": 1,
+                    "created_at": "2026-06-06T23:05:43+00:00"
+                }
+            ],
+            "page": 1,
+            "limit": 20,
+            "total": 1
+        }
+    },
+    "97ff9ee869048eb2d6e4cf8d3c31b281": {
+        "expires": 1781530986,
+        "data": {
+            "items": [],
+            "page": 1,
+            "limit": 20,
+            "total": 0
+        }
+    },
+    "8b206f489d96bee538e8487e9513ea63": {
+        "expires": 1781230760,
+        "data": {
+            "items": [
+                {
+                    "id": "c9c1dafe412bb859b78787f7a7d7b717",
+                    "user_id": "58d85bbab87f218663907556e3b161e8",
+                    "tenant_id": "default",
+                    "content": "Test post from automated check",
+                    "media": [],
+                    "likes_count": 0,
+                    "comments_count": 0,
+                    "created_at": "2026-06-12T02:04:54+00:00"
+                }
+            ],
+            "page": 1,
+            "limit": 20,
+            "total": 1
+        }
+    },
+    "59af9bc1b6ce72e0d4fff743d3be77cc": {
+        "expires": 1781229926,
+        "data": {
+            "items": [
+                {
+                    "id": "c9c1dafe412bb859b78787f7a7d7b717",
+                    "user_id": "58d85bbab87f218663907556e3b161e8",
+                    "tenant_id": "default",
+                    "content": "Test post from automated check",
+                    "media": [],
+                    "likes_count": 0,
+                    "comments_count": 0,
+                    "created_at": "2026-06-12T02:04:54+00:00"
+                }
+            ],
+            "page": 1,
+            "limit": 10,
+            "total": 1
+        }
+    },
+    "ec8600d5e6ec648781805e4b76507a70": {
+        "expires": 1781530996,
+        "data": {
+            "items": [],
+            "page": 1,
+            "limit": 50,
+            "total": 0
+        }
+    },
+    "eda66f07c7523846fe497eabbf876096": {
+        "expires": 1781450822,
+        "data": {
+            "items": [],
+            "page": 1,
+            "limit": 20,
+            "total": 0
+        }
+    },
+    "3709c39e8aed70c8b6268597f3eb15aa": {
+        "expires": 1781450829,
+        "data": {
+            "items": [],
+            "page": 1,
+            "limit": 50,
+            "total": 0
+        }
+    },
+    "0f3d6fb5a7e25700af6c3259100f511c": {
+        "expires": 1781461035,
+        "data": {
+            "items": [],
+            "page": 1,
+            "limit": 50,
+            "total": 0
+        }
+    },
+    "d619dced93116389891ba78e8413171b": {
+        "expires": 1781482750,
+        "data": {
+            "items": [],
+            "page": 1,
+            "limit": 20,
+            "total": 0
+        }
+    },
+    "09906496669ff5c1bf468328b2c2c2b5": {
+        "expires": 1781530046,
+        "data": {
+            "items": [
+                {
+                    "id": "e5d906087e10daec5aef2c0e9ac5b157",
+                    "user_id": "dev-user-1",
+                    "tenant_id": "default",
+                    "content": "Automated test post from browser",
+                    "media": [],
+                    "likes_count": 0,
+                    "comments_count": 0,
+                    "created_at": "2026-06-15T13:11:07+00:00"
+                }
+            ],
+            "page": 1,
+            "limit": 20,
+            "total": 1
+        }
+    },
+    "891e55d9d988606e08464f4bbd7bac4b": {
+        "expires": 1781529577,
+        "data": {
+            "items": [
+                {
+                    "id": "e5d906087e10daec5aef2c0e9ac5b157",
+                    "user_id": "dev-user-1",
+                    "tenant_id": "default",
+                    "content": "Automated test post from browser",
+                    "media": [],
+                    "likes_count": 0,
+                    "comments_count": 0,
+                    "created_at": "2026-06-15T13:11:07+00:00"
+                }
+            ],
+            "page": 1,
+            "limit": 50,
+            "total": 1
+        }
+    }
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "us-east-1-production",
+    "url": "https://license-us-east.example.com",
+    "admin_token": "REPLACE_WITH_ADMIN_TOKEN",
+    "license_test_key": "REPLACE_WITH_TEST_LICENSE_KEY"
+  },
+  {
+    "name": "eu-west-1-production",
+    "url": "https://license-eu.example.com",
+    "admin_token": "REPLACE_WITH_ADMIN_TOKEN",
+    "license_test_key": "REPLACE_WITH_TEST_LICENSE_KEY"
+  }
+]

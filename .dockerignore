@@ -1,0 +1,30 @@
+# .dockerignore for gd-workflow-bridge-pro
+# Prevent accidental inclusion of secrets, keys, and large artifacts in Docker build context.
+
+# Environment files
+.env
+.env.*
+*.env
+
+# License server keys and runtime credentials (keep these out of the repo/build)
+license-server/keys/
+license-server/data/
+keys/
+secrets/
+*.pem
+*.key
+*.p12
+*.crt
+
+# Local service data and logs
+services/data/*.log
+services/data/*.sqlite
+services/data/*.db
+
+# Version control, deps, OS
+.git
+.gitignore
+node_modules
+vendor
+.DS_Store
+Thumbs.db

@@ -1,0 +1,35 @@
+# Ignore environment files and local secrets
+.env
+.env.*
+
+# License keys and sensitive runtime data
+license-server/keys/
+license-server/data/gdwb_db_credentials.txt
+services/data/stripe_debug.log
+services/data/*.log
+secrets/
+keys/
+*.pem
+*.key
+
+# Node / PHP deps and editor files
+node_modules/
+vendor/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+# Ignore runtime secrets and generated keys
+license-server/keys/
+license-server/data/
+license-server/keys/*.pem
+license-server/keys/*.txt
+license-server/keys/*.json
+
+# Local env files
+.env
+*.env
+
+# Node / vendor
+node_modules/
+vendor/
