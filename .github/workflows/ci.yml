@@ -122,7 +122,7 @@ jobs:
       - name: Run license server integration tests
         env:
           POSTGRES_USER: gdwb_user
-          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: gdwb_app
           REDIS_HOST: 127.0.0.1
           REDIS_PORT: 6379
@@ -133,7 +133,7 @@ jobs:
       - name: Run distributed revocation test
         env:
           POSTGRES_USER: gdwb_user
-          POSTGRES_PASSWORD: /FdCDrG6wWczmjJvgXl28w==
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: gdwb_app
           REDIS_HOST: 127.0.0.1
           REDIS_PORT: 6379
