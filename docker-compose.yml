@@ -210,7 +210,7 @@ services:
 
   myapp-backend:
     build:
-      context: ${MYAPP_BACKEND_PATH:-C:/Users/USER/Desktop/Software Programming/godemars-empire4/myApp-backend}
+      context: ${MYAPP_BACKEND_PATH:-./godemars-empire4/myApp-backend}
       dockerfile: Dockerfile
     container_name: gdwb_myapp_backend
     restart: unless-stopped
@@ -225,7 +225,7 @@ services:
       - gateway-service
       - license-server
     volumes:
-      - ${MYAPP_BACKEND_PATH:-C:/Users/USER/Desktop/Software Programming/godemars-empire4/myApp-backend}:/usr/src/app:rw
+      - ${MYAPP_BACKEND_PATH:-./godemars-empire4/myApp-backend}:/usr/src/app:rw
 
   ci-runner:
     build:
