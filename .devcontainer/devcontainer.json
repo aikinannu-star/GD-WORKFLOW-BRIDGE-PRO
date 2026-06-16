@@ -1,5 +1,6 @@
 {
   "name": "GDWB Codespace",
+  "image": "mcr.microsoft.com/devcontainers/base:0-bullseye",
   "dockerComposeFile": [
     "../docker-compose.yml"
   ],
