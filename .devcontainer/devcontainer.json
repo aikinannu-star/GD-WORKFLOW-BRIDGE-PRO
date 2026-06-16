@@ -4,7 +4,7 @@
     "../docker-compose.yml"
   ],
   "service": "gateway-service",
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/workspaces/gd-workflow-bridge-pro",
   "runServices": [
     "postgres",
     "redis",
@@ -14,6 +14,9 @@
     "billing-service",
     "usage-service"
   ],
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
   "shutdownAction": "stopCompose",
   "forwardPorts": [8000, 8001, 8010, 5432, 6379, 9090, 9091],
   "postCreateCommand": "cp .env.example .env || true && echo 'Please edit .env (set secrets) and update MYAPP_BACKEND_PATH if you want the Node backend included.'",
