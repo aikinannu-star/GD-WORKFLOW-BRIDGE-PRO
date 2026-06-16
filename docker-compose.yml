@@ -87,7 +87,7 @@ services:
     container_name: gdwb_auth_service
     restart: unless-stopped
     ports:
-      - "8005:8005"
+      - "8006:8005"
     volumes:
       - ./services/auth:/app/services/auth
       - ./services/lib:/app/services/lib
