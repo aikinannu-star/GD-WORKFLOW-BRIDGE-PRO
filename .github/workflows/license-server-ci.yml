@@ -158,7 +158,7 @@ EOF
           --health-timeout 2s
           --health-retries 30
       pushgateway:
-        image: prom/pushgateway:1.5.0
+        image: prom/pushgateway:latest
         ports:
           - 9091:9091
         options: >-
@@ -273,7 +273,7 @@ EOF
           --health-timeout 2s
           --health-retries 30
       pushgateway:
-        image: prom/pushgateway:1.5.0
+        image: prom/pushgateway:latest
         ports:
           - 9091:9091
         options: >-
