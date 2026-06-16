@@ -36,7 +36,7 @@ services:
     command: "until pg_isready -h postgres -p 5432; do sleep 1; done; PGPASSWORD=\"$POSTGRES_PASSWORD\" psql -h postgres -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\" -f /migrations/postgres.sql || true"
 
   pushgateway:
-    image: prom/pushgateway:1.5.0
+    image: prom/pushgateway:latest
     container_name: gdwb_pushgateway
     restart: unless-stopped
     ports:
