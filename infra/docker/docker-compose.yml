@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile.license-server
     ports:
-      - "8001:8001"
+      - "8101:8001"
     environment:
       LICENSE_SERVER_ENV: dev
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
@@ -22,7 +22,7 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile.auth
     ports:
-      - "8002:8002"
+      - "8102:8002"
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       AUTH0_DOMAIN: ${AUTH0_DOMAIN}
@@ -36,7 +36,7 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile.billing
     ports:
-      - "8003:8003"
+      - "8103:8003"
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
@@ -49,7 +49,7 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile.cms
     ports:
-      - "8004:8004"
+      - "8104:8004"
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       AWS_S3_BUCKET: ${AWS_S3_BUCKET}
@@ -63,7 +63,7 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile.domains
     ports:
-      - "8005:8005"
+      - "8105:8005"
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       CLOUDFLARE_API_KEY: ${CLOUDFLARE_API_KEY}
@@ -77,7 +77,7 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile.marketplace
     ports:
-      - "8006:8006"
+      - "8106:8006"
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
     depends_on:
@@ -89,7 +89,7 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile.usage
     ports:
-      - "8007:8007"
+      - "8107:8007"
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       REDIS_URL: redis://redis:6379
@@ -103,7 +103,7 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile.admin
     ports:
-      - "8008:8008"
+      - "8108:8008"
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
     depends_on:
@@ -138,13 +138,13 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schemas:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   # Redis Cache
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
 
