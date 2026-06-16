@@ -104,7 +104,7 @@ services:
       BILLING_ADMIN_TOKEN: ${BILLING_ADMIN_TOKEN}
       PUSHGATEWAY_ENABLED: ${PUSHGATEWAY_ENABLED:-true}
     healthcheck:
-      test: ["CMD-SHELL", "php -r \"$r=@file_get_contents('http://127.0.0.1:8002/health'); if (!$r) exit(1);\""]
+      test: ["CMD-SHELL", "php -r \"$$r=@file_get_contents('http://127.0.0.1:8002/health'); if (!$$r) exit(1);\""]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -200,7 +200,7 @@ services:
       GATEWAY_REDIS_PORT: ${GATEWAY_REDIS_PORT:-6379}
     command: ["php", "-S", "0.0.0.0:8000", "-t", "services/gateway", "services/gateway/server.php"]
     healthcheck:
-      test: ["CMD-SHELL", "php -r \"$r=@file_get_contents('http://127.0.0.1:8000/health'); if (!$r) exit(1);\""]
+      test: ["CMD-SHELL", "php -r \"$$r=@file_get_contents('http://127.0.0.1:8000/health'); if (!$$r) exit(1);\""]
       interval: 5s
       timeout: 3s
       retries: 10
