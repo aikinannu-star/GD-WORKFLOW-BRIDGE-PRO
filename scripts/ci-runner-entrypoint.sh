@@ -36,4 +36,14 @@ if ! command -v curl >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1; then
 fi
 
 echo "Running quota integration script..."
-./tests/quota_integration.sh BASE=http://gateway-service:8000
+echo "---DEBUG START---"
+echo "Hosts file:"; cat /etc/hosts || true
+echo "Environment (BASE/PROXY/GATEWAY vars):"; env | grep -E '^BASE=|[Pp]ROXY|GATEWAY' || true
+echo "---DEBUG END---"
+# Force BASE to the containerized gateway service in CI, overriding any host-local defaults
+export BASE="http://gateway-service:8000"
+echo "Using BASE=$BASE"
+echo "Healthcheck (quick):"; curl -sS -o /dev/null -w "%{http_code}\n" "$BASE/health" || true
+echo "Running quota integration script with bash -x for tracing..."
+# run the test with shell tracing so we can see the exact curl command and expansions
+bash -x ./tests/quota_integration.sh

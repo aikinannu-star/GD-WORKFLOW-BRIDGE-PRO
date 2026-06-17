@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-BASE=${BASE:-http://127.0.0.1:8000}
+## In CI the gateway is available as the service hostname; default to that
+BASE=${BASE:-http://gateway-service:8000}
 TENANT=${TENANT:-ci-tenant}
 EMAIL="quota-ci-$(date +%s)@example.com"
 PWD="password123"
