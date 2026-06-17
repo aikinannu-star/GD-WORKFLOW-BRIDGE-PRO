@@ -15,20 +15,21 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $queryString = $_SERVER['QUERY_STRING'] ?? '';
 
 $registry = [
-    'auth' => 'http://127.0.0.1:8002',
-    'tenant' => 'http://127.0.0.1:8009',
-    'cms' => 'http://127.0.0.1:8004',
-    'billing' => 'http://127.0.0.1:8003',
-    'marketplace' => 'http://127.0.0.1:8006',
-    'media' => 'http://127.0.0.1:8010',
-    'social' => 'http://127.0.0.1:8008',
-    'feed' => 'http://127.0.0.1:8011',
-    'realtime' => 'http://127.0.0.1:8012',
-    'usage' => 'http://127.0.0.1:8007',
-    'license' => 'http://127.0.0.1:8001',
+    // Allow overriding individual backends via environment variables in compose/devcontainer.
+    'auth' => $_ENV['GATEWAY_AUTH_BASE'] ?? 'http://auth-service:8002',
+    'tenant' => $_ENV['GATEWAY_TENANT_BASE'] ?? 'http://tenant-service:8009',
+    'cms' => $_ENV['GATEWAY_CMS_BASE'] ?? 'http://cms-service:8004',
+    'billing' => $_ENV['GATEWAY_BILLING_BASE'] ?? 'http://billing-service:8003',
+    'marketplace' => $_ENV['GATEWAY_MARKETPLACE_BASE'] ?? 'http://marketplace-service:8006',
+    'media' => $_ENV['GATEWAY_MEDIA_BASE'] ?? 'http://media-service:8010',
+    'social' => $_ENV['GATEWAY_SOCIAL_BASE'] ?? 'http://social-service:8008',
+    'feed' => $_ENV['GATEWAY_FEED_BASE'] ?? 'http://feed-service:8011',
+    'realtime' => $_ENV['GATEWAY_REALTIME_BASE'] ?? 'http://realtime-service:8012',
+    'usage' => $_ENV['GATEWAY_USAGE_BASE'] ?? 'http://usage-service:8007',
+    'license' => $_ENV['GATEWAY_LICENSE_BASE'] ?? 'http://license-server:8001',
     // Support legacy/plural route used by some frontends: /api/v1/licenses/*
     // Route legacy `licenses/*` to the license-server for local development.
-    'licenses' => 'http://127.0.0.1:8001',
+    'licenses' => $_ENV['GATEWAY_LICENSE_BASE'] ?? 'http://license-server:8001',
 ];
 
 function sendCorsHeaders(): void
@@ -211,7 +212,9 @@ function isPublicService(string $serviceKey): bool
 
 function introspectToken(string $token): ?array
 {
-    $url = 'http://127.0.0.1:8002/api/v1/auth/introspect';
+    global $registry;
+    $authBase = $_ENV['GATEWAY_AUTH_BASE'] ?? ($registry['auth'] ?? 'http://auth-service:8002');
+    $url = rtrim($authBase, '/') . '/api/v1/auth/introspect';
     $payload = json_encode(['token' => $token]);
     if (function_exists('curl_init')) {
         $ch = curl_init();
