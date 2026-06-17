@@ -85,7 +85,7 @@ services:
     container_name: gdwb_auth_service
     restart: unless-stopped
     ports:
-      - "8006:8005"
+      - "8006:8002"
     volumes:
       - ./services/auth:/app/services/auth
       - ./services/lib:/app/services/lib
@@ -103,6 +103,8 @@ services:
       PUSHGATEWAY_URL: ${PUSHGATEWAY_URL:-http://pushgateway:9091}
       BILLING_ADMIN_TOKEN: ${BILLING_ADMIN_TOKEN}
       PUSHGATEWAY_ENABLED: ${PUSHGATEWAY_ENABLED:-true}
+      SERVICE: auth
+      SERVICE_PORT: "8002"
     healthcheck:
       test: ["CMD-SHELL", "php -r \"$$r=@file_get_contents('http://127.0.0.1:8002/health'); if (!$$r) exit(1);\""]
       interval: 5s
@@ -117,14 +119,15 @@ services:
     container_name: gdwb_tenant_service
     restart: unless-stopped
     ports:
-      - "8003:8003"
+      - "8003:8009"
     volumes:
       - ./services/tenant:/app/services/tenant
       - ./services/lib:/app/services/lib
       - ./services/data:/app/services/data
     environment:
       TENANT_DEFAULT_PLAN: ${TENANT_DEFAULT_PLAN:-starter}
-    command: ["php", "-S", "0.0.0.0:8003", "-t", "services/tenant", "services/tenant/server.php"]
+      SERVICE: tenant
+      SERVICE_PORT: "8009"
 
   cms-service:
     build:
@@ -140,7 +143,8 @@ services:
       - ./services/data:/app/services/data
     environment:
       CMS_DEFAULT_LOCALE: ${CMS_DEFAULT_LOCALE:-en_US}
-    command: ["php", "-S", "0.0.0.0:8004", "-t", "services/cms", "services/cms/server.php"]
+      SERVICE: cms
+      SERVICE_PORT: "8004"
 
   billing-service:
     build:
@@ -149,7 +153,7 @@ services:
     container_name: gdwb_billing_service
     restart: unless-stopped
     ports:
-      - "8005:8005"
+      - "8005:8003"
     volumes:
       - ./services/billing:/app/services/billing
       - ./services/lib:/app/services/lib
@@ -157,7 +161,8 @@ services:
       - ./integrations/payments:/app/integrations/payments
     environment:
       BILLING_CURRENCY: ${BILLING_CURRENCY:-USD}
-    command: ["php", "-S", "0.0.0.0:8005", "-t", "services/billing", "services/billing/server.php"]
+      SERVICE: billing
+      SERVICE_PORT: "8003"
 
   usage-service:
     build:
@@ -173,7 +178,8 @@ services:
       - ./services/data:/app/services/data
     environment:
       USAGE_DEFAULT_LIMITS: ${USAGE_DEFAULT_LIMITS:-{"api_calls_per_day":10000,"workflows":20,"storage_gb":5}}
-    command: ["php", "-S", "0.0.0.0:8007", "-t", "services/usage", "services/usage/server.php"]
+      SERVICE: usage
+      SERVICE_PORT: "8007"
 
   gateway-service:
     build:
@@ -198,7 +204,8 @@ services:
       GATEWAY_CORS_ORIGIN: ${GATEWAY_CORS_ORIGIN:-'*'}
       GATEWAY_REDIS_HOST: ${GATEWAY_REDIS_HOST:-redis}
       GATEWAY_REDIS_PORT: ${GATEWAY_REDIS_PORT:-6379}
-    command: ["php", "-S", "0.0.0.0:8000", "-t", "services/gateway", "services/gateway/server.php"]
+      SERVICE: gateway
+      SERVICE_PORT: "8000"
     healthcheck:
       test: ["CMD-SHELL", "php -r \"$$r=@file_get_contents('http://127.0.0.1:8000/health'); if (!$$r) exit(1);\""]
       interval: 5s
