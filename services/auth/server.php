@@ -213,8 +213,18 @@ if ($method === 'POST' && $uri === '/api/v1/auth/introspect') {
     if (!$token) {
         sendError(400, 'token required');
     }
+    $debugFile = __DIR__ . '/../../services/data/auth_introspect.log';
+    $debugDir = dirname($debugFile);
+    if (!is_dir($debugDir)) {
+        @mkdir($debugDir, 0777, true);
+    }
+    $tredacted = is_string($token) && strlen($token) > 8 ? substr($token, 0, 8) . '...' : 'null';
+    @file_put_contents($debugFile, gmdate('c') . " INTROSPECT RECEIVED TOKEN={$tredacted}\n", FILE_APPEND | LOCK_EX);
+    @error_log("[auth] INTROSPECT RECEIVED TOKEN={$tredacted}");
     $payload = getUserFromToken($token);
     if (!$payload) {
+        @file_put_contents($debugFile, gmdate('c') . " INTROSPECT INVALID TOKEN={$tredacted}\n", FILE_APPEND | LOCK_EX);
+        @error_log("[auth] INTROSPECT INVALID TOKEN={$tredacted}");
         sendError(401, 'Token invalid or expired');
     }
     // Include license metadata if present in token payload so downstream
@@ -227,6 +237,8 @@ if ($method === 'POST' && $uri === '/api/v1/auth/introspect') {
     ];
     if (!empty($payload['license_key'])) $userOut['license_key'] = $payload['license_key'];
     if (!empty($payload['seats'])) $userOut['seats'] = (int)$payload['seats'];
+    @file_put_contents($debugFile, gmdate('c') . " INTROSPECT OK user=" . ($userOut['id'] ?? '') . " tenant=" . ($userOut['tenant_id'] ?? '') . "\n", FILE_APPEND | LOCK_EX);
+    @error_log("[auth] INTROSPECT OK user=" . ($userOut['id'] ?? '') . " tenant=" . ($userOut['tenant_id'] ?? ''));
     ServiceHelpers::sendJson(200, ['success' => true, 'valid' => true, 'user' => $userOut]);
 }
 

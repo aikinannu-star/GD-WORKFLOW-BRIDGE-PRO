@@ -1,0 +1,73 @@
+# Save as launch-gdwb-ec2.ps1 and run in PowerShell (PowerShell 7 recommended)
+$Region = 'us-east-1'
+$Ami = 'ami-02fd066b86800f60c'
+$KeyName = 'gdwb-deploy'
+$PubKeyPath = 'C:\Users\USER\.ssh\id_ed25519_gdwb.pub'
+$PubKeyFileUri = "fileb://$($PubKeyPath -replace '\\','/')"
+$SGName = 'gdwb-deploy-sg'
+
+if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
+  Write-Error 'AWS CLI not found. Install it and run `aws configure` first.'
+  exit 1
+}
+
+# Import key if missing
+$key = aws ec2 describe-key-pairs --filters "Name=key-name,Values=$KeyName" --query 'KeyPairs[0].KeyName' --output text --region $Region 2>$null
+if (-not $key -or $key -eq 'None') {
+  Write-Host "Importing key pair $KeyName from $PubKeyPath"
+  aws ec2 import-key-pair --key-name $KeyName --public-key-material $PubKeyFileUri --region $Region
+} else {
+  Write-Host "Key pair $KeyName already exists"
+}
+
+# Find default VPC
+$VpcId = aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query 'Vpcs[0].VpcId' --output text --region $Region
+if (-not $VpcId -or $VpcId -eq 'None') { Write-Error "No default VPC in $Region"; exit 1 }
+Write-Host "Using VPC $VpcId"
+
+# Create or reuse security group
+$SgId = aws ec2 describe-security-groups --filters "Name=group-name,Values=$SGName" "Name=vpc-id,Values=$VpcId" --query 'SecurityGroups[0].GroupId' --output text --region $Region 2>$null
+if (-not $SgId -or $SgId -eq 'None') {
+  Write-Host "Creating security group $SGName"
+  $SgId = aws ec2 create-security-group --group-name $SGName --description "gdwb deploy SG" --vpc-id $VpcId --query GroupId --output text --region $Region
+} else {
+  Write-Host "Security group $SGName exists: $SgId"
+}
+
+# Authorize ingress (SSH restricted to your IP; HTTP open)
+try { $MyIp = (Invoke-RestMethod -Uri 'https://checkip.amazonaws.com').Trim() } catch { $MyIp = '' }
+if ($MyIp) {
+  Write-Host "Authorizing SSH from $MyIp/32"
+  aws ec2 authorize-security-group-ingress --group-id $SgId --protocol tcp --port 22 --cidr "$MyIp/32" --region $Region 2>$null
+} else {
+  Write-Warning "Could not determine public IP; update SSH rule manually if needed."
+}
+Write-Host "Authorizing HTTP (80) from 0.0.0.0/0"
+aws ec2 authorize-security-group-ingress --group-id $SgId --protocol tcp --port 80 --cidr "0.0.0.0/0" --region $Region 2>$null
+
+# Pick a public subnet (fallback to first subnet)
+$SubnetId = aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VpcId" "Name=map-public-ip-on-launch,Values=true" --query 'Subnets[0].SubnetId' --output text --region $Region
+if (-not $SubnetId -or $SubnetId -eq 'None') {
+  $SubnetId = aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VpcId" --query 'Subnets[0].SubnetId' --output text --region $Region
+}
+if (-not $SubnetId -or $SubnetId -eq 'None') { Write-Error "No subnet found in VPC $VpcId"; exit 1 }
+Write-Host "Using subnet $SubnetId"
+
+# Launch instance
+Write-Host "Launching t3.micro instance ($Ami) in $Region..."
+aws ec2 run-instances `
+  --image-id $Ami `
+  --count 1 `
+  --instance-type t3.micro `
+  --key-name $KeyName `
+  --security-group-ids $SgId `
+  --subnet-id $SubnetId `
+  --associate-public-ip-address `
+  --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=gdwb-deploy}]" `
+  --region $Region
+
+# Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_gdwb
+    IdentitiesOnly yes

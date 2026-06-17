@@ -10,9 +10,14 @@ RUN set -eux; \
 	apt-get purge -y --auto-remove autoconf build-essential pkg-config; \
 	rm -rf /var/lib/apt/lists/*;
 
+# Copy entrypoint wrapper and make it executable, then copy repository context.
+COPY infra/docker/gdwb-php-entrypoint.sh /usr/local/bin/gdwb-php-entrypoint.sh
+RUN chmod +x /usr/local/bin/gdwb-php-entrypoint.sh
+
 # Copy full repository context so service files, helpers, and data folders are available.
 COPY . .
 
 EXPOSE 8000
 
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "services/gateway", "services/gateway/server.php"]
+ENTRYPOINT ["/usr/local/bin/gdwb-php-entrypoint.sh"]
+CMD ["sh", "-c", "sleep infinity"]

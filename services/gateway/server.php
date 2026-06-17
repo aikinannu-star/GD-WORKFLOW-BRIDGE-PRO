@@ -17,9 +17,9 @@ $queryString = $_SERVER['QUERY_STRING'] ?? '';
 $registry = [
     // Allow overriding individual backends via environment variables in compose/devcontainer.
     'auth' => $_ENV['GATEWAY_AUTH_BASE'] ?? 'http://auth-service:8002',
-    'tenant' => $_ENV['GATEWAY_TENANT_BASE'] ?? 'http://tenant-service:8009',
+    'tenant' => $_ENV['GATEWAY_TENANT_BASE'] ?? 'http://tenant-service:8003',
     'cms' => $_ENV['GATEWAY_CMS_BASE'] ?? 'http://cms-service:8004',
-    'billing' => $_ENV['GATEWAY_BILLING_BASE'] ?? 'http://billing-service:8003',
+    'billing' => $_ENV['GATEWAY_BILLING_BASE'] ?? 'http://billing-service:8005',
     'marketplace' => $_ENV['GATEWAY_MARKETPLACE_BASE'] ?? 'http://marketplace-service:8006',
     'media' => $_ENV['GATEWAY_MEDIA_BASE'] ?? 'http://media-service:8010',
     'social' => $_ENV['GATEWAY_SOCIAL_BASE'] ?? 'http://social-service:8008',
@@ -216,6 +216,11 @@ function introspectToken(string $token): ?array
     $authBase = $_ENV['GATEWAY_AUTH_BASE'] ?? ($registry['auth'] ?? 'http://auth-service:8002');
     $url = rtrim($authBase, '/') . '/api/v1/auth/introspect';
     $payload = json_encode(['token' => $token]);
+    $debugFile = __DIR__ . '/../../services/data/gateway_introspect.log';
+    // redact token for logs
+    $tredacted = substr($token, 0, 8) . '...';
+    @file_put_contents($debugFile, gmdate('c') . " INTROSPECT -> {$url} TOKEN={$tredacted}\n", FILE_APPEND | LOCK_EX);
+    @error_log("[gateway] INTROSPECT -> {$url} TOKEN={$tredacted}");
     if (function_exists('curl_init')) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -225,12 +230,17 @@ function introspectToken(string $token): ?array
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         $resp = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($resp === false) {
+            $err = curl_error($ch);
             curl_close($ch);
+            @file_put_contents($debugFile, gmdate('c') . " INTROSPECT ERROR: CURL_FAIL {$err}\n", FILE_APPEND | LOCK_EX);
+            @error_log("[gateway] INTROSPECT ERROR: CURL_FAIL {$err}");
             return null;
         }
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
+        @file_put_contents($debugFile, gmdate('c') . " INTROSPECT RESPONSE_CODE={$code} RESP_BODY=" . substr($resp, 0, 1024) . "\n", FILE_APPEND | LOCK_EX);
+        @error_log("[gateway] INTROSPECT RESPONSE_CODE={$code} RESP_BODY=" . substr($resp, 0, 1024));
         if ($code !== 200) {
             return null;
         }
@@ -239,6 +249,8 @@ function introspectToken(string $token): ?array
     }
     $ctx = stream_context_create(['http' => ['method' => 'POST', 'header' => "Content-Type: application/json\r\n", 'content' => $payload, 'timeout' => 5, 'ignore_errors' => true]]);
     $resp = @file_get_contents($url, false, $ctx);
+    @file_put_contents($debugFile, gmdate('c') . " INTROSPECT STREAM_RESP=" . substr($resp ?: '', 0, 1024) . "\n", FILE_APPEND | LOCK_EX);
+    @error_log("[gateway] INTROSPECT STREAM_RESP=" . substr($resp ?: '', 0, 1024));
     if ($resp === false) {
         return null;
     }
