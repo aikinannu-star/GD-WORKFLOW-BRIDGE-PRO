@@ -13,4 +13,4 @@ COPY . /workspace
 
 RUN chmod +x /workspace/scripts/ci-runner-entrypoint.sh || true
 
-ENTRYPOINT ["/workspace/scripts/ci-runner-entrypoint.sh"]
+ENTRYPOINT ["bash","/workspace/scripts/ci-runner-entrypoint.sh"]

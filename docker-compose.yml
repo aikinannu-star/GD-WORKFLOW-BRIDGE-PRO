@@ -224,6 +224,7 @@ services:
       - license-server
     volumes:
       - ${MYAPP_BACKEND_PATH:-./godemars-empire4/myApp-backend}:/usr/src/app:rw
+      - myapp_node_modules:/usr/src/app/node_modules
 
   ci-runner:
     build:
@@ -231,6 +232,7 @@ services:
       dockerfile: infra/docker/Dockerfile.ci-runner
     container_name: gdwb_ci_runner
     restart: 'no'
+    entrypoint: ["bash","/workspace/scripts/ci-runner-entrypoint.sh"]
     volumes:
       - ./:/workspace
     working_dir: /workspace
@@ -243,4 +245,6 @@ volumes:
   redis_data:
     driver: local
   prometheus_data:
+    driver: local
+  myapp_node_modules:
     driver: local
