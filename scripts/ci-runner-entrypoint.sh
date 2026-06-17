@@ -40,6 +40,11 @@ echo "---DEBUG START---"
 echo "Hosts file:"; cat /etc/hosts || true
 echo "Environment (BASE/PROXY/GATEWAY vars):"; env | grep -E '^BASE=|[Pp]ROXY|GATEWAY' || true
 echo "---DEBUG END---"
+# unset any proxy environment variables that may force curl to use a localhost proxy
+echo "Unsetting proxy environment variables to avoid host-local proxies"
+unset HTTP_PROXY http_proxy HTTPS_PROXY https_proxy ALL_PROXY all_proxy NO_PROXY no_proxy || true
+echo "Proxy envs after unset:"; env | grep -i proxy || true
+
 # Force BASE to the containerized gateway service in CI, overriding any host-local defaults
 export BASE="http://gateway-service:8000"
 echo "Using BASE=$BASE"
