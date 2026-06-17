@@ -1,6 +1,7 @@
 # Ignore environment files and local secrets
 .env
 .env.*
+!.env.example
 
 # License keys and sensitive runtime data
 license-server/keys/
