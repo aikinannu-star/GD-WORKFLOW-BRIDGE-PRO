@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-## In CI the gateway is available as the service hostname; default to that
-BASE=${BASE:-http://gateway-service:8000}
+## In CI the gateway is available as the service hostname; force it here
+export BASE="http://gateway-service:8000"
 TENANT=${TENANT:-ci-tenant}
 EMAIL="quota-ci-$(date +%s)@example.com"
 PWD="password123"
@@ -19,7 +19,12 @@ if command -v redis-cli >/dev/null 2>&1; then
 fi
 
 echo "Registering test user $EMAIL..."
-REG=$(curl -sS -X POST "$BASE/api/v1/auth/register" -H 'Content-Type: application/json' -d "{\"tenant_id\":\"$TENANT\",\"email\":\"$EMAIL\",\"password\":\"$PWD\"}") || true
+echo "DEBUG: BASE=$BASE"
+echo "DEBUG: Proxy envs:"; env | grep -i proxy || true
+echo "DEBUG: gateway health verbose:"; curl --noproxy "*" -v -sS "$BASE/health" 2>&1 || true
+echo "DEBUG: attempting register POST..."
+REG=$(curl --noproxy "*" -sS -X POST "$BASE/api/v1/auth/register" -H 'Content-Type: application/json' -d "{\"tenant_id\":\"$TENANT\",\"email\":\"$EMAIL\",\"password\":\"$PWD\"}") || true
+echo "DEBUG: register raw response: $REG"
 if [[ -z "$REG" ]]; then
   echo "register returned empty"; exit 1
 fi
@@ -45,7 +50,7 @@ echo "Tenant limit: $LIMIT"
 
 # perform requests until quota is enforced
 for i in $(seq 1 $((LIMIT + 5))); do
-  status=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN" "$BASE/api/v1/tenant/health" || true)
+  status=$(curl --noproxy "*" -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN" "$BASE/api/v1/tenant/health" || true)
   echo "iter $i -> $status"
   if [[ "$status" == "429" ]]; then
     echo "quota enforced at iteration $i"

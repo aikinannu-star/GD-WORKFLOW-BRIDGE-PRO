@@ -5,7 +5,7 @@ CI_WAIT_TIMEOUT=${CI_WAIT_TIMEOUT:-60}
 
 echo "ci-runner: waiting up to ${CI_WAIT_TIMEOUT}s for gateway..."
 for i in $(seq 1 "${CI_WAIT_TIMEOUT}"); do
-  if curl -sSf "http://gateway-service:8000/health" >/dev/null 2>&1; then
+  if curl --noproxy "*" -sSf "http://gateway-service:8000/health" >/dev/null 2>&1; then
     echo "gateway-service is healthy"
     break
   fi
@@ -13,7 +13,7 @@ for i in $(seq 1 "${CI_WAIT_TIMEOUT}"); do
   sleep 1
 done
 
-if ! curl -sSf "http://gateway-service:8000/health" >/dev/null 2>&1; then
+if ! curl --noproxy "*" -sSf "http://gateway-service:8000/health" >/dev/null 2>&1; then
   echo "ERROR: gateway did not become healthy in ${CI_WAIT_TIMEOUT}s" >&2
   exit 1
 fi
@@ -48,7 +48,7 @@ echo "Proxy envs after unset:"; env | grep -i proxy || true
 # Force BASE to the containerized gateway service in CI, overriding any host-local defaults
 export BASE="http://gateway-service:8000"
 echo "Using BASE=$BASE"
-echo "Healthcheck (quick):"; curl -sS -o /dev/null -w "%{http_code}\n" "$BASE/health" || true
+echo "Healthcheck (quick):"; curl --noproxy "*" -sS -o /dev/null -w "%{http_code}\n" "$BASE/health" || true
 echo "Running quota integration script with bash -x for tracing..."
 # run the test with shell tracing so we can see the exact curl command and expansions
 bash -x ./tests/quota_integration.sh
