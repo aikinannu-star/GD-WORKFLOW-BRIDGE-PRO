@@ -213,26 +213,6 @@ services:
       retries: 10
       start_period: 5s
 
-  myapp-backend:
-    build:
-      context: ${MYAPP_BACKEND_PATH:-./godemars-empire4/myApp-backend}
-      dockerfile: Dockerfile
-    container_name: gdwb_myapp_backend
-    restart: unless-stopped
-    ports:
-      - "${MYAPP_BACKEND_PORT:-8010}:8000"
-    environment:
-      NODE_ENV: ${NODE_ENV:-development}
-      PORT: ${MYAPP_BACKEND_PORT:-8000}
-      GATEWAY_BASE: ${GATEWAY_BASE:-http://gateway-service:8000}
-      LICENSE_SERVER_BASE: ${LICENSE_SERVER_BASE:-http://license-server:8001}
-    depends_on:
-      - gateway-service
-      - license-server
-    volumes:
-      - ${MYAPP_BACKEND_PATH:-./godemars-empire4/myApp-backend}:/usr/src/app:rw
-      - myapp_node_modules:/usr/src/app/node_modules
-
   ci-runner:
     build:
       context: .
@@ -252,6 +232,4 @@ volumes:
   redis_data:
     driver: local
   prometheus_data:
-    driver: local
-  myapp_node_modules:
     driver: local
