@@ -1,0 +1,67 @@
+name: Deploy to Droplet
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build ZIP artifact
+        run: |
+          php -r "copy('https://getcomposer.org/installer','composer-setup.php');"
+          php composer-setup.php --install-dir=./ --filename=composer.phar
+          php ./composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-interaction || true
+          ./build/package-plugin.sh
+
+      - name: Start ssh-agent and add private key
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
+
+      - name: Add droplet host key to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Verify droplet SSH host fingerprint
+        if: ${{ secrets.DROPLET_SSH_FINGERPRINT != '' }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT }}" "${{ secrets.DROPLET_HOST }}" > /tmp/host_key.pub
+          fp=$(ssh-keygen -lf /tmp/host_key.pub -E sha256 | awk '{print $2}' | sed 's/^SHA256://')
+          expected="${{ secrets.DROPLET_SSH_FINGERPRINT }}"
+          expected_norm=$(echo "$expected" | sed 's/^SHA256://')
+          echo "Got fingerprint: $fp"
+          echo "Expected: $expected_norm"
+          if [ "$fp" != "$expected_norm" ]; then
+            echo "Host fingerprint mismatch! Aborting deployment." >&2
+            exit 1
+          fi
+          echo "Host fingerprint verified."
+
+      - name: Copy artifact to Droplet (scp)
+        run: |
+          scp -o StrictHostKeyChecking=yes -P "${{ secrets.DROPLET_SSH_PORT }}" release/gd-workflow-bridge-pro.zip "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}:/tmp/"
+
+      - name: Deploy on Droplet (ssh)
+        run: |
+          ssh -o StrictHostKeyChecking=yes -p "${{ secrets.DROPLET_SSH_PORT }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" <<'EOF'
+            set -e
+            sudo mkdir -p /srv/gdwb/releases/current
+            sudo unzip -o /tmp/gd-workflow-bridge-pro.zip -d /srv/gdwb/releases/current
+            sudo chown -R ${DEPLOY_USER:-deploy}:${DEPLOY_USER:-deploy} /srv/gdwb/releases/current
+            cd /srv/gdwb
+            sudo docker compose -f docker-compose.prod.yml pull || true
+            sudo docker compose -f docker-compose.prod.yml up -d --build
+            sudo rm -f /tmp/gd-workflow-bridge-pro.zip
+EOF

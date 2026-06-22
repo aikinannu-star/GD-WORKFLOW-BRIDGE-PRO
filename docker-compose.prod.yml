@@ -1,0 +1,92 @@
+version: '3.8'
+services:
+  mariadb:
+    image: mariadb:10.6
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${WORDPRESS_DB}
+      MYSQL_USER: ${WORDPRESS_DB_USER}
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - traefik-public
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - traefik-public
+
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - traefik-public
+
+  license-server:
+    build:
+      context: .
+      dockerfile: license-server/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      LICENSE_SERVER_PORT: "8001"
+      LICENSE_DB_DSN: "pgsql:host=postgres;port=5432;dbname=${POSTGRES_DB}"
+      LICENSE_DB_USER: ${POSTGRES_USER}
+      LICENSE_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      LICENSE_SERVER_ENV: production
+    volumes:
+      - ./license-server/keys:/app/license-server/keys:ro
+      - ./license-server/data:/app/license-server/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gdwb-license.rule=Host(`${LICENSE_HOST}`)"
+      - "traefik.http.routers.gdwb-license.entrypoints=websecure"
+      - "traefik.http.routers.gdwb-license.tls=true"
+      - "traefik.http.services.gdwb-license.loadbalancer.server.port=8001"
+    networks:
+      - traefik-public
+
+  wordpress:
+    image: wordpress:6.2-apache
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB}
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./release:/tmp/release:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gdwb-wordpress.rule=Host(`${WP_HOST}`)"
+      - "traefik.http.routers.gdwb-wordpress.entrypoints=websecure"
+      - "traefik.http.routers.gdwb-wordpress.tls=true"
+      - "traefik.http.services.gdwb-wordpress.loadbalancer.server.port=80"
+    networks:
+      - traefik-public
+
+volumes:
+  mariadb_data:
+  wordpress_data:
+  redis_data:
+  pgdata:
+
+networks:
+  traefik-public:
+    external: true
