@@ -24,7 +24,6 @@ const pluginNameById = {};
 for (const p of plugins) { if (p && p.id) pluginNameById[p.id] = p.name || p.id; }
 
 let lines = [];
-lines.push('```mermaid');
 lines.push('graph TD;');
 
 for (const v of versions) {
@@ -46,7 +45,7 @@ for (const v of versions) {
   }
 }
 
-lines.push('```');
+// output plain mermaid graph (no fenced code block)
 
 fs.writeFileSync(outPath, lines.join('\n'));
 console.log('Wrote dependency graph to', outPath);
