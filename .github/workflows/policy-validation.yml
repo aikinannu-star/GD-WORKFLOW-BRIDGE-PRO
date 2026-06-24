@@ -1,0 +1,55 @@
+name: Policy Validation
+
+on:
+  pull_request:
+    paths:
+      - 'CONTROL_PLANE_POLICY.yml'
+      - 'services/**'
+      - 'tools/**'
+      - '.github/workflows/**'
+
+jobs:
+  validate-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install dependencies
+        run: |
+          if [ -f composer.json ]; then composer install --no-progress --no-suggest --no-interaction; fi
+
+      - name: Compile policy
+        run: php tools/compile-policy.php
+
+      - name: Validate policy
+        run: |
+          php tools/policy-validator.php --strict --policy=CONTROL_PLANE_POLICY.yml
+
+      - name: Check compiled artifact integrity
+        run: php tools/check-compiled-artifact.php
+
+      - name: Artifact compatibility
+        run: |
+          # Example: enforce minimum versions if required by repo policy
+          php tools/artifact-compatibility-check.php --min-artifact-version=1.0 --min-policy-schema-version=1.0
+
+      - name: (Optional) Artifact diff
+        run: |
+          echo "Preparing baseline artifact from main for diff..."
+      - name: Checkout main branch as baseline
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: baseline
+      - name: Run artifact diff against baseline (if baseline exists)
+        run: |
+          if [ -f baseline/build/compiled-policy.json ]; then \
+            php tools/artifact-diff.php --old=baseline/build/compiled-policy.json --new=build/compiled-policy.json; \
+          else \
+            echo "No baseline artifact in main; skipping artifact-diff."; \
+          fi

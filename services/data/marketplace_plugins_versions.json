@@ -1,0 +1,259 @@
+[
+    {
+        "id": "aeed44cc568644f59f04bd9d0d6861fa",
+        "plugin_id": "2aa18a570704d95f6c365d89adbd1bcd",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest-v0.1.json",
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T09:34:09+00:00"
+    },
+    {
+        "id": "dec7d2b461316dc5730e922483f2a668",
+        "plugin_id": "a9407dc0b6de66d2798291f2566bfec7",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest-v0.1.json",
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T09:35:01+00:00"
+    },
+    {
+        "id": "e64bbc485f2551cd942b303861bdb472",
+        "plugin_id": "fb884411c2e50068218771c7a575c937",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest-v0.1.json",
+        "manifest": null,
+        "manifest_validated": false,
+        "signature_verified": false,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:19:27+00:00"
+    },
+    {
+        "id": "d51a10666c474fd58bb50280fe7a1aad",
+        "plugin_id": "31b38fa447a2259e6bf7fa6ac969da91",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest-v0.1.json",
+        "manifest": null,
+        "manifest_validated": false,
+        "signature_verified": false,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:19:38+00:00"
+    },
+    {
+        "id": "5e3eeb0ce65de652efdeed54dc55f9e6",
+        "plugin_id": "40ad49d9758408b1d5ad9487ddc3707a",
+        "version": "0.1.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "Example Plugin",
+            "version": "0.1.0",
+            "entrypoint": "index.js",
+            "permissions": [],
+            "assets": []
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:24:18+00:00"
+    },
+    {
+        "id": "2f6ce632fa6160fc835ab3f09145a22e",
+        "plugin_id": "d928486cb4f0f3e1d64e80bd9f70cc49",
+        "version": "0.1.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "Example Plugin",
+            "version": "0.1.0",
+            "entrypoint": "index.js",
+            "permissions": [],
+            "assets": []
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:27:33+00:00"
+    },
+    {
+        "id": "1f53ced2247a7c5cd38d5a3d7b631fba",
+        "plugin_id": "09f863254167dd90434dbe6be1455531",
+        "version": "0.1.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "Example Plugin",
+            "version": "0.1.0",
+            "entrypoint": "index.js",
+            "permissions": [],
+            "assets": []
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:28:51+00:00"
+    },
+    {
+        "id": "b6f55aa7312c367e80e6e5f133eed322",
+        "plugin_id": "e42daf31dd3d2e284b0c3e856f9310a3",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "RotateTest Plugin",
+            "version": "1.0.0",
+            "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "",
+        "created_at": "2026-06-24T13:35:42+00:00"
+    },
+    {
+        "id": "eae099a21898e30e58b0fb22430b75dd",
+        "plugin_id": "e42daf31dd3d2e284b0c3e856f9310a3",
+        "version": "1.2.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "RotateTest Plugin",
+            "version": "1.2.0",
+            "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "",
+        "created_at": "2026-06-24T13:35:42+00:00"
+    },
+    {
+        "id": "44ad802fbfd96d5b0cfdc29d915ff933",
+        "plugin_id": "6e386f7cc7178b42203e4e0686c07618",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "RotateTest Plugin",
+            "version": "1.0.0",
+            "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "",
+        "created_at": "2026-06-24T13:49:04+00:00"
+    },
+    {
+        "id": "abfeaeb5cf0ff95dea7fb8d1fe11a22d",
+        "plugin_id": "6e386f7cc7178b42203e4e0686c07618",
+        "version": "1.2.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "RotateTest Plugin",
+            "version": "1.2.0",
+            "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "",
+        "created_at": "2026-06-24T13:49:04+00:00"
+    },
+    {
+        "id": "35849299d3a61aa10faf6eca3a0f2b4e",
+        "plugin_id": "e57ef3a640719ae060e13b2fd66ec756",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "DepA",
+            "version": "1.0.0",
+            "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T13:51:47+00:00"
+    },
+    {
+        "id": "b4539966c43fb86717cc9aa48adc113e",
+        "plugin_id": "19919147ab46469ceeaac8e32dc16865",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "DepB",
+            "version": "1.0.0",
+            "entrypoint": "index.js",
+            "dependencies": [
+                {
+                    "plugin_id": "e57ef3a640719ae060e13b2fd66ec756",
+                    "version": "1.0.0"
+                }
+            ]
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T13:51:47+00:00"
+    },
+    {
+        "id": "30a909313718165344ffade28d69fe0f",
+        "plugin_id": "64802e57aa291f81e28425e9291f1447",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "DepA",
+            "version": "1.0.0",
+            "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T14:04:19+00:00"
+    },
+    {
+        "id": "9e5cad40a292193983c91f4ebaa253b2",
+        "plugin_id": "4a967db9fe32b042885408fb0815e446",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "DepB",
+            "version": "1.0.0",
+            "entrypoint": "index.js",
+            "dependencies": [
+                {
+                    "plugin_id": "64802e57aa291f81e28425e9291f1447",
+                    "version": "1.0.0"
+                }
+            ]
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T14:04:19+00:00"
+    },
+    {
+        "id": "533476958c965a15f96d2d0466bfef9d",
+        "plugin_id": "e1e6eb34825eb62214ae1c34be811c09",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "DepA",
+            "version": "1.0.0",
+            "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T14:19:03+00:00"
+    },
+    {
+        "id": "ec0229b790319bde0b2821d1ab17af93",
+        "plugin_id": "1dd18f248c5c79b16a2249f4f9484d73",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+            "name": "DepB",
+            "version": "1.0.0",
+            "entrypoint": "index.js",
+            "dependencies": [
+                {
+                    "plugin_id": "e1e6eb34825eb62214ae1c34be811c09",
+                    "version": "1.0.0"
+                }
+            ]
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T14:19:03+00:00"
+    }
+]

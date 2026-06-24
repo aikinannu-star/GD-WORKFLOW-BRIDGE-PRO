@@ -5,6 +5,8 @@
  */
 
 require_once __DIR__ . '/../lib/ServiceHelpers.php';
+require_once __DIR__ . '/../lib/Metrics.php';
+require_once __DIR__ . '/../lib/ControlPlaneAuth.php';
 
 define('SERVICE_NAME', 'gateway');
 define('SERVICE_PORT', 8000);
@@ -345,6 +347,40 @@ if ($uri === '/api/v1/license/openapi.yaml' || $uri === '/api/v1/license/openapi
     ServiceHelpers::sendJson(404, ['error' => 'openapi_not_found']);
 }
 
+// Supervisor invalidation health endpoint (served directly by the gateway)
+if ($uri === '/health/invalidation' || $uri === '/health/invalidation/') {
+    ControlPlaneAuth::enforceOrExit();
+    $healthFile = __DIR__ . '/invalidation_supervisor_health.php';
+    if (file_exists($healthFile)) {
+        include $healthFile;
+        exit;
+    }
+    ServiceHelpers::sendJson(404, ['error' => 'invalidation_health_not_found']);
+}
+
+// Aggregated auth-system metrics endpoint
+if ($uri === '/metrics/auth-system' || $uri === '/metrics/auth-system/') {
+    ControlPlaneAuth::enforceOrExit();
+    $m = new Metrics();
+    $all = $m->getAll();
+    $filtered = [];
+    foreach ($all as $k => $v) {
+        if (preg_match('/^gateway_invalidation|^gateway_auth_cache|gateway_invalidation_supervisor/', $k)) {
+            $filtered[$k] = $v;
+        }
+    }
+    $lines = [];
+    foreach ($filtered as $k => $v) {
+        $name = preg_replace('/[^a-z0-9_]/', '_', strtolower($k));
+        $lines[] = "# HELP {$name} Auto-generated metric for auth-system";
+        $lines[] = "# TYPE {$name} counter";
+        $lines[] = "{$name} {$v}";
+    }
+    header('Content-Type: text/plain');
+    echo implode("\n", $lines) . "\n";
+    exit;
+}
+
 // Aggregated health check for all registered services
 if ($uri === '/health/services' || $uri === '/health/aggregate') {
     $results = [];
@@ -496,6 +532,108 @@ if ($user && is_array($user)) {
 
 
 $body = file_get_contents('php://input');
+
+// metrics helper (used for auth/cache telemetry)
+$metrics = new Metrics();
+// --- Gateway preflight for CMS write-sensitive endpoints (with optional Redis cache) ---
+if ($target['key'] === 'cms' && in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'], true)) {
+    $preflightProjectId = null;
+    $preflightAction = null;
+
+    // Map common CMS write endpoints to actions
+    if (preg_match('#^/api/v1/cms/chat/([a-f0-9]+)/send#', $uri, $m)) {
+        $preflightProjectId = $m[1];
+        $preflightAction = 'send';
+    } elseif (preg_match('#^/api/v1/cms/vault/([a-f0-9]+)/upload#', $uri, $m)) {
+        $preflightProjectId = $m[1];
+        $preflightAction = 'upload';
+    } elseif (preg_match('#^/api/v1/cms/projects/([a-f0-9]+)/upload#', $uri, $m)) {
+        $preflightProjectId = $m[1];
+        $preflightAction = 'upload';
+    } elseif (preg_match('#^/api/v1/cms/projects/([a-f0-9]+)/access/(grant|revoke)#', $uri, $m)) {
+        $preflightProjectId = $m[1];
+        $preflightAction = 'manage';
+    } elseif (preg_match('#^/api/v1/cms/projects/([a-f0-9]+)/timeline#', $uri, $m)) {
+        $preflightProjectId = $m[1];
+        $preflightAction = 'comment';
+    } elseif (preg_match('#^/api/v1/cms/forms/([a-f0-9]+)/revision-request#', $uri, $m)) {
+        $preflightProjectId = $m[1];
+        $preflightAction = 'submit';
+    } elseif (preg_match('#^/api/v1/cms/forms/([a-f0-9]+)/requirements#', $uri, $m)) {
+        $preflightProjectId = $m[1];
+        $preflightAction = 'submit';
+    }
+
+    if ($preflightProjectId && $preflightAction) {
+        // Build a cache key when a user id is available
+        $cacheKey = null;
+        if (!empty($user['id'])) {
+            $cacheKey = 'gateway:cms:auth:' . sha1('u:' . $user['id'] . ':p:' . $preflightProjectId . ':a:' . $preflightAction);
+        }
+
+        // Try to connect to Redis (if available) for short-lived preflight cache
+        $redis = null;
+        $redisConnected = false;
+        if (class_exists('Redis')) {
+            $redisHost = $_ENV['GATEWAY_REDIS_HOST'] ?? '127.0.0.1';
+            $redisPort = (int)($_ENV['GATEWAY_REDIS_PORT'] ?? 6379);
+            try {
+                $redis = new Redis();
+                if (@$redis->connect($redisHost, $redisPort, 1.0)) {
+                    $redisConnected = true;
+                } else {
+                    $redis = null;
+                }
+            } catch (Throwable $e) {
+                $redis = null;
+            }
+        }
+        $cacheTtl = isset($_ENV['GATEWAY_AUTH_CACHE_TTL']) ? (int)$_ENV['GATEWAY_AUTH_CACHE_TTL'] : 10;
+
+        $cacheHit = false;
+        if ($cacheKey && $redisConnected && $redis) {
+            try {
+                $cached = $redis->get($cacheKey);
+                if ($cached !== false && $cached !== null) {
+                    $cacheHit = true;
+                    $allowed = ($cached === '1');
+                            header('X-Gateway-Auth-Cache: hit');
+                            // metrics
+                            try { $metrics->incr('gateway_auth_cache_hit', 1); } catch (Throwable $_) {}
+                    if (!$allowed) {
+                        ServiceHelpers::sendJson(403, ['error' => 'forbidden', 'message' => 'preflight denied (cache)']);
+                    }
+                }
+            } catch (Throwable $e) {
+                // Redis read failed; fall through to live preflight
+            }
+        }
+
+        if (!$cacheHit) {
+            $authUrl = rtrim($target['host'], '/') . '/api/v1/cms/authorize';
+            $payload = json_encode(['project_id' => $preflightProjectId, 'action' => $preflightAction]);
+            $authResp = proxyToService($authUrl, 'POST', $forwardHeaders, $payload);
+            if (($authResp['status'] ?? 0) !== 200) {
+                ServiceHelpers::sendJson(502, ['error' => 'authorize_failed', 'message' => 'Authorization preflight failed', 'detail' => substr($authResp['body'] ?? '', 0, 200)]);
+            }
+            $data = json_decode($authResp['body'] ?? '', true) ?: [];
+            $allowed = !empty($data['allowed']);
+            // store decision in redis (if available)
+            if ($cacheKey && $redisConnected && $redis) {
+                try {
+                    $redis->setex($cacheKey, max(1, $cacheTtl), $allowed ? '1' : '0');
+                } catch (Throwable $e) {
+                    // ignore cache write failures
+                }
+            }
+            header('X-Gateway-Auth-Cache: miss');
+            try { $metrics->incr('gateway_auth_cache_miss', 1); } catch (Throwable $_) {}
+            if (!$allowed) {
+                ServiceHelpers::sendJson(403, ['error' => 'forbidden', 'message' => 'preflight denied']);
+            }
+        }
+    }
+}
 
 // Try full original URI first, fall back to trimmed service path if backend 404s.
 $attemptUrls = [$fullUrl];

@@ -1,0 +1,37 @@
+name: Boundary Linter (Warning Mode)
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  boundary-lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Run Boundary Linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: php tools/boundary-linter.php --pr-number=${{ github.event.pull_request.number }} --repo=${{ github.repository }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🚨 Boundary Linter Summary" >> $GITHUB_STEP_SUMMARY
+          echo "Boundary linter ran in **WARNING MODE** (non-blocking)." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Violations detected are shown as warnings above." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Reference:** [CONTROL_PLANE_BOUNDARY.md](../CONTROL_PLANE_BOUNDARY.md)" >> $GITHUB_STEP_SUMMARY

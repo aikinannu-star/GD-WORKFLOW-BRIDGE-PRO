@@ -1,0 +1,61 @@
+name: Marketplace CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  marketplace-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        category: [security, dependency, publishing, ratings, artifact]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Run Marketplace CI group
+        run: bash ./tools/marketplace-ci.sh ${{ matrix.category }}
+
+  marketplace-ts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Install TS SDK dependencies
+        run: |
+          cd sdk/typescript/gd-module-sdk
+          npm ci
+      - name: Build TS SDK
+        run: |
+          cd sdk/typescript/gd-module-sdk
+          npm run build
+      - name: Start Marketplace servers
+        run: |
+          php -S 127.0.0.1:8006 -t services/marketplace services/marketplace/server.php > /tmp/marketplace.log 2>&1 &
+          echo $! > /tmp/mpid
+          php -S 127.0.0.1:8009 -t services/tenant services/tenant/server.php > /tmp/tenant.log 2>&1 &
+          echo $! > /tmp/tpid
+          sleep 1
+      - name: Run TS tests
+        run: |
+          node sdk/typescript/gd-module-sdk/dist/test/dependency-resolution.js
+          node sdk/typescript/gd-module-sdk/dist/test/ratings-publish.js
+      - name: Stop Marketplace servers
+        if: always()
+        run: |
+          kill $(cat /tmp/mpid) || true
+          kill $(cat /tmp/tpid) || true

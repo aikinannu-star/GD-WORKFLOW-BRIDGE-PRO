@@ -1,0 +1,20 @@
+{
+  "name": "gd-module-sdk-ts",
+  "version": "1.0.0",
+  "description": "GD Module SDK v1 - TypeScript client for GD Workflow Bridge",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node dist/test/unit.js",
+    "dev:test": "ts-node src/test/unit.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "ts-node": "^10.0.0"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  }
+}

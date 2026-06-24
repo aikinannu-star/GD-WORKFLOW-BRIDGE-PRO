@@ -56,4 +56,63 @@ class ServiceHelpers
     {
         return $data['tenant_id'] ?? $_GET['tenant_id'] ?? self::getHeader('X-Tenant-Id') ?? null;
     }
+
+    public static function redisConnect(): ?Redis
+    {
+        if (!class_exists('Redis')) {
+            return null;
+        }
+        $host = $_ENV['GATEWAY_REDIS_HOST'] ?? ($_ENV['REDIS_HOST'] ?? '127.0.0.1');
+        $port = (int)($_ENV['GATEWAY_REDIS_PORT'] ?? ($_ENV['REDIS_PORT'] ?? 6379));
+        try {
+            $r = new Redis();
+            if (@$r->connect($host, $port, 1.0)) {
+                return $r;
+            }
+        } catch (Throwable $e) {
+            return null;
+        }
+        return null;
+    }
+
+    public static function invalidateGatewayAuthCache(string $userId, string $projectId, array $actions = []): void
+    {
+        if (empty($userId) || empty($projectId)) {
+            return;
+        }
+        if (empty($actions)) {
+            // Derive default action keywords from PermissionService if available
+            if (!class_exists('PermissionService')) {
+                @include_once __DIR__ . '/PermissionService.php';
+            }
+            if (class_exists('PermissionService')) {
+                try {
+                    $actions = PermissionService::getActionKeywords();
+                } catch (Throwable $e) {
+                    $actions = [];
+                }
+            }
+        }
+        if (empty($actions)) {
+            return;
+        }
+        $redis = self::redisConnect();
+        if (!$redis) {
+            return;
+        }
+        foreach ($actions as $action) {
+            $key = 'gateway:cms:auth:' . sha1('u:' . $userId . ':p:' . $projectId . ':a:' . $action);
+            try {
+                @$redis->del($key);
+            } catch (Throwable $e) {
+                // ignore
+            }
+            // publish invalidation message for observability/subscribers
+            try {
+                @$redis->publish('gateway:cms:auth:invalidate', json_encode(['user_id' => $userId, 'project_id' => $projectId, 'action' => $action]));
+            } catch (Throwable $e) {
+                // ignore
+            }
+        }
+    }
 }

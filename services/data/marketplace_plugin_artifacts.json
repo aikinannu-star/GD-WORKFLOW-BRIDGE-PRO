@@ -1,0 +1,31 @@
+[
+    {
+        "id": "b437a38595b42a5122a5d69d405199b3",
+        "plugin_id": "9365d9ec91de60a8244c1c8128f7d0d0",
+        "version": "0.1.0",
+        "file_name": "hello.txt",
+        "path": "C:\\Users\\USER\\Downloads\\New folder\\gd-workflow-bridge-pro\\services\\marketplace/../../services/data/artifacts/9365d9ec91de60a8244c1c8128f7d0d0_0.1.0_b437a38595b42a5122a5d69d405199b3_hello.txt",
+        "signature_verified": true,
+        "created_at": "2026-06-24T13:37:10+00:00"
+    },
+    {
+        "id": "030684097a39a436d8d6fb4f4d547eb7",
+        "plugin_id": "c76e7d3e5d112156518e74d67b9d71ac",
+        "version": "0.1.0",
+        "file_name": "hello.txt",
+        "path": "C:\\Users\\USER\\Downloads\\New folder\\gd-workflow-bridge-pro\\services\\marketplace/../../services/data/artifacts/c76e7d3e5d112156518e74d67b9d71ac_0.1.0_030684097a39a436d8d6fb4f4d547eb7_hello.txt",
+        "signature_verified": true,
+        "created_at": "2026-06-24T13:49:05+00:00"
+    },
+    {
+        "id": "ce17b51af8b773c2428bf0bb44f6a58c",
+        "plugin_id": "401703317d2769e7e05eb310f6d92b47",
+        "version": "0.1.0",
+        "file_name": "dl.txt",
+        "path": "C:\\Users\\USER\\Downloads\\New folder\\gd-workflow-bridge-pro\\services\\marketplace/../../services/data/artifacts/401703317d2769e7e05eb310f6d92b47_0.1.0_ce17b51af8b773c2428bf0bb44f6a58c_dl.txt",
+        "signature_verified": true,
+        "signature": "eIEO8eWb5Iwr19MyXrpuiv4ovxZD9ZReikfxsC4rT/Wm8TQaW1hxg6C4Wuv3QwmS94djI8pQH+3moeyUY2uEDzAhxg26MiiavT8lw59V5n8DGEavEFOpWBjUTKgA+E5UJbLkddc7+guP1TouhzggDEWOpGyhPlwRmZc+egsbAHokY+HbLkw2E14eDJVoMlcb2W6sDyZXKTXhT/ZTKrqsfO0Nr4oSW318aazV4w+e2eThsr2YNvDHQJAapNOfVOK37HK/A4ZiUkIjIZFrqS4bRqT4OGZCEPZghrlxIDF2YnQ2nQFRlbvU1PHarXgoBICZez9I+hTAfnwcGJMPiBi6VQ==",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArLkrzvR+0ggCoaTio2cy\nIjKq11Auc8ecyJWKB/flAyTqALtL78PIQazBDyOyxfs9o5OEWZ07q5zd0p9HJTBK\n+LVxC656Zq4sd9B4IMQtw7KaoDlEy5HmqOQxd5F/3gfM9s9FhblxdGSZmLduW1Pg\nYAI+LC3UzySjmUq1XZJvT1T9lBnwxPxExn1gBJIYk+YG9b9LWLZDs3uiEub+y/Gi\nBmqkMhaju47cwg1ctm1peyeSMqNSpH13YzBLJ6FU/yicvK6aUzh+CzhPsiWb7Q0I\nUKJ+Z/UwUQenlaLcTmINX4kC6S883A5LeAiOv+3sngTMjETaRJ92HA6vK2bhvf3L\nywIDAQAB\n-----END PUBLIC KEY-----",
+        "created_at": "2026-06-24T13:50:03+00:00"
+    }
+]

@@ -1,0 +1,77 @@
+[
+    {
+        "id": "426f4b2477710548fc4253fefd124c4f",
+        "plugin_id": "2aa18a570704d95f6c365d89adbd1bcd",
+        "tenant_id": "f95a1f4782b223f38932c69d8c8ef612",
+        "version": "0.1.0",
+        "status": "uninstalled",
+        "installed_at": "2026-06-24T09:34:09+00:00",
+        "uninstalled_at": "2026-06-24T09:34:09+00:00"
+    },
+    {
+        "id": "b2c8dd5aa79f2038e011752e224499cd",
+        "plugin_id": "09f863254167dd90434dbe6be1455531",
+        "tenant_id": "ee37e7e0108b5542e30f6883cbd0b6e4",
+        "version": "0.1.0",
+        "status": "uninstalled",
+        "installed_at": "2026-06-24T13:28:51+00:00",
+        "uninstalled_at": "2026-06-24T13:28:51+00:00"
+    },
+    {
+        "id": "0deeefe1ada71c3e071a8875f60630f6",
+        "plugin_id": "e6a1bbdf0993c61824b82f9cd134df11",
+        "tenant_id": "93c4241f2b023d8764bbdf8094a07352",
+        "version": "0.0.1",
+        "status": "uninstalled",
+        "installed_at": "2026-06-24T13:50:22+00:00",
+        "uninstalled_at": "2026-06-24T13:50:23+00:00"
+    },
+    {
+        "id": "145f1a1d5a9715496065995305db372f",
+        "plugin_id": "e57ef3a640719ae060e13b2fd66ec756",
+        "tenant_id": "1bcc23207609ff8f77b94c42447cf618",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T13:51:47+00:00"
+    },
+    {
+        "id": "559baee5d868806226d2a6bab42de879",
+        "plugin_id": "19919147ab46469ceeaac8e32dc16865",
+        "tenant_id": "1bcc23207609ff8f77b94c42447cf618",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T13:51:47+00:00"
+    },
+    {
+        "id": "866a96e4b4618a74166a725b66dc4ccb",
+        "plugin_id": "64802e57aa291f81e28425e9291f1447",
+        "tenant_id": "33f4eb56c798faa01b2406c1d8d19a45",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T14:04:19+00:00"
+    },
+    {
+        "id": "2092bf9c510332b7ceb1191425336b94",
+        "plugin_id": "4a967db9fe32b042885408fb0815e446",
+        "tenant_id": "33f4eb56c798faa01b2406c1d8d19a45",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T14:04:19+00:00"
+    },
+    {
+        "id": "57a3e73130af963f15962b44c3ed02b5",
+        "plugin_id": "e1e6eb34825eb62214ae1c34be811c09",
+        "tenant_id": "142368570ac415c28ed4554082e865cd",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T14:19:03+00:00"
+    },
+    {
+        "id": "547de161c9c8b281326e1476fc6a381a",
+        "plugin_id": "1dd18f248c5c79b16a2249f4f9484d73",
+        "tenant_id": "142368570ac415c28ed4554082e865cd",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T14:19:03+00:00"
+    }
+]

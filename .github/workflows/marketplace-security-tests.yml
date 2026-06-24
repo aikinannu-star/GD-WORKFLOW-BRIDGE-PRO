@@ -1,0 +1,21 @@
+name: Marketplace Security Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  security-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Run security CI script
+        run: bash ./tools/marketplace-security-ci.sh

@@ -128,6 +128,110 @@ function getRequestBody(): array
     return ServiceHelpers::getRequestBody();
 }
 
+function sortKeysRecursively(&$data)
+{
+    if (is_array($data)) {
+        // associative array: sort keys
+        $keys = array_keys($data);
+        $isAssoc = $keys !== array_keys(array_values($data));
+        if ($isAssoc) ksort($data);
+        foreach ($data as &$v) {
+            sortKeysRecursively($v);
+        }
+    }
+}
+
+function canonicalJson($data)
+{
+    sortKeysRecursively($data);
+    return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | (defined('JSON_PRESERVE_ZERO_FRACTION') ? JSON_PRESERVE_ZERO_FRACTION : 0));
+}
+
+function validateManifest($manifest)
+{
+    $errors = [];
+    if (!is_array($manifest)) {
+        return ['manifest_must_be_object'];
+    }
+    $required = ['name', 'version', 'entrypoint'];
+    foreach ($required as $r) {
+        if (!isset($manifest[$r]) || !is_string($manifest[$r]) || trim($manifest[$r]) === '') {
+            $errors[] = 'missing_' . $r;
+        }
+    }
+    if (isset($manifest['permissions']) && !is_array($manifest['permissions'])) {
+        $errors[] = 'permissions_must_be_array';
+    }
+    if (isset($manifest['assets']) && !is_array($manifest['assets'])) {
+        $errors[] = 'assets_must_be_array';
+    }
+    if (isset($manifest['assets']) && is_array($manifest['assets'])) {
+        foreach ($manifest['assets'] as $i => $asset) {
+            if (!is_array($asset) || empty($asset['url'])) {
+                $errors[] = "assets[{$i}]_missing_url";
+            }
+        }
+    }
+    if (isset($manifest['dependencies'])) {
+        if (!is_array($manifest['dependencies'])) {
+            $errors[] = 'dependencies_must_be_array';
+        } else {
+            foreach ($manifest['dependencies'] as $i => $dep) {
+                if (!is_array($dep) || empty($dep['plugin_id']) || empty($dep['version'])) {
+                    $errors[] = "dependencies[{$i}]_invalid_format";
+                }
+            }
+        }
+    }
+    return $errors;
+}
+
+function verifyManifestSignature(array $manifest, string $signatureB64, ?string $publicPem = null): bool
+{
+    if (!function_exists('openssl_verify')) {
+        return false;
+    }
+    $canonical = canonicalJson($manifest);
+    $sig = base64_decode($signatureB64, true);
+    if ($sig === false) return false;
+    if ($publicPem === null || trim($publicPem) === '') {
+        $defaultKey = __DIR__ . '/../../keys/public.pem';
+        if (file_exists($defaultKey)) {
+            $publicPem = file_get_contents($defaultKey);
+        }
+    }
+    if (!$publicPem) return false;
+    $res = openssl_pkey_get_public($publicPem);
+    if ($res === false) return false;
+    $ok = openssl_verify($canonical, $sig, $res, OPENSSL_ALGO_SHA256);
+    return $ok === 1;
+}
+
+function verifyArtifactSignature(string $rawData, string $signatureB64, ?string $publicPem = null): bool
+{
+    if (!function_exists('openssl_verify')) {
+        return false;
+    }
+    $sig = base64_decode($signatureB64, true);
+    if ($sig === false) return false;
+    if ($publicPem === null || trim($publicPem) === '') {
+        $defaultKey = __DIR__ . '/../../keys/public.pem';
+        if (file_exists($defaultKey)) {
+            $publicPem = file_get_contents($defaultKey);
+        }
+    }
+    if (!$publicPem) return false;
+    $res = openssl_pkey_get_public($publicPem);
+    if ($res === false) return false;
+    $ok = openssl_verify($rawData, $sig, $res, OPENSSL_ALGO_SHA256);
+    return $ok === 1;
+}
+
+function ensureDir(string $path)
+{
+    if (!file_exists($path)) mkdir($path, 0777, true);
+}
+
 $path = preg_replace('#^/api/v1/marketplace#', '', $uri);
 
 if ($method === 'GET' && ($path === '' || $path === '/' || $path === '/products' || $path === '/products/')) {
@@ -190,6 +294,672 @@ if ($method === 'POST' && preg_match('#^/products/([^/]+)/purchase$#', $path, $m
         'quantity' => $quantity,
         'message' => 'Purchase registered (prototype).',
     ]);
+}
+
+// --- Plugins (Module Registration) ---
+function getPlugins(): array
+{
+    return ServiceHelpers::loadJson('marketplace', 'plugins.json');
+}
+
+function getPluginById(string $id): ?array
+{
+    foreach (getPlugins() as $p) {
+        if ((string)($p['id'] ?? '') === $id) return $p;
+    }
+    return null;
+}
+
+function getPluginKeys(string $pluginId): array
+{
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_keys.json');
+    return array_values(array_filter($all, fn($k) => (($k['plugin_id'] ?? '') === $pluginId)));
+}
+
+function getPluginKeyById(string $pluginId, string $keyId): ?array
+{
+    foreach (getPluginKeys($pluginId) as $k) {
+        if ((string)($k['id'] ?? '') === $keyId) return $k;
+    }
+    return null;
+}
+
+if ($method === 'GET' && ($path === '' || $path === '/' || $path === '/plugins' || $path === '/plugins/')) {
+    $plugins = getPlugins();
+    $tenant = $_GET['tenant_id'] ?? ServiceHelpers::getHeader('X-Tenant-Id') ?? null;
+    if ($tenant) {
+        $plugins = array_values(array_filter($plugins, fn($p) => (($p['tenant_id'] ?? '') === $tenant)));
+    }
+    ServiceHelpers::sendJson(200, ['items' => $plugins, 'total' => count($plugins)]);
+}
+
+if ($method === 'GET' && preg_match('#^/plugins/([^/]+)$#', $path, $matches)) {
+    $plugin = getPluginById($matches[1]);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    ServiceHelpers::sendJson(200, $plugin);
+}
+
+if ($method === 'POST' && ($path === '/plugins' || $path === '/plugins/')) {
+    $payload = getRequestBody();
+    $name = trim($payload['name'] ?? '');
+    $version = trim($payload['version'] ?? '');
+
+    if ($name === '' || $version === '') {
+        ServiceHelpers::sendJson(400, ['error' => 'invalid_plugin', 'message' => 'Plugin name and version are required.']);
+    }
+
+    $plugins = ServiceHelpers::loadJson('marketplace', 'plugins.json');
+
+    $plugin = [
+        'id' => ServiceHelpers::generateUuid(),
+        'name' => $name,
+        'description' => trim($payload['description'] ?? ''),
+        'author' => trim($payload['author'] ?? ''),
+        'version' => $version,
+        'manifest_url' => trim($payload['manifest_url'] ?? ''),
+        'published' => true,
+        'tenant_id' => ServiceHelpers::normalizeTenantId($payload) ?? '',
+        'created_at' => gmdate('c'),
+    ];
+
+    $plugins[] = $plugin;
+    ServiceHelpers::saveJson('marketplace', 'plugins.json', $plugins);
+    ServiceHelpers::sendJson(201, $plugin);
+}
+
+// Update plugin metadata
+if ($method === 'PUT' && preg_match('#^/plugins/([^/]+)$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugins = ServiceHelpers::loadJson('marketplace', 'plugins.json');
+    $found = false;
+    $payload = getRequestBody();
+    foreach ($plugins as &$p) {
+        if (($p['id'] ?? '') === $pluginId) {
+            $p = array_merge($p, $payload);
+            $p['updated_at'] = gmdate('c');
+            $found = true;
+            $result = $p;
+            break;
+        }
+    }
+    if (!$found) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    ServiceHelpers::saveJson('marketplace', 'plugins.json', $plugins);
+    ServiceHelpers::sendJson(200, $result);
+}
+
+// Publish plugin
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/publish$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugins = ServiceHelpers::loadJson('marketplace', 'plugins.json');
+    $found = false;
+    foreach ($plugins as &$p) {
+        if (($p['id'] ?? '') === $pluginId) {
+            $p['published'] = true;
+            $p['updated_at'] = gmdate('c');
+            $found = true;
+            $result = $p;
+            break;
+        }
+    }
+    if (!$found) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    ServiceHelpers::saveJson('marketplace', 'plugins.json', $plugins);
+    ServiceHelpers::sendJson(200, $result);
+}
+
+// Unpublish plugin
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/unpublish$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugins = ServiceHelpers::loadJson('marketplace', 'plugins.json');
+    $found = false;
+    foreach ($plugins as &$p) {
+        if (($p['id'] ?? '') === $pluginId) {
+            $p['published'] = false;
+            $p['updated_at'] = gmdate('c');
+            $found = true;
+            $result = $p;
+            break;
+        }
+    }
+    if (!$found) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    ServiceHelpers::saveJson('marketplace', 'plugins.json', $plugins);
+    ServiceHelpers::sendJson(200, $result);
+}
+
+// --- Plugin Keys (public signing keys) ---
+if ($method === 'GET' && preg_match('#^/plugins/([^/]+)/keys$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    $keys = getPluginKeys($pluginId);
+    ServiceHelpers::sendJson(200, ['items' => $keys, 'total' => count($keys)]);
+}
+
+if ($method === 'GET' && preg_match('#^/plugins/([^/]+)/keys/([^/]+)$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $keyId = $matches[2];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    $key = getPluginKeyById($pluginId, $keyId);
+    if (!$key) {
+        ServiceHelpers::sendJson(404, ['error' => 'key_not_found']);
+    }
+    ServiceHelpers::sendJson(200, $key);
+}
+
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/keys$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    $payload = getRequestBody();
+    $publicKey = trim($payload['public_key'] ?? '');
+    $label = trim($payload['label'] ?? '');
+    if ($publicKey === '') {
+        ServiceHelpers::sendJson(400, ['error' => 'invalid_key', 'message' => 'public_key is required']);
+    }
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_keys.json');
+    $entry = [
+        'id' => ServiceHelpers::generateUuid(),
+        'plugin_id' => $pluginId,
+        'public_key' => $publicKey,
+        'label' => $label,
+        'revoked' => false,
+        'created_at' => gmdate('c'),
+    ];
+    $all[] = $entry;
+    ServiceHelpers::saveJson('marketplace', 'plugin_keys.json', $all);
+    ServiceHelpers::sendJson(201, $entry);
+}
+
+// Revoke a key
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/keys/([^/]+)/revoke$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $keyId = $matches[2];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_keys.json');
+    $found = false;
+    foreach ($all as &$k) {
+        if (($k['plugin_id'] ?? '') === $pluginId && ($k['id'] ?? '') === $keyId) {
+            $k['revoked'] = true;
+            $k['revoked_at'] = gmdate('c');
+            $found = true;
+            $result = $k;
+            break;
+        }
+    }
+    if (!$found) ServiceHelpers::sendJson(404, ['error' => 'key_not_found']);
+    ServiceHelpers::saveJson('marketplace', 'plugin_keys.json', $all);
+    ServiceHelpers::sendJson(200, $result);
+}
+
+// Activate (unrevoke) a key
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/keys/([^/]+)/activate$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $keyId = $matches[2];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_keys.json');
+    $found = false;
+    foreach ($all as &$k) {
+        if (($k['plugin_id'] ?? '') === $pluginId && ($k['id'] ?? '') === $keyId) {
+            $k['revoked'] = false;
+            unset($k['revoked_at']);
+            $found = true;
+            $result = $k;
+            break;
+        }
+    }
+    if (!$found) ServiceHelpers::sendJson(404, ['error' => 'key_not_found']);
+    ServiceHelpers::saveJson('marketplace', 'plugin_keys.json', $all);
+    ServiceHelpers::sendJson(200, $result);
+}
+
+// Delete a key
+if ($method === 'DELETE' && preg_match('#^/plugins/([^/]+)/keys/([^/]+)$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $keyId = $matches[2];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_keys.json');
+    $found = false;
+    $new = [];
+    foreach ($all as $k) {
+        if (($k['plugin_id'] ?? '') === $pluginId && ($k['id'] ?? '') === $keyId) {
+            $found = true;
+            continue;
+        }
+        $new[] = $k;
+    }
+    if (!$found) ServiceHelpers::sendJson(404, ['error' => 'key_not_found']);
+    ServiceHelpers::saveJson('marketplace', 'plugin_keys.json', $new);
+    ServiceHelpers::sendJson(200, ['status' => 'deleted']);
+}
+
+// --- Plugin Versions & Installs ---
+function getPluginVersions(string $pluginId): array
+{
+    $all = ServiceHelpers::loadJson('marketplace', 'plugins_versions.json');
+    return array_values(array_filter($all, fn($v) => (($v['plugin_id'] ?? '') === $pluginId)));
+}
+
+function getPluginVersionByIdentifier(string $pluginId, string $identifier): ?array
+{
+    foreach (getPluginVersions($pluginId) as $v) {
+        if ((string)($v['id'] ?? '') === $identifier || (string)($v['version'] ?? '') === $identifier) {
+            return $v;
+        }
+    }
+    return null;
+}
+
+function getPluginInstalls(string $pluginId): array
+{
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_installs.json');
+    return array_values(array_filter($all, fn($i) => (($i['plugin_id'] ?? '') === $pluginId)));
+}
+
+function sendWebhook(string $url, array $payload): void
+{
+    try {
+        $opts = [
+            'http' => [
+                'method' => 'POST',
+                'header' => "Content-Type: application/json\r\n",
+                'timeout' => 2,
+                'content' => json_encode($payload),
+            ],
+        ];
+        $ctx = stream_context_create($opts);
+        @file_get_contents($url, false, $ctx);
+    } catch (Throwable $e) {
+        // ignore webhook failures
+    }
+}
+
+if ($method === 'GET' && preg_match('#^/plugins/([^/]+)/versions$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    $versions = getPluginVersions($pluginId);
+    ServiceHelpers::sendJson(200, ['items' => $versions, 'total' => count($versions)]);
+}
+
+if ($method === 'GET' && preg_match('#^/plugins/([^/]+)/versions/([^/]+)$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $identifier = $matches[2];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    $version = getPluginVersionByIdentifier($pluginId, $identifier);
+    if (!$version) {
+        ServiceHelpers::sendJson(404, ['error' => 'version_not_found']);
+    }
+    ServiceHelpers::sendJson(200, $version);
+}
+
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/versions$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    $payload = getRequestBody();
+    $ver = trim($payload['version'] ?? '');
+    $manifestUrl = isset($payload['manifest_url']) ? trim($payload['manifest_url']) : '';
+    $manifestObj = isset($payload['manifest']) ? $payload['manifest'] : null;
+    if ($ver === '' || ($manifestUrl === '' && $manifestObj === null)) {
+        ServiceHelpers::sendJson(400, ['error' => 'invalid_version', 'message' => 'Version string and manifest (or manifest_url) are required.']);
+    }
+
+    $manifestValidated = false;
+    $signatureVerified = false;
+    if ($manifestObj !== null) {
+        $errors = validateManifest($manifestObj);
+        if (!empty($errors)) {
+            ServiceHelpers::sendJson(400, ['error' => 'invalid_manifest', 'details' => $errors]);
+        }
+        $manifestValidated = true;
+        $signature = trim($payload['signature'] ?? '');
+        $publicKey = isset($payload['public_key']) ? trim($payload['public_key']) : null;
+        if ($signature !== '') {
+            $ok = false;
+            // If a public_key was provided in the request, try it first
+            if ($publicKey !== null && $publicKey !== '') {
+                $ok = verifyManifestSignature($manifestObj, $signature, $publicKey);
+            }
+            // Otherwise try any registered plugin keys
+            if (!$ok) {
+                $registered = getPluginKeys($pluginId);
+                foreach ($registered as $rk) {
+                    if (!empty($rk['public_key']) && empty($rk['revoked'])) {
+                        if (verifyManifestSignature($manifestObj, $signature, $rk['public_key'])) {
+                            $ok = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            // Fallback to default server key if still not ok
+            if (!$ok) {
+                if (verifyManifestSignature($manifestObj, $signature, null)) {
+                    $ok = true;
+                }
+            }
+            if (!$ok) {
+                ServiceHelpers::sendJson(400, ['error' => 'invalid_signature', 'message' => 'Manifest signature verification failed.']);
+            }
+            $signatureVerified = true;
+        }
+    }
+
+    $versions = ServiceHelpers::loadJson('marketplace', 'plugins_versions.json');
+    $entry = [
+        'id' => ServiceHelpers::generateUuid(),
+        'plugin_id' => $pluginId,
+        'version' => $ver,
+        'manifest_url' => $manifestUrl,
+        'manifest' => $manifestObj !== null ? $manifestObj : null,
+        'manifest_validated' => $manifestValidated,
+        'signature_verified' => $signatureVerified,
+        'changelog' => trim($payload['changelog'] ?? ''),
+        'created_at' => gmdate('c'),
+    ];
+    $versions[] = $entry;
+    ServiceHelpers::saveJson('marketplace', 'plugins_versions.json', $versions);
+    ServiceHelpers::sendJson(201, $entry);
+}
+
+if ($method === 'GET' && preg_match('#^/plugins/([^/]+)/installs$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    $tenant = $_GET['tenant_id'] ?? ServiceHelpers::getHeader('X-Tenant-Id') ?? null;
+    $installs = getPluginInstalls($pluginId);
+    if ($tenant) {
+        $installs = array_values(array_filter($installs, fn($i) => (($i['tenant_id'] ?? '') === $tenant)));
+    }
+    ServiceHelpers::sendJson(200, ['items' => $installs, 'total' => count($installs)]);
+}
+
+// Plugin ratings
+if ($method === 'GET' && preg_match('#^/plugins/([^/]+)/ratings$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_ratings.json');
+    $items = array_values(array_filter($all, fn($r) => (($r['plugin_id'] ?? '') === $pluginId)));
+    $avg = null;
+    if (!empty($items)) {
+        $sum = 0; foreach ($items as $it) $sum += intval($it['rating'] ?? 0);
+        $avg = $sum / count($items);
+    }
+    ServiceHelpers::sendJson(200, ['items' => $items, 'total' => count($items), 'average' => $avg]);
+}
+
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/ratings$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    $payload = getRequestBody();
+    $rating = isset($payload['rating']) ? intval($payload['rating']) : 0;
+    $comment = trim($payload['comment'] ?? '');
+    $tenantId = ServiceHelpers::normalizeTenantId($payload) ?? trim($payload['tenant_id'] ?? '');
+    if ($rating < 1 || $rating > 5) ServiceHelpers::sendJson(400, ['error' => 'invalid_rating', 'message' => 'rating must be 1-5']);
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_ratings.json');
+    $entry = [
+        'id' => ServiceHelpers::generateUuid(),
+        'plugin_id' => $pluginId,
+        'tenant_id' => $tenantId,
+        'rating' => $rating,
+        'comment' => $comment,
+        'created_at' => gmdate('c'),
+    ];
+    $all[] = $entry;
+    ServiceHelpers::saveJson('marketplace', 'plugin_ratings.json', $all);
+    ServiceHelpers::sendJson(201, $entry);
+}
+
+// --- Plugin Artifacts ---
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/versions/([^/]+)/artifact$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $version = $matches[2];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    $payload = getRequestBody();
+    $fileName = trim($payload['file_name'] ?? 'artifact.bin');
+    $artifactBase64 = $payload['artifact_base64'] ?? '';
+    if (trim($artifactBase64) === '') ServiceHelpers::sendJson(400, ['error' => 'invalid_artifact', 'message' => 'artifact_base64 required']);
+    $raw = base64_decode($artifactBase64, true);
+    if ($raw === false) ServiceHelpers::sendJson(400, ['error' => 'invalid_artifact', 'message' => 'artifact_base64 not valid base64']);
+
+    $artDir = __DIR__ . '/../../services/data/artifacts';
+    ensureDir($artDir);
+    $fileId = ServiceHelpers::generateUuid();
+    $safeName = preg_replace('/[^A-Za-z0-9_.-]/', '_', $fileName);
+    $pathOnDisk = $artDir . '/' . $pluginId . '_' . $version . '_' . $fileId . '_' . $safeName;
+    file_put_contents($pathOnDisk, $raw);
+
+    $signature = trim($payload['signature'] ?? '');
+    $publicKey = isset($payload['public_key']) ? trim($payload['public_key']) : null;
+    $signatureVerified = false;
+    if ($signature !== '') {
+        $ok = false;
+        if ($publicKey !== null && $publicKey !== '') {
+            $ok = verifyArtifactSignature($raw, $signature, $publicKey);
+        }
+        if (!$ok) {
+            $registered = getPluginKeys($pluginId);
+            foreach ($registered as $rk) {
+                if (!empty($rk['public_key']) && empty($rk['revoked'])) {
+                    if (verifyArtifactSignature($raw, $signature, $rk['public_key'])) {
+                        $ok = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!$ok) {
+            if (verifyArtifactSignature($raw, $signature, null)) {
+                $ok = true;
+            }
+        }
+        if (!$ok) {
+            ServiceHelpers::sendJson(400, ['error' => 'invalid_artifact_signature', 'message' => 'Artifact signature verification failed.']);
+        }
+        $signatureVerified = true;
+    }
+
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_artifacts.json');
+    $entry = [
+        'id' => $fileId,
+        'plugin_id' => $pluginId,
+        'version' => $version,
+        'file_name' => $fileName,
+        'path' => $pathOnDisk,
+        'signature_verified' => $signatureVerified,
+        'signature' => $signature !== '' ? $signature : null,
+        'public_key' => $publicKey !== null ? $publicKey : null,
+        'created_at' => gmdate('c'),
+    ];
+    $all[] = $entry;
+    ServiceHelpers::saveJson('marketplace', 'plugin_artifacts.json', $all);
+    ServiceHelpers::sendJson(201, $entry);
+}
+
+if ($method === 'GET' && preg_match('#^/plugins/([^/]+)/versions/([^/]+)/artifact$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $version = $matches[2];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_artifacts.json');
+    $items = array_values(array_filter($all, fn($a) => (($a['plugin_id'] ?? '') === $pluginId && ($a['version'] ?? '') === $version)));
+    ServiceHelpers::sendJson(200, ['items' => $items, 'total' => count($items)]);
+}
+
+if ($method === 'GET' && preg_match('#^/plugins/([^/]+)/versions/([^/]+)/artifact/([^/]+)$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $version = $matches[2];
+    $artifactId = $matches[3];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    $all = ServiceHelpers::loadJson('marketplace', 'plugin_artifacts.json');
+    $item = null;
+    foreach ($all as $a) {
+        if (($a['id'] ?? '') === $artifactId && ($a['plugin_id'] ?? '') === $pluginId && ($a['version'] ?? '') === $version) {
+            $item = $a;
+            break;
+        }
+    }
+    if (!$item) ServiceHelpers::sendJson(404, ['error' => 'artifact_not_found']);
+    if (empty($item['path']) || !file_exists($item['path'])) {
+        ServiceHelpers::sendJson(500, ['error' => 'artifact_missing_on_disk']);
+    }
+    $raw = file_get_contents($item['path']);
+    if ($raw === false) ServiceHelpers::sendJson(500, ['error' => 'artifact_read_error']);
+    $b64 = base64_encode($raw);
+    $resp = $item;
+    $resp['download_base64'] = $b64;
+    ServiceHelpers::sendJson(200, $resp);
+}
+
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/install$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    $payload = getRequestBody();
+    $tenantId = ServiceHelpers::normalizeTenantId($payload) ?? trim($payload['tenant_id'] ?? '');
+    if (!$tenantId) {
+        ServiceHelpers::sendJson(400, ['error' => 'missing_tenant', 'message' => 'tenant_id required to install plugin']);
+    }
+    $versionReq = trim($payload['version'] ?? '');
+    if ($versionReq !== '') {
+        $versionObj = getPluginVersionByIdentifier($pluginId, $versionReq);
+        if (!$versionObj) {
+            ServiceHelpers::sendJson(404, ['error' => 'version_not_found']);
+        }
+        $versionToUse = $versionObj['version'];
+    } else {
+        $versionToUse = $plugin['version'] ?? null;
+    }
+    // Resolve version object if available
+    $versionObj = getPluginVersionByIdentifier($pluginId, $versionToUse);
+    $manifestForVersion = $versionObj['manifest'] ?? null;
+    $autoInstallDeps = !empty($payload['auto_install_dependencies']);
+    // If manifest declares dependencies, ensure they are satisfied or auto-install
+    if (is_array($manifestForVersion) && !empty($manifestForVersion['dependencies'])) {
+        $missing = [];
+        foreach ($manifestForVersion['dependencies'] as $dep) {
+            $depPluginId = $dep['plugin_id'] ?? null;
+            $depVersion = $dep['version'] ?? null;
+            if (!$depPluginId || !$depVersion) {
+                ServiceHelpers::sendJson(400, ['error' => 'invalid_dependency_spec', 'detail' => $dep]);
+            }
+            // check if dependency is already installed for tenant
+            $installsAll = ServiceHelpers::loadJson('marketplace', 'plugin_installs.json');
+            $found = false;
+            foreach ($installsAll as $ins) {
+                if (($ins['plugin_id'] ?? '') === $depPluginId && ($ins['tenant_id'] ?? '') === $tenantId && ($ins['status'] ?? '') === 'installed' && ($ins['version'] ?? '') === $depVersion) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $missing[] = ['plugin_id' => $depPluginId, 'version' => $depVersion];
+            }
+        }
+        if (!empty($missing)) {
+            if ($autoInstallDeps) {
+                // attempt to auto-install missing dependencies
+                $allInstalls = ServiceHelpers::loadJson('marketplace', 'plugin_installs.json');
+                foreach ($missing as $m) {
+                    $depPlugin = getPluginById($m['plugin_id']);
+                    if (!$depPlugin) ServiceHelpers::sendJson(404, ['error' => 'dependency_plugin_not_found', 'detail' => $m]);
+                    $depVersionObj = getPluginVersionByIdentifier($m['plugin_id'], $m['version']);
+                    if (!$depVersionObj) ServiceHelpers::sendJson(404, ['error' => 'dependency_version_not_found', 'detail' => $m]);
+                    $depEntry = [
+                        'id' => ServiceHelpers::generateUuid(),
+                        'plugin_id' => $m['plugin_id'],
+                        'tenant_id' => $tenantId,
+                        'version' => $m['version'],
+                        'status' => 'installed',
+                        'installed_at' => gmdate('c'),
+                    ];
+                    $allInstalls[] = $depEntry;
+                    // send webhook for dependency install if configured
+                    if (!empty($depPlugin['webhook_url'])) {
+                        sendWebhook($depPlugin['webhook_url'], ['event' => 'installed', 'plugin_id' => $m['plugin_id'], 'tenant_id' => $tenantId, 'version' => $m['version'], 'install' => $depEntry]);
+                    }
+                }
+                ServiceHelpers::saveJson('marketplace', 'plugin_installs.json', $allInstalls);
+            } else {
+                ServiceHelpers::sendJson(400, ['error' => 'missing_dependencies', 'details' => $missing]);
+            }
+        }
+    }
+    $installs = ServiceHelpers::loadJson('marketplace', 'plugin_installs.json');
+    $entry = [
+        'id' => ServiceHelpers::generateUuid(),
+        'plugin_id' => $pluginId,
+        'tenant_id' => $tenantId,
+        'version' => $versionToUse,
+        'status' => 'installed',
+        'installed_at' => gmdate('c'),
+    ];
+    $installs[] = $entry;
+    ServiceHelpers::saveJson('marketplace', 'plugin_installs.json', $installs);
+    // send install webhook if configured
+    if (!empty($plugin['webhook_url'])) {
+        sendWebhook($plugin['webhook_url'], ['event' => 'installed', 'plugin_id' => $pluginId, 'tenant_id' => $tenantId, 'version' => $versionToUse, 'install' => $entry]);
+    }
+    ServiceHelpers::sendJson(200, ['status' => 'installed', 'install' => $entry]);
+}
+
+if ($method === 'POST' && preg_match('#^/plugins/([^/]+)/uninstall$#', $path, $matches)) {
+    $pluginId = $matches[1];
+    $plugin = getPluginById($pluginId);
+    if (!$plugin) {
+        ServiceHelpers::sendJson(404, ['error' => 'plugin_not_found']);
+    }
+    $payload = getRequestBody();
+    $tenantId = ServiceHelpers::normalizeTenantId($payload) ?? trim($payload['tenant_id'] ?? '');
+    if (!$tenantId) {
+        ServiceHelpers::sendJson(400, ['error' => 'missing_tenant', 'message' => 'tenant_id required to uninstall plugin']);
+    }
+    $installs = ServiceHelpers::loadJson('marketplace', 'plugin_installs.json');
+    $found = false;
+    foreach ($installs as &$ins) {
+        if (($ins['plugin_id'] ?? '') === $pluginId && ($ins['tenant_id'] ?? '') === $tenantId && ($ins['status'] ?? '') === 'installed') {
+            $ins['status'] = 'uninstalled';
+            $ins['uninstalled_at'] = gmdate('c');
+            $found = true;
+            $result = $ins;
+            break;
+        }
+    }
+    if (!$found) {
+        ServiceHelpers::sendJson(404, ['error' => 'not_installed']);
+    }
+    ServiceHelpers::saveJson('marketplace', 'plugin_installs.json', $installs);
+    // send uninstall webhook if configured
+    if (!empty($plugin['webhook_url'])) {
+        sendWebhook($plugin['webhook_url'], ['event' => 'uninstalled', 'plugin_id' => $pluginId, 'tenant_id' => $tenantId, 'version' => $result['version'] ?? null, 'install' => $result]);
+    }
+    ServiceHelpers::sendJson(200, ['status' => 'uninstalled', 'install' => $result]);
 }
 
 ServiceHelpers::sendJson(404, ['error' => 'not_found']);

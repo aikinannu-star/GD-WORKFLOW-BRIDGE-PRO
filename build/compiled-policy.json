@@ -1,0 +1,303 @@
+{
+    "metadata": {
+        "policy_version": "1.0",
+        "policy_schema_version": "1.0",
+        "artifact_version": "1.0",
+        "compiler_version": "1.0",
+        "compiled_at": "2026-06-23T19:31:38+00:00",
+        "source_policy": "CONTROL_PLANE_POLICY.yml",
+        "source_policy_digest": "9919434a45b6b9d80b0ee821660b9bfc0a10341f8d54372de3d290e3bf4bde5b",
+        "artifact_digest": "d10440fbb0dbdcca0ec01e3596a8fda6758418006542c3c113f53e143db26480"
+    },
+    "graph": {
+        "nodes": [
+            {
+                "id": "policy:root",
+                "type": "policy",
+                "meta": {
+                    "version": "1.0",
+                    "schema_version": "1.0"
+                }
+            },
+            {
+                "id": "path:0",
+                "type": "path",
+                "meta": {
+                    "pattern": "services\/gateway\/"
+                }
+            },
+            {
+                "id": "path:1",
+                "type": "path",
+                "meta": {
+                    "pattern": "services\/lib\/ControlPlaneAuth.php"
+                }
+            },
+            {
+                "id": "path:2",
+                "type": "path",
+                "meta": {
+                    "pattern": "services\/lib\/AccessGraph.php"
+                }
+            },
+            {
+                "id": "path:3",
+                "type": "path",
+                "meta": {
+                    "pattern": "services\/lib\/Metrics.php"
+                }
+            },
+            {
+                "id": "path:4",
+                "type": "path",
+                "meta": {
+                    "pattern": "services\/lib\/PermissionService.php"
+                }
+            },
+            {
+                "id": "path:5",
+                "type": "path",
+                "meta": {
+                    "pattern": ".github\/workflows\/auth-tests.yml"
+                }
+            },
+            {
+                "id": "rule:no_cms_imports",
+                "type": "rule",
+                "meta": {
+                    "name": "no_cms_imports",
+                    "severity": "warning",
+                    "enabled": true,
+                    "message": "Control-plane code imports CMS business logic (includes\/*). Use HTTP API or pub\/sub instead.",
+                    "predicate": {
+                        "type": "composed",
+                        "operator": "and",
+                        "children": [
+                            {
+                                "type": "composed",
+                                "operator": "or",
+                                "children": [
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/gateway\/**",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/lib\/ControlPlaneAuth.php",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/lib\/AccessGraph.php",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/lib\/Metrics.php",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/lib\/PermissionService.php",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": ".github\/workflows\/auth-tests.yml",
+                                        "field": "filePath"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "composed",
+                                "operator": "or",
+                                "children": [
+                                    {
+                                        "type": "regex",
+                                        "pattern": "require.*includes\/",
+                                        "field": "content",
+                                        "flags": "i"
+                                    },
+                                    {
+                                        "type": "regex",
+                                        "pattern": "include.*includes\/",
+                                        "field": "content",
+                                        "flags": "i"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "applies_to": "control_plane_files",
+                    "patterns": [
+                        {
+                            "pattern": "require.*includes\/",
+                            "type": "regex"
+                        },
+                        {
+                            "pattern": "include.*includes\/",
+                            "type": "regex"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "rule:no_business_logic",
+                "type": "rule",
+                "meta": {
+                    "name": "no_business_logic",
+                    "severity": "warning",
+                    "enabled": true,
+                    "message": "Potential business logic in control-plane code. Business logic belongs in the Application Plane (CMS).",
+                    "predicate": {
+                        "type": "composed",
+                        "operator": "and",
+                        "children": [
+                            {
+                                "type": "composed",
+                                "operator": "or",
+                                "children": [
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/gateway\/**",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/lib\/ControlPlaneAuth.php",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/lib\/AccessGraph.php",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/lib\/Metrics.php",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": "services\/lib\/PermissionService.php",
+                                        "field": "filePath"
+                                    },
+                                    {
+                                        "type": "path_glob",
+                                        "pattern": ".github\/workflows\/auth-tests.yml",
+                                        "field": "filePath"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "composed",
+                                "operator": "or",
+                                "children": [
+                                    {
+                                        "type": "regex",
+                                        "pattern": "if.*\\$tenant",
+                                        "field": "content",
+                                        "flags": "i"
+                                    },
+                                    {
+                                        "type": "regex",
+                                        "pattern": "if.*\\$customer",
+                                        "field": "content",
+                                        "flags": "i"
+                                    },
+                                    {
+                                        "type": "regex",
+                                        "pattern": "if.*\\$order",
+                                        "field": "content",
+                                        "flags": "i"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "applies_to": "control_plane_files",
+                    "patterns": [
+                        {
+                            "pattern": "if.*\\$tenant",
+                            "type": "regex"
+                        },
+                        {
+                            "pattern": "if.*\\$customer",
+                            "type": "regex"
+                        },
+                        {
+                            "pattern": "if.*\\$order",
+                            "type": "regex"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "rule:require_rfc_for_control_plane",
+                "type": "rule",
+                "meta": {
+                    "name": "require_rfc_for_control_plane",
+                    "severity": "warning",
+                    "enabled": true,
+                    "message": "Control-plane changes detected. Link an RFC issue for design review via .github\/RFC_TEMPLATE.md",
+                    "predicate": {
+                        "type": "meta",
+                        "check": "rfc_linkage",
+                        "trigger": "control_plane_files_changed",
+                        "description": "Control-plane changes should reference an RFC for design review"
+                    },
+                    "applies_to": "pr",
+                    "patterns": []
+                }
+            }
+        ],
+        "edges": [
+            {
+                "from": "policy:root",
+                "to": "path:0",
+                "type": "contains"
+            },
+            {
+                "from": "policy:root",
+                "to": "path:1",
+                "type": "contains"
+            },
+            {
+                "from": "policy:root",
+                "to": "path:2",
+                "type": "contains"
+            },
+            {
+                "from": "policy:root",
+                "to": "path:3",
+                "type": "contains"
+            },
+            {
+                "from": "policy:root",
+                "to": "path:4",
+                "type": "contains"
+            },
+            {
+                "from": "policy:root",
+                "to": "path:5",
+                "type": "contains"
+            },
+            {
+                "from": "policy:root",
+                "to": "rule:no_cms_imports",
+                "type": "contains"
+            },
+            {
+                "from": "policy:root",
+                "to": "rule:no_business_logic",
+                "type": "contains"
+            },
+            {
+                "from": "policy:root",
+                "to": "rule:require_rfc_for_control_plane",
+                "type": "contains"
+            }
+        ]
+    }
+}
