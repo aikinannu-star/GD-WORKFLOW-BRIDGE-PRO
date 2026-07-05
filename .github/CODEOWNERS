@@ -1,0 +1,18 @@
+# CODEOWNERS
+# Replace the placeholder org/team handles below with your real GitHub org or team names.
+# Example: replace `@ORG/control-plane` with `@your-org/control-plane` or an individual like `@alice`.
+
+# Require Control Plane owners for gateway and control-plane libraries
+/services/gateway/ @aikinannu-star
+/services/lib/ControlPlaneAuth.php @aikinannu-star
+
+# Platform maintainers for library changes and tests
+/services/lib/ @aikinannu-star
+/tests/auth/ @aikinannu-star
+
+# PR template and workflow changes should be reviewed by platform team
+/.github/PULL_REQUEST_TEMPLATE.md @aikinannu-star
+/.github/workflows/auth-tests.yml @aikinannu-star
+
+# Fallback owners (replace as appropriate)
+* @aikinannu-star

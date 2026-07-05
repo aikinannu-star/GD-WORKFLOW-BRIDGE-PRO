@@ -1,0 +1,48 @@
+{
+    "96c0ba436de51e08c9e6bbed4118902a216fe624": {
+        "allowed": true,
+        "permissions": {
+            "project.read": true,
+            "project.write": true,
+            "project.delete": true,
+            "project.manage": true,
+            "project.upload": true,
+            "project.comment": true,
+            "chat.read": true,
+            "chat.send": true,
+            "forms.read": true,
+            "forms.submit": true,
+            "notification.read": true,
+            "notification.mark_read": true,
+            "vault.access": true,
+            "vault.upload": true,
+            "vault.delete": true
+        },
+        "expires_at": 1782236978,
+        "user": "user:u2",
+        "project": "project:p2"
+    },
+    "d376f3cb92715851c114acd09199f8da0b97ec62": {
+        "allowed": true,
+        "permissions": {
+            "project.read": true,
+            "project.write": true,
+            "project.delete": true,
+            "project.manage": true,
+            "project.upload": true,
+            "project.comment": true,
+            "chat.read": true,
+            "chat.send": true,
+            "forms.read": true,
+            "forms.submit": true,
+            "notification.read": true,
+            "notification.mark_read": true,
+            "vault.access": true,
+            "vault.upload": true,
+            "vault.delete": true
+        },
+        "expires_at": 1782236978,
+        "user": "user:someone_else",
+        "project": "project:p2"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "counters": {
+        "control_plane_artifact_reload_total": 6,
+        "control_plane_artifact_reload_success_total": 6,
+        "control_plane_evaluation_requests_total": 1,
+        "control_plane_evaluation_success_total": 1
+    },
+    "gauges": {
+        "control_plane_artifact_present": 1,
+        "control_plane_signature_present": 0,
+        "control_plane_health_state": 1,
+        "control_plane_signature_verified": 0
+    }
+}

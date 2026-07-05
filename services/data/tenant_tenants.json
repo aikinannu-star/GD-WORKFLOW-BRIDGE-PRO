@@ -1,0 +1,104 @@
+[
+    {
+        "id": "8eab1a0a95785a8caced88ae2d659cac",
+        "name": "Example Corp (Updated)",
+        "domain": "example.local",
+        "status": "active",
+        "created_at": "2026-06-24T09:29:09+00:00",
+        "branding": {
+            "logo_url": "https://placehold.co/128x128?text=Example",
+            "primary_color": "#0044ff",
+            "accent_color": "#FFFFFF"
+        },
+        "settings": {
+            "plan": "pro"
+        },
+        "feature_flags": {
+            "cms": true
+        }
+    },
+    {
+        "id": "f95a1f4782b223f38932c69d8c8ef612",
+        "name": "Plugin Tenant",
+        "domain": "plugin.local",
+        "status": "active",
+        "created_at": "2026-06-24T09:34:09+00:00",
+        "branding": {
+            "logo_url": null,
+            "primary_color": "#FFB300",
+            "accent_color": "#FFFFFF"
+        },
+        "settings": [],
+        "feature_flags": []
+    },
+    {
+        "id": "ee37e7e0108b5542e30f6883cbd0b6e4",
+        "name": "Plugin Tenant",
+        "domain": "plugin-1782307731550.local",
+        "status": "active",
+        "created_at": "2026-06-24T13:28:51+00:00",
+        "branding": {
+            "logo_url": null,
+            "primary_color": "#FFB300",
+            "accent_color": "#FFFFFF"
+        },
+        "settings": [],
+        "feature_flags": []
+    },
+    {
+        "id": "93c4241f2b023d8764bbdf8094a07352",
+        "name": "Webhook Tenant",
+        "domain": "hook-1782309022903.local",
+        "status": "active",
+        "created_at": "2026-06-24T13:50:22+00:00",
+        "branding": {
+            "logo_url": null,
+            "primary_color": "#FFB300",
+            "accent_color": "#FFFFFF"
+        },
+        "settings": [],
+        "feature_flags": []
+    },
+    {
+        "id": "1bcc23207609ff8f77b94c42447cf618",
+        "name": "Dep Tenant",
+        "domain": "dep-1782309107302.local",
+        "status": "active",
+        "created_at": "2026-06-24T13:51:47+00:00",
+        "branding": {
+            "logo_url": null,
+            "primary_color": "#FFB300",
+            "accent_color": "#FFFFFF"
+        },
+        "settings": [],
+        "feature_flags": []
+    },
+    {
+        "id": "33f4eb56c798faa01b2406c1d8d19a45",
+        "name": "Dep Tenant",
+        "domain": "dep-1782309859384.local",
+        "status": "active",
+        "created_at": "2026-06-24T14:04:19+00:00",
+        "branding": {
+            "logo_url": null,
+            "primary_color": "#FFB300",
+            "accent_color": "#FFFFFF"
+        },
+        "settings": [],
+        "feature_flags": []
+    },
+    {
+        "id": "142368570ac415c28ed4554082e865cd",
+        "name": "Dep Tenant",
+        "domain": "dep-1782310743252.local",
+        "status": "active",
+        "created_at": "2026-06-24T14:19:03+00:00",
+        "branding": {
+            "logo_url": null,
+            "primary_color": "#FFB300",
+            "accent_color": "#FFFFFF"
+        },
+        "settings": [],
+        "feature_flags": []
+    }
+]

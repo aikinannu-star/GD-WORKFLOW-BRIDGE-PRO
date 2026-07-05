@@ -9,13 +9,6 @@ require_once __DIR__ . '/context/PromptOptimizationPipeline.php';
 require_once __DIR__ . '/context/ProviderRouter.php';
 require_once __DIR__ . '/memory/MemoryStore.php';
 require_once __DIR__ . '/memory/MemoryLifecyclePipeline.php';
-require_once __DIR__ . '/execution/UsageEstimatorInterface.php';
-require_once __DIR__ . '/execution/CostCalculatorInterface.php';
-require_once __DIR__ . '/execution/AIUsageServiceInterface.php';
-require_once __DIR__ . '/execution/DefaultAIUsageService.php';
-require_once __DIR__ . '/execution/ProviderMetadataRegistry.php';
-require_once __DIR__ . '/execution/DefaultUsageEstimator.php';
-require_once __DIR__ . '/execution/DefaultCostCalculator.php';
 require_once __DIR__ . '/../dispatcher/events/RuntimeEventEmitter.php';
 
 class RuntimeServiceRegistry
@@ -29,10 +22,6 @@ class RuntimeServiceRegistry
     private ?ProviderRouter $providerRouter;
     private ?MemoryStore $memoryStore;
     private ?MemoryLifecyclePipeline $memoryLifecyclePipeline;
-    private ?UsageEstimatorInterface $usageEstimator = null;
-    private ?CostCalculatorInterface $costCalculator = null;
-    private ?AIUsageServiceInterface $aiUsageService = null;
-    private ?ProviderMetadataRegistry $providerMetadataRegistry = null;
     private ?RuntimeContextServices $contextServices = null;
     private ?RuntimePromptServices $promptServices = null;
     private ?RuntimeProviderServices $providerServices = null;
@@ -49,11 +38,7 @@ class RuntimeServiceRegistry
         ?PromptOptimizationPipeline $promptOptimizationPipeline = null,
         ?ProviderRouter $providerRouter = null,
         ?MemoryStore $memoryStore = null,
-        ?MemoryLifecyclePipeline $memoryLifecyclePipeline = null,
-        ?UsageEstimatorInterface $usageEstimator = null,
-        ?CostCalculatorInterface $costCalculator = null,
-        ?AIUsageServiceInterface $aiUsageService = null,
-        ?ProviderMetadataRegistry $providerMetadataRegistry = null
+        ?MemoryLifecyclePipeline $memoryLifecyclePipeline = null
     ) {
         $this->provider = $provider;
         $this->eventEmitter = $eventEmitter;
@@ -64,10 +49,6 @@ class RuntimeServiceRegistry
         $this->providerRouter = $providerRouter;
         $this->memoryStore = $memoryStore;
         $this->memoryLifecyclePipeline = $memoryLifecyclePipeline;
-        $this->usageEstimator = $usageEstimator;
-        $this->costCalculator = $costCalculator;
-        $this->aiUsageService = $aiUsageService;
-        $this->providerMetadataRegistry = $providerMetadataRegistry;
     }
 
     public function getProvider(): ?ModelProviderInterface
@@ -206,66 +187,6 @@ class RuntimeServiceRegistry
         $this->memoryLifecyclePipeline = $memoryLifecyclePipeline;
         return $this;
     }
-
-    public function getUsageEstimator(): UsageEstimatorInterface
-    {
-        if ($this->usageEstimator === null) {
-            $this->usageEstimator = new DefaultUsageEstimator();
-        }
-        return $this->usageEstimator;
-    }
-
-    public function getCostCalculator(): CostCalculatorInterface
-    {
-        if ($this->costCalculator === null) {
-            $this->costCalculator = new DefaultCostCalculator();
-        }
-        return $this->costCalculator;
-    }
-
-    public function getProviderMetadataRegistry(): ProviderMetadataRegistry
-    {
-        if ($this->providerMetadataRegistry === null) {
-            $this->providerMetadataRegistry = new ProviderMetadataRegistry();
-        }
-        return $this->providerMetadataRegistry;
-    }
-
-    public function getAIUsageService(): AIUsageServiceInterface
-    {
-        if ($this->aiUsageService === null) {
-            $this->aiUsageService = new DefaultAIUsageService(
-                $this->getUsageEstimator(),
-                $this->getCostCalculator(),
-                $this->getProviderMetadataRegistry()
-            );
-        }
-        return $this->aiUsageService;
-    }
-
-    public function withUsageEstimator(UsageEstimatorInterface $usageEstimator): self
-    {
-        $this->usageEstimator = $usageEstimator;
-        return $this;
-    }
-
-    public function withCostCalculator(CostCalculatorInterface $costCalculator): self
-    {
-        $this->costCalculator = $costCalculator;
-        return $this;
-    }
-
-    public function withProviderMetadataRegistry(ProviderMetadataRegistry $providerMetadataRegistry): self
-    {
-        $this->providerMetadataRegistry = $providerMetadataRegistry;
-        return $this;
-    }
-
-    public function withAIUsageService(AIUsageServiceInterface $aiUsageService): self
-    {
-        $this->aiUsageService = $aiUsageService;
-        return $this;
-    }
 }
 
 class RuntimeContextServices
@@ -320,16 +241,6 @@ class RuntimeProviderServices
     public function getProviderRouter(): ProviderRouter
     {
         return $this->registry->getProviderRouter();
-    }
-
-    public function getAIUsageService(): AIUsageServiceInterface
-    {
-        return $this->registry->getAIUsageService();
-    }
-
-    public function getProviderMetadataRegistry(): ProviderMetadataRegistry
-    {
-        return $this->registry->getProviderMetadataRegistry();
     }
 }
 

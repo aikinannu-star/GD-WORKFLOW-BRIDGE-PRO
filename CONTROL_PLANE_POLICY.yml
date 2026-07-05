@@ -1,0 +1,219 @@
+version: "1.0"
+description: "Control Plane Architecture Policy - defines boundaries, rules, and enforcement"
+schema_version: "1.0"
+
+# Versioning & Migrations (for policy stability and evolution)
+versioning:
+  current: "1.0"
+  minimum_supported: "1.0"
+  changelog:
+    - version: "1.0"
+      date: "2026-06-23"
+      changes:
+        - "Initial policy schema: rules, control-plane paths, enforcement modes"
+        - "Three core rules: no_cms_imports, no_business_logic, require_rfc_for_control_plane"
+        - "Interaction patterns: HTTP preflight, pub/sub invalidation, read-only exports"
+      breaking_changes: []
+  migration_guide: |
+    ## Upgrading Policy Versions
+    
+    ### 1.0 → 2.x (future)
+    When versioning policy, ensure:
+    - All existing control-plane paths remain in control_plane.paths
+    - Do not remove rules; deprecate them instead (see deprecated_rules section)
+    - New rules must have default_enabled: false until widely tested
+    - Update this changelog entry before merging
+    
+    ### Deprecation Strategy
+    - A rule is deprecated when it becomes obsolete but may still be referenced by older configurations
+    - Deprecated rules remain in the policy but trigger warnings in CI
+    - Tools must handle missing/deprecated rules gracefully
+    
+    ### Breaking Change Policy
+    - Control-plane paths should never be removed (only added or renamed)
+    - If a path must be removed: mark as deprecated for one full release cycle, then remove
+    - Changing rule severity from warning→error is a breaking change and requires RFC
+
+# Define what constitutes the control plane
+control_plane:
+  description: "Paths and components that implement control-plane primitives"
+  paths:
+    - "services/gateway/"
+    - "services/lib/ControlPlaneAuth.php"
+    - "services/lib/AccessGraph.php"
+    - "services/lib/Metrics.php"
+    - "services/lib/PermissionService.php"
+    - ".github/workflows/auth-tests.yml"
+  owners:
+    - "@aikinannu-star"
+  stability:
+    description: "Indicates how stable/mature each component is"
+    gateway: "stable"
+    ControlPlaneAuth: "stable"
+    AccessGraph: "stable"
+    Metrics: "stable"
+    PermissionService: "stable"
+
+# Rules that apply to control-plane code
+rules:
+  no_cms_imports:
+    description: "Forbidden: control-plane code importing CMS business code"
+    severity: "warning"
+    enabled: true
+    applies_to: "control_plane_files"
+    patterns:
+      - pattern: 'require.*includes/'
+        type: "regex"
+      - pattern: 'include.*includes/'
+        type: "regex"
+    message: "Control-plane code imports CMS business logic (includes/*). Use HTTP API or pub/sub instead."
+    examples:
+      bad: "require_once __DIR__ . '/../../includes/Core/Plugin.php';"
+      good: "// Use HTTP: POST /api/v1/cms/authorize"
+    since_version: "1.0"
+    deprecated: false
+
+  no_business_logic:
+    description: "Control-plane should not implement business logic (tenant/customer/order specifics)"
+    severity: "warning"
+    enabled: true
+    applies_to: "control_plane_files"
+    patterns:
+      - pattern: 'if.*\$tenant'
+        type: "regex"
+      - pattern: 'if.*\$customer'
+        type: "regex"
+      - pattern: 'if.*\$order'
+        type: "regex"
+    message: "Potential business logic in control-plane code. Business logic belongs in the Application Plane (CMS)."
+    examples:
+      bad: "if ($tenant['premium']) { // business rule }"
+      good: "if ($hasPermission) { // cache/routing decision }"
+    since_version: "1.0"
+    deprecated: false
+
+  require_rfc_for_control_plane:
+    description: "Control-plane changes should reference an RFC for design review"
+    severity: "warning"
+    enabled: true
+    applies_to: "pr"
+    trigger: "control_plane_files_changed"
+    message: "Control-plane changes detected. Link an RFC issue for design review via .github/RFC_TEMPLATE.md"
+    check: "rfc_linkage"
+    examples:
+      good_pr_body: "Fixes #42 (RFC: JWT migration strategy)"
+      bad_pr_body: "Minor auth fixes"
+    since_version: "1.0"
+    deprecated: false
+
+# Deprecated rules (kept for backward compatibility, but not enforced)
+deprecated_rules: []
+# Example when deprecating a rule:
+# - rule_name: "old_rule"
+#   deprecated_in: "2.0"
+#   removal_version: "3.0"
+#   migration: "Use new_rule instead. See RFC #123 for details."
+
+  require_tests:
+    description: "Control-plane changes must include tests"
+    severity: "warning"
+    enabled: true
+    applies_to: "control_plane_files"
+    requires_paths:
+      - "tests/auth/"
+    message: "Control-plane changes must add or update tests in tests/auth/"
+
+# Interaction patterns (allowed ways for Control Plane and Application Plane to communicate)
+interactions:
+  http_preflight:
+    description: "Gateway calls CMS preflight endpoint for authorization decisions"
+    endpoint: "POST /api/v1/cms/authorize"
+    request_schema:
+      user_id: "string"
+      project_id: "string"
+      action: "string"
+    response_schema:
+      allowed: "boolean"
+    note: "Stateless, minimal payload. Decision cached by gateway."
+
+  pub_sub_invalidation:
+    description: "CMS publishes invalidation events when auth state changes"
+    channel: "gateway:cms:auth:invalidate"
+    payload_schema:
+      user_id: "string"
+      project_id: "string"
+      action: "string"
+      ts: "integer (unix timestamp)"
+    note: "Subscribers log/metric the invalidation. No direct response."
+
+  readonly_exports:
+    description: "Control Plane may read canonicalized, read-only exports from CMS"
+    examples:
+      - "graph.json (access graph snapshot)"
+      - "config.json (operational config)"
+    note: "Exports must not reference live internals or mutable state."
+
+# Enforcement configuration
+enforcement:
+  mode: "warning"  # warning | error | disabled
+  block_on_violations: false  # If true, CI fails on violations
+  block_on_missing_rfc: false  # If true, CI blocks PR without RFC link
+  require_approval_for_control_plane: true  # Require reviewer approval from owners
+  approval_owners:
+    - "@aikinannu-star"
+
+# Future enforcement profiles (not yet active)
+enforcement_profiles:
+  strict:
+    mode: "error"
+    block_on_violations: true
+    block_on_missing_rfc: true
+    description: "Strict mode: all violations fail CI, must resolve before merge"
+  permissive:
+    mode: "warning"
+    block_on_violations: false
+    block_on_missing_rfc: false
+    description: "Permissive mode: violations warn but do not block (current default)"
+
+# Schema and tooling notes
+metadata:
+  last_updated: "2026-06-23"
+  source_of_truth: "CONTROL_PLANE_POLICY.yml"
+  derived_docs:
+    - "CONTROL_PLANE_BOUNDARY.md"
+  tools_consuming_policy:
+    - "tools/boundary-linter.php"
+    - "tools/policy-validator.php"
+  
+  # Policy Validation Rules (what makes this policy valid and backward-compatible)
+  validation_rules:
+    - "version must match schema_version (semantic versioning)"
+    - "All rules in 'rules' section must have: description, severity, enabled, message"
+    - "All control_plane.paths must be non-empty strings"
+    - "All owners must be @-mentions or email addresses"
+    - "Rules cannot be removed; only deprecated (added to deprecated_rules with migration info)"
+    - "Severity can only be: warning | error"
+    - "Changes to rule severity or applies_to require RFC and changelog entry"
+  
+  # What triggers a breaking change (requires careful migration)
+  breaking_change_triggers:
+    - "Removing a rule from 'rules' section without deprecation"
+    - "Removing a path from control_plane.paths without deprecation"
+    - "Changing rule severity from warning → error (or vice versa) without explicit opt-in period"
+    - "Changing applies_to from 'control_plane_files' to something else"
+  
+  migration_notes: |
+    As enforcement mode transitions from warning to error:
+    1. Keep this file as the authoritative schema
+    2. Update tools/boundary-linter.php to read enforcement.mode
+    3. Update .github/workflows/boundary-lint.yml to respect block_on_violations
+    4. No changes to CONTROL_PLANE_BOUNDARY.md needed (it stays as docs)
+    5. For each rule severity change:
+       - Add RFC issue discussing the change
+       - Update changelog with breaking_changes entry
+       - Set rule.enabled: false initially, then re-enable after one release cycle
+    
+    Tools that consume this policy:
+    - boundary-linter.php: reads rules, control_plane.paths, enforcement config
+    - policy-validator.php: validates policy schema, detects breaking changes
+    - Future: policy-compiler (typed error generation from policy)

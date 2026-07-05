@@ -1,0 +1,15 @@
+{
+  "name": "gd-module-sdk",
+  "version": "1.0.0",
+  "description": "GD Module SDK v1 - lightweight JS client for GD Workflow Bridge platform",
+  "main": "src/gdClient.js",
+  "scripts": {
+    "test": "node test/test.js",
+    "test:unit": "node test/unit.js"
+  },
+  "types": "src/index.d.ts",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  }
+}

@@ -1,6 +1,7 @@
 # GD Workflow Bridge Pro v3.4.0 — Documentation Index
 
 [![License Server CI](https://github.com/OWNER/REPO/actions/workflows/license-server-ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/license-server-ci.yml)
+[![Auth Tests](https://github.com/OWNER/REPO/actions/workflows/auth-tests.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/auth-tests.yml)
 
 
 ## Quick Navigation

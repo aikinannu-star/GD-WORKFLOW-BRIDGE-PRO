@@ -7,13 +7,11 @@ class FileMemoryRepository implements MemoryRepositoryInterface
 {
     private string $basePath;
     private int $listLimit;
-    private int $maxFileSizeBytes;
 
-    public function __construct(string $basePath = null, int $listLimit = 1000, int $maxFileSizeBytes = 256 * 1024)
+    public function __construct(string $basePath = null, int $listLimit = 1000)
     {
         $this->basePath = $basePath ?: __DIR__ . '/../../data/assistant/memory';
         $this->listLimit = $listLimit;
-        $this->maxFileSizeBytes = $maxFileSizeBytes;
         if (!is_dir($this->basePath)) {
             mkdir($this->basePath, 0775, true);
         }
@@ -53,23 +51,16 @@ class FileMemoryRepository implements MemoryRepositoryInterface
     public function listByUser(string $userId, string $tenantId = 'default'): array
     {
         $records = [];
-        $files = $this->listCandidateFiles();
+        $files = glob($this->basePath . DIRECTORY_SEPARATOR . '*.json');
+
+        // Sort files by modification time descending so we collect the most
+        // recent records first and can stop once we reach the configured limit.
+        usort($files, function (string $a, string $b): int {
+            return filemtime($b) <=> filemtime($a);
+        });
 
         foreach ($files as $file) {
-            if (!is_readable($file)) {
-                continue;
-            }
-
-            $size = filesize($file);
-            if ($size === false || $size > $this->maxFileSizeBytes) {
-                continue;
-            }
-
-            $data = @json_decode((string) file_get_contents($file), true);
-            if (!is_array($data)) {
-                continue;
-            }
-
+            $data = json_decode(file_get_contents($file), true);
             if (($data['userId'] ?? null) === $userId && ($data['tenantId'] ?? 'default') === $tenantId) {
                 $records[] = new MemoryRecord($data);
                 if (count($records) >= $this->listLimit) {
@@ -83,47 +74,6 @@ class FileMemoryRepository implements MemoryRepositoryInterface
         });
 
         return $records;
-    }
-
-    private function listCandidateFiles(): array
-    {
-        if (!is_dir($this->basePath)) {
-            return [];
-        }
-
-        $entries = scandir($this->basePath);
-        if ($entries === false) {
-            return [];
-        }
-
-        $files = [];
-        foreach ($entries as $entry) {
-            if ($entry === '.' || $entry === '..') {
-                continue;
-            }
-
-            $path = $this->basePath . DIRECTORY_SEPARATOR . $entry;
-            if (!is_file($path) || substr($entry, -5) !== '.json') {
-                continue;
-            }
-
-            $files[] = [
-                'path' => $path,
-                'mtime' => filemtime($path) ?: 0,
-            ];
-        }
-
-        usort($files, function (array $a, array $b): int {
-            return $b['mtime'] <=> $a['mtime'];
-        });
-
-        $scanBudget = max(50, min($this->listLimit * 10, 2000));
-        $candidatePaths = [];
-        foreach (array_slice($files, 0, $scanBudget) as $file) {
-            $candidatePaths[] = $file['path'];
-        }
-
-        return $candidatePaths;
     }
 
     public function search(string $userId, string $tenantId, array $filters = []): array

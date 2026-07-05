@@ -1,0 +1,155 @@
+name: Policy Simulator
+
+on:
+  pull_request:
+    paths:
+      - 'CONTROL_PLANE_POLICY.yml'
+      - '.github/workflows/policy-simulator.yml'
+      - 'tools/policy-simulator.php'
+  workflow_dispatch:
+    inputs:
+      commits:
+        description: 'Number of commits to analyze'
+        required: false
+        default: '5'
+      profile:
+        description: 'Enforcement profile to simulate'
+        required: true
+        default: 'strict'
+        type: choice
+        options:
+          - warning
+          - error
+          - strict
+          - permissive
+
+jobs:
+  simulate:
+    name: Simulate Enforcement Transition
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50  # Fetch enough history for analysis
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Determine profile to simulate
+        id: profile
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "target=${{ github.event.inputs.profile }}" >> $GITHUB_OUTPUT
+            echo "commits=${{ github.event.inputs.commits }}" >> $GITHUB_OUTPUT
+          else
+            # Default: simulate strict mode when policy is changed
+            echo "target=strict" >> $GITHUB_OUTPUT
+            echo "commits=5" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for enforcement mode change in PR
+        id: enforcement
+        if: github.event_name == 'pull_request'
+        run: |
+          # Get old and new enforcement mode
+          OLD_MODE=$(git show HEAD:CONTROL_PLANE_POLICY.yml 2>/dev/null | grep "mode:" | head -1 | grep -oP 'mode:\s*"\K[^"]+' || echo "")
+          NEW_MODE=$(grep "mode:" CONTROL_PLANE_POLICY.yml | head -1 | grep -oP 'mode:\s*"\K[^"]+' || echo "")
+          
+          echo "old_mode=${OLD_MODE}" >> $GITHUB_OUTPUT
+          echo "new_mode=${NEW_MODE}" >> $GITHUB_OUTPUT
+          
+          if [ "${OLD_MODE}" != "${NEW_MODE}" ] && [ ! -z "${OLD_MODE}" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Enforcement mode changing from '${OLD_MODE}' to '${NEW_MODE}'"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Policy Simulator
+        id: simulator
+        run: |
+          php tools/policy-simulator.php \
+            --commits=${{ steps.profile.outputs.commits }} \
+            --profile=${{ steps.profile.outputs.target }} \
+            > /tmp/simulation-report.txt 2>&1
+          
+          cat /tmp/simulation-report.txt
+          echo "report=$(cat /tmp/simulation-report.txt)" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR with Simulation Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('/tmp/simulation-report.txt', 'utf8');
+            
+            const enforcement = {
+              old_mode: '${{ steps.enforcement.outputs.old_mode }}',
+              new_mode: '${{ steps.enforcement.outputs.new_mode }}',
+              changed: '${{ steps.enforcement.outputs.changed }}' === 'true'
+            };
+            
+            let comment = '';
+            
+            if (enforcement.changed) {
+              comment += `## ⚠️ Enforcement Mode Change Detected\n\n`;
+              comment += `**Transitioning from:** \`${enforcement.old_mode}\` → \`${enforcement.new_mode}\`\n\n`;
+              comment += `Run simulation before approving this change:\n\n`;
+              comment += '```bash\n';
+              comment += `php tools/policy-simulator.php --profile=${enforcement.new_mode}\n`;
+              comment += '```\n\n';
+            } else {
+              comment += `## 📊 Policy Compliance Simulation\n\n`;
+              comment += `**Profile:** \`${{ steps.profile.outputs.target }}\`\n`;
+              comment += `**Commits Analyzed:** ${{ steps.profile.outputs.commits }}\n\n`;
+            }
+            
+            comment += '<details><summary>Full Report</summary>\n\n';
+            comment += '```\n' + report + '\n```\n\n';
+            comment += '</details>\n\n';
+            
+            if (enforcement.changed) {
+              comment += '> **Action Required:** Ensure simulation passes before merging enforcement mode changes\n';
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Enforce strict mode check (if transitioning to error)
+        if: github.event_name == 'pull_request' && steps.enforcement.outputs.changed == 'true' && steps.enforcement.outputs.new_mode == 'error'
+        run: |
+          # Parse report to find violations
+          VIOLATIONS=$(grep -c "violations" /tmp/simulation-report.txt || echo "0")
+          
+          if grep -q "Safe to transition to error mode immediately" /tmp/simulation-report.txt; then
+            echo "✓ Policy state is safe for error mode enforcement"
+            exit 0
+          else
+            echo "✗ Cannot transition to error mode: unresolved violations remain"
+            echo "Re-run locally to see violations:"
+            echo "  php tools/policy-simulator.php --profile=error"
+            exit 1
+          fi
+
+      - name: Generate artifact
+        if: always()
+        run: |
+          mkdir -p reports
+          cp /tmp/simulation-report.txt reports/simulation-report-${{ github.run_id }}.txt
+
+      - name: Upload simulation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: policy-simulation-report
+          path: reports/simulation-report-*.txt
+          retention-days: 30
