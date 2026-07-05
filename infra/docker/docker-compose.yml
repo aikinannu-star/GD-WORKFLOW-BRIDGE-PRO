@@ -27,6 +27,8 @@ services:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       AUTH0_DOMAIN: ${AUTH0_DOMAIN}
       AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID}
+      SERVICE: auth
+      SERVICE_PORT: "8002"
     depends_on:
       - postgres
 
@@ -40,6 +42,8 @@ services:
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      SERVICE: billing
+      SERVICE_PORT: "8003"
     depends_on:
       - postgres
 
@@ -53,6 +57,8 @@ services:
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      SERVICE: cms
+      SERVICE_PORT: "8004"
     depends_on:
       - postgres
       - s3-local
@@ -68,6 +74,8 @@ services:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       CLOUDFLARE_API_KEY: ${CLOUDFLARE_API_KEY}
       GODADDY_API_KEY: ${GODADDY_API_KEY}
+      SERVICE: domains
+      SERVICE_PORT: "8005"
     depends_on:
       - postgres
 
@@ -81,6 +89,11 @@ services:
       - "8106:8006"
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
+      SERVICE: marketplace
+      SERVICE_PORT: "8006"
+    working_dir: /app
+    entrypoint: ["php"]
+    command: ["-S", "0.0.0.0:8006", "-t", "/app/services/marketplace", "/app/services/marketplace/server.php"]
     depends_on:
       - postgres
 
@@ -94,6 +107,8 @@ services:
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
       REDIS_URL: redis://redis:6379
+      SERVICE: usage
+      SERVICE_PORT: "8007"
     depends_on:
       - postgres
       - redis
@@ -107,6 +122,8 @@ services:
       - "8108:8008"
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/gdwb_app
+      SERVICE: admin
+      SERVICE_PORT: "8008"
     depends_on:
       - postgres
 
@@ -117,7 +134,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./infra/docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - license-server
       - auth-service
@@ -137,7 +154,7 @@ services:
       POSTGRES_DB: gdwb_app
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/schemas:/docker-entrypoint-initdb.d
+      - ../../database/schemas:/docker-entrypoint-initdb.d
     ports:
       - "5433:5432"
 
