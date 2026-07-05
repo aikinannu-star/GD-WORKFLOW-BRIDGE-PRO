@@ -4,8 +4,8 @@ services:
   # Core License Server (existing)
   license-server:
     build:
-      context: .
-      dockerfile: infra/docker/Dockerfile.license-server
+      context: ../..
+      dockerfile: ../license-server/Dockerfile
     ports:
       - "8101:8001"
     environment:
@@ -19,7 +19,7 @@ services:
   # Auth Service
   auth-service:
     build:
-      context: .
+      context: ../..
       dockerfile: infra/docker/Dockerfile.auth
     ports:
       - "8102:8002"
@@ -33,8 +33,8 @@ services:
   # Billing Service
   billing-service:
     build:
-      context: .
-      dockerfile: infra/docker/Dockerfile.billing
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8103:8003"
     environment:
@@ -46,8 +46,8 @@ services:
   # CMS Service
   cms-service:
     build:
-      context: .
-      dockerfile: infra/docker/Dockerfile.cms
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8104:8004"
     environment:
@@ -60,8 +60,8 @@ services:
   # Domains Service
   domains-service:
     build:
-      context: .
-      dockerfile: infra/docker/Dockerfile.domains
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8105:8005"
     environment:
@@ -73,9 +73,10 @@ services:
 
   # Marketplace Service
   marketplace-service:
+    image: gdwb-marketplace-test
     build:
-      context: .
-      dockerfile: infra/docker/Dockerfile.marketplace
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8106:8006"
     environment:
@@ -86,8 +87,8 @@ services:
   # Usage Service
   usage-service:
     build:
-      context: .
-      dockerfile: infra/docker/Dockerfile.usage
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8107:8007"
     environment:
@@ -100,8 +101,8 @@ services:
   # Admin Service
   admin-service:
     build:
-      context: .
-      dockerfile: infra/docker/Dockerfile.admin
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8108:8008"
     environment:
