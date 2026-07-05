@@ -1,6 +1,0 @@
-{
-    "billing_webhook_received_total": 14,
-    "billing_activation_failure_total": 2,
-    "billing_activation_success_total": 12,
-    "billing_webhook_invalid_signature_total": 4
-}

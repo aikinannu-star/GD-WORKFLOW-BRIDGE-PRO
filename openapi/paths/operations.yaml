@@ -1,0 +1,188 @@
+/api/v1/marketplace/platform/dashboard:
+  get:
+    summary: Platform dashboard overview
+    tags:
+    - Platform
+    parameters:
+    - name: refresh
+      in: query
+      schema:
+        type: boolean
+    responses:
+      '200':
+        description: Dashboard summary
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PlatformDashboardResponse
+    operationId: platformListMarketplacePlatformDashboard
+    x-maturity: stable
+    x-stabilitySince: 1.2.0
+    x-owner: Platform Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/platform/tenants-overview:
+  get:
+    summary: Platform tenants overview
+    tags:
+    - Platform
+    parameters:
+    - name: refresh
+      in: query
+      schema:
+        type: boolean
+    responses:
+      '200':
+        description: Tenants overview list
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: ./components/schemas.yaml#/PlatformOverviewItem
+                total:
+                  type: integer
+    operationId: platformListMarketplacePlatformTenantsoverview
+    x-maturity: stable
+    x-stabilitySince: 1.2.0
+    x-owner: Platform Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/platform/rankings:
+  get:
+    summary: Platform ranking reports
+    tags:
+    - Platform
+    responses:
+      '200':
+        description: Rankings report
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PlatformRankingsResponse
+    operationId: platformListMarketplacePlatformRankings
+    x-maturity: stable
+    x-stabilitySince: 1.2.0
+    x-owner: Platform Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/platform/drift-summary:
+  get:
+    summary: Platform drift summary
+    tags:
+    - Platform
+    responses:
+      '200':
+        description: Drift summary
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PlatformDriftSummaryResponse
+    operationId: platformListMarketplacePlatformDriftsummary
+    x-maturity: stable
+    x-stabilitySince: 1.2.0
+    x-owner: Platform Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/platform/timeseries:
+  get:
+    summary: Platform time-series data
+    tags:
+    - Platform
+    parameters:
+    - name: tenant_id
+      in: query
+      schema:
+        type: string
+    - name: tenant_ids
+      in: query
+      schema:
+        type: string
+    - name: metric
+      in: query
+      schema:
+        type: string
+        default: health_score
+    - name: period
+      in: query
+      schema:
+        type: string
+        default: hourly
+    - name: days_back
+      in: query
+      schema:
+        type: integer
+        default: 7
+    - name: forecast_horizon
+      in: query
+      schema:
+        type: integer
+        default: 0
+    responses:
+      '200':
+        description: Time series response
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/TimeSeriesResponse
+    operationId: platformListMarketplacePlatformTimeseries
+    x-maturity: stable
+    x-stabilitySince: 1.2.0
+    x-owner: Platform Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/platform/overview:
+  get:
+    summary: Health vs volatility overview
+    tags:
+    - Platform
+    responses:
+      '200':
+        description: Platform overview
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PlatformOverviewResponse
+    operationId: platformListMarketplacePlatformOverview
+    x-maturity: stable
+    x-stabilitySince: 1.2.0
+    x-owner: Platform Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/test/scenario:
+  post:
+    summary: Create or reset a synthetic test scenario
+    tags:
+    - Testing
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/TestScenarioRequest
+    responses:
+      '200':
+        description: Scenario created or reset
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/TestScenarioResponse
+      '400':
+        $ref: '#/components/responses/BadRequest'
+    operationId: testingCreateMarketplaceTestScenario
+    x-maturity: experimental
+    x-stabilitySince: 1.0.0-test
+    x-owner: Quality Assurance
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-warning: For testing purposes only. May change or be removed without notice.
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

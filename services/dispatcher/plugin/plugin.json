@@ -1,0 +1,15 @@
+{
+  "id": "email-plugin",
+  "name": "Email Action Plugin",
+  "version": "1.0.0",
+  "author": "Platform Team",
+  "description": "Sends emails as workflow actions",
+  "minimumRuntimeVersion": "1.0.0",
+  "dependencies": [],
+  "permissions": ["network"],
+  "entry": "EmailPlugin.php",
+  "actions": ["email"],
+  "middleware": [],
+  "workers": [],
+  "eventListeners": []
+}

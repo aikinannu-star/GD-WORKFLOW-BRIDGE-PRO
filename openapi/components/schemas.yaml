@@ -1,0 +1,1009 @@
+HealthResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [ok, degraded, failed]
+    service:
+      type: string
+    version:
+      type: string
+    time:
+      type: string
+      format: date-time
+  required: [status, service, version, time]
+
+ErrorResponse:
+  type: object
+  properties:
+    error:
+      type: string
+    message:
+      type: string
+    details:
+      nullable: true
+      type: object
+  required: [error]
+
+RiskZone:
+  type: object
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    severity:
+      type: string
+      enum: [low, medium, high, critical]
+    description:
+      type: string
+    health_range:
+      type: string
+    volatility_range:
+      type: string
+  required: [id, name, severity]
+
+RiskZoneList:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/RiskZone'
+    total:
+      type: integer
+  required: [items, total]
+
+DriftTenantSummary:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    drift_magnitude:
+      type: number
+    drift_sigma:
+      type: number
+    is_anomalous:
+      type: boolean
+  required: [tenant_id, drift_magnitude, drift_sigma, is_anomalous]
+
+DriftAnalysisResult:
+  type: object
+  properties:
+    metric:
+      type: string
+    days_back:
+      type: integer
+    sort_by:
+      type: string
+    tenants:
+      type: array
+      items:
+        $ref: '#/DriftTenantSummary'
+    fleet_average:
+      type: number
+    fleet_stddev:
+      type: number
+    tenant_count:
+      type: integer
+    anomalous_count:
+      type: integer
+    computed_at:
+      type: string
+      format: date-time
+  required: [metric, days_back, sort_by, tenants, computed_at]
+
+Finding:
+  type: object
+  properties:
+    severity:
+      type: string
+      enum: [info, warning, critical]
+    title:
+      type: string
+    message:
+      type: string
+  required: [severity, title, message]
+
+IntelligenceHealthResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [healthy, warning, critical]
+    trend_confidence:
+      type: number
+      format: float
+    stable_tenants_pct:
+      type: number
+    anomaly_density:
+      type: number
+    remediation_success_rate:
+      nullable: true
+      type: number
+    average_drift_resolution_hours:
+      nullable: true
+      type: number
+    tenant_count:
+      type: integer
+    anomalous_count:
+      type: integer
+    fleet_average:
+      type: number
+    fleet_stddev:
+      type: number
+    findings:
+      type: array
+      items:
+        $ref: '#/Finding'
+    recommendations:
+      type: array
+      items:
+        type: string
+    computed_at:
+      type: string
+      format: date-time
+  required: [status, trend_confidence, tenant_count, anomalous_count, computed_at, findings, recommendations]
+
+RemediationEventRequest:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    action:
+      type: string
+    recommendation_type:
+      type: string
+    details:
+      type: object
+      additionalProperties: true
+  required: [tenant_id, action]
+
+RemediationEvent:
+  type: object
+  properties:
+    id:
+      type: string
+    tenant_id:
+      type: string
+    action:
+      type: string
+    details:
+      type: object
+      additionalProperties: true
+    created_at:
+      type: string
+      format: date-time
+  required: [id, tenant_id, action, created_at]
+
+RemediationResolveRequest:
+  type: object
+  properties:
+    resolved_at:
+      type: string
+      format: date-time
+    resolution_comment:
+      type: string
+    outcome:
+      type: string
+    success:
+      type: boolean
+  required: [resolved_at]
+
+RecommendationEffectivenessItem:
+  type: object
+  properties:
+    recommendation_id:
+      type: string
+    description:
+      type: string
+    effectiveness_score:
+      type: number
+    adopted_count:
+      type: integer
+    total_recommendations:
+      type: integer
+  required: [recommendation_id, description, effectiveness_score]
+
+EffectivenessMetric:
+  type: object
+  properties:
+    value:
+      type: number
+    unit:
+      type: string
+    computed_at:
+      type: string
+      format: date-time
+  required: [value, computed_at]
+
+IntelligenceEffectivenessSummary:
+  type: object
+  properties:
+    recommendations:
+      type: array
+      items:
+        $ref: '#/RecommendationEffectivenessItem'
+    mttd:
+      $ref: '#/EffectivenessMetric'
+    mttr:
+      $ref: '#/EffectivenessMetric'
+    acceptance_rate:
+      $ref: '#/EffectivenessMetric'
+    accuracy:
+      $ref: '#/EffectivenessMetric'
+    computed_at:
+      type: string
+      format: date-time
+  required: [recommendations, mttd, mttr, acceptance_rate, accuracy, computed_at]
+
+LearningPerformance:
+  type: object
+  properties:
+    total_recommendations:
+      type: integer
+    successful_outcomes:
+      type: integer
+    success_rate:
+      type: number
+    computed_at:
+      type: string
+      format: date-time
+  required: [total_recommendations, successful_outcomes, success_rate, computed_at]
+
+AdoptionGapsResponse:
+  type: object
+  properties:
+    gaps:
+      type: array
+      items:
+        type: object
+        properties:
+          area:
+            type: string
+          count:
+            type: integer
+    computed_at:
+      type: string
+      format: date-time
+  required: [gaps, computed_at]
+
+RecurringIssuesResponse:
+  type: object
+  properties:
+    issues:
+      type: array
+      items:
+        type: object
+        properties:
+          issue_id:
+            type: string
+          description:
+            type: string
+          occurrences:
+            type: integer
+    computed_at:
+      type: string
+      format: date-time
+  required: [issues, computed_at]
+
+LearningTrendsResponse:
+  type: object
+  properties:
+    trends:
+      type: array
+      items:
+        type: object
+        properties:
+          metric:
+            type: string
+          delta:
+            type: number
+          direction:
+            type: string
+    computed_at:
+      type: string
+      format: date-time
+  required: [trends, computed_at]
+
+LearningEffectivenessScore:
+  type: object
+  properties:
+    score:
+      type: number
+    level:
+      type: string
+    computed_at:
+      type: string
+      format: date-time
+  required: [score, level, computed_at]
+
+ConsolidatedLearningResponse:
+  type: object
+  properties:
+    performance:
+      $ref: '#/LearningPerformance'
+    adoption_gaps:
+      $ref: '#/AdoptionGapsResponse'
+    recurring_issues:
+      $ref: '#/RecurringIssuesResponse'
+    trends:
+      $ref: '#/LearningTrendsResponse'
+    effectiveness_score:
+      $ref: '#/LearningEffectivenessScore'
+    computed_at:
+      type: string
+      format: date-time
+  required: [performance, adoption_gaps, recurring_issues, trends, effectiveness_score, computed_at]
+
+Product:
+  type: object
+  properties:
+    id:
+      type: string
+    title:
+      type: string
+    description:
+      type: string
+    price:
+      type: number
+      format: float
+    category:
+      type: string
+    brand:
+      type: string
+    image:
+      type: string
+      format: uri
+    inventory:
+      type: integer
+    tenant_id:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+  required: [id, title, price, category, brand, created_at]
+
+ProductCreateRequest:
+  type: object
+  properties:
+    title:
+      type: string
+    description:
+      type: string
+    price:
+      type: number
+      format: float
+    category:
+      type: string
+    brand:
+      type: string
+    image:
+      type: string
+      format: uri
+    inventory:
+      type: integer
+    tenant_id:
+      type: string
+  required: [title, price]
+
+ProductListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Product'
+    total:
+      type: integer
+  required: [items, total]
+
+PurchaseResponse:
+  type: object
+  properties:
+    status:
+      type: string
+    product:
+      $ref: '#/Product'
+    quantity:
+      type: integer
+    message:
+      type: string
+  required: [status, product, quantity, message]
+
+Plugin:
+  type: object
+  properties:
+    id:
+      type: string
+    slug:
+      type: string
+    name:
+      type: string
+    description:
+      type: string
+    author:
+      type: string
+    version:
+      type: string
+    manifest_url:
+      type: string
+      format: uri
+    published:
+      type: boolean
+    tenant_id:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      nullable: true
+      type: string
+      format: date-time
+  required: [id, slug, name, version, published, created_at]
+
+PluginCreateRequest:
+  type: object
+  properties:
+    name:
+      type: string
+    version:
+      type: string
+    description:
+      type: string
+    author:
+      type: string
+    manifest_url:
+      type: string
+      format: uri
+    tenant_id:
+      type: string
+  required: [name, version]
+
+PluginUpdateRequest:
+  type: object
+  properties:
+    name:
+      type: string
+    version:
+      type: string
+    description:
+      type: string
+    author:
+      type: string
+    manifest_url:
+      type: string
+      format: uri
+    published:
+      type: boolean
+    tenant_id:
+      type: string
+
+PluginListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Plugin'
+    total:
+      type: integer
+  required: [items, total]
+
+PluginKey:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    public_key:
+      type: string
+    label:
+      type: string
+    revoked:
+      type: boolean
+    created_at:
+      type: string
+      format: date-time
+    revoked_at:
+      nullable: true
+      type: string
+      format: date-time
+  required: [id, plugin_id, public_key, revoked, created_at]
+
+PluginKeyCreateRequest:
+  type: object
+  properties:
+    public_key:
+      type: string
+    label:
+      type: string
+  required: [public_key]
+
+PluginKeyListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/PluginKey'
+    total:
+      type: integer
+  required: [items, total]
+
+PluginVersion:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    version:
+      type: string
+    manifest_url:
+      nullable: true
+      type: string
+      format: uri
+    manifest:
+      nullable: true
+      type: object
+      additionalProperties: true
+    manifest_validated:
+      type: boolean
+    signature_verified:
+      type: boolean
+    changelog:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+  required: [id, plugin_id, version, manifest_validated, signature_verified, created_at]
+
+PluginVersionCreateRequest:
+  type: object
+  properties:
+    version:
+      type: string
+    manifest_url:
+      type: string
+      format: uri
+    manifest:
+      type: object
+      additionalProperties: true
+    signature:
+      type: string
+    public_key:
+      type: string
+    changelog:
+      type: string
+  required: [version]
+
+PluginVersionListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/PluginVersion'
+    total:
+      type: integer
+  required: [items, total]
+
+PluginInstall:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    tenant_id:
+      type: string
+    version:
+      type: string
+    status:
+      type: string
+    installed_at:
+      type: string
+      format: date-time
+    uninstalled_at:
+      nullable: true
+      type: string
+      format: date-time
+    installed_by:
+      type: string
+  required: [id, plugin_id, tenant_id, status, installed_at]
+
+PluginInstallListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/PluginInstall'
+    total:
+      type: integer
+  required: [items, total]
+
+PluginRating:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    tenant_id:
+      type: string
+    rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    comment:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+  required: [id, plugin_id, rating, created_at]
+
+PluginRatingCreateRequest:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    comment:
+      type: string
+  required: [rating]
+
+PluginArtifact:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    version:
+      type: string
+    file_name:
+      type: string
+    path:
+      type: string
+    signature_verified:
+      type: boolean
+    signature:
+      nullable: true
+      type: string
+    public_key:
+      nullable: true
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    download_base64:
+      nullable: true
+      type: string
+  required: [id, plugin_id, version, file_name, signature_verified, created_at]
+
+PluginArtifactCreateRequest:
+  type: object
+  properties:
+    file_name:
+      type: string
+    artifact_base64:
+      type: string
+    signature:
+      type: string
+    public_key:
+      type: string
+  required: [file_name, artifact_base64]
+
+Snapshot:
+  type: object
+  properties:
+    id:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+  required: [id, created_at]
+
+SnapshotListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Snapshot'
+    total:
+      type: integer
+  required: [items, total]
+
+Tenant:
+  type: object
+  properties:
+    id:
+      type: string
+  required: [id]
+
+TenantListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Tenant'
+    total:
+      type: integer
+  required: [items, total]
+
+TenantStatsResponse:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    health_score:
+      type: number
+    health_status:
+      type: string
+    install_count:
+      type: integer
+    findings:
+      type: array
+      items:
+        $ref: '#/Finding'
+    missing_deps:
+      type: array
+      items:
+        type: string
+    revoked_key_count:
+      type: integer
+    health_trend:
+      type: string
+    health_delta:
+      type: integer
+    volatility_score:
+      type: number
+    volatility_status:
+      type: string
+    drift_status:
+      type: string
+    last_updated:
+      type: string
+      format: date-time
+  required: [tenant_id, health_score, health_status, install_count, findings, revoked_key_count, health_trend, health_delta, volatility_score, drift_status]
+
+TenantTrendResponse:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    history_points:
+      type: integer
+    current_snapshot:
+      type: object
+      additionalProperties: true
+    trends:
+      type: object
+      additionalProperties: true
+    history:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required: [tenant_id, history_points, current_snapshot, trends, history]
+
+RemediationPreviewResponse:
+  type: object
+  properties:
+    action:
+      type: string
+    current_health:
+      type: integer
+    projected_health:
+      type: integer
+    health_impact:
+      type: integer
+    changes:
+      type: array
+      items:
+        type: string
+    confidence:
+      type: string
+    safe_to_execute:
+      type: boolean
+  required: [action, current_health, projected_health, health_impact, confidence, safe_to_execute]
+
+PlatformDashboardResponse:
+  type: object
+  properties:
+    platform_health_score:
+      type: number
+    platform_health_status:
+      type: string
+    at_risk_tenants:
+      type: integer
+    critical_alerts:
+      type: integer
+    total_active_installs:
+      type: integer
+    total_remediations_7d:
+      type: integer
+    fleet_volatility:
+      type: number
+    health_distribution:
+      type: object
+      additionalProperties:
+        type: integer
+    drift_summary:
+      type: object
+      properties:
+        governance_drift:
+          type: integer
+        revocation_drift:
+          type: integer
+    tenant_count:
+      type: integer
+    cached_at:
+      type: string
+      format: date-time
+  required: [platform_health_score, platform_health_status, at_risk_tenants, critical_alerts, total_active_installs, total_remediations_7d, fleet_volatility, health_distribution, drift_summary, tenant_count, cached_at]
+
+PlatformOverviewItem:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    health_score:
+      type: number
+    health_status:
+      type: string
+    install_count:
+      type: integer
+    finding_count:
+      type: integer
+    critical_finding_count:
+      type: integer
+    missing_deps_count:
+      type: integer
+    revoked_key_count:
+      type: integer
+    health_trend:
+      type: string
+    health_delta:
+      type: integer
+    volatility_score:
+      type: number
+    volatility_status:
+      type: string
+    drift_status:
+      type: string
+    last_updated:
+      type: string
+      format: date-time
+  required: [tenant_id, health_score, health_status, install_count, finding_count, critical_finding_count, health_trend, health_delta, volatility_score, drift_status, last_updated]
+
+PlatformRankingsResponse:
+  type: object
+  properties:
+    healthiest_tenants:
+      type: array
+      items:
+        $ref: '#/PlatformOverviewItem'
+    most_improved_tenants:
+      type: array
+      items:
+        $ref: '#/PlatformOverviewItem'
+    highest_risk_tenants:
+      type: array
+      items:
+        $ref: '#/PlatformOverviewItem'
+    cached_at:
+      type: string
+      format: date-time
+  required: [healthiest_tenants, most_improved_tenants, highest_risk_tenants, cached_at]
+
+PlatformDriftSummaryResponse:
+  type: object
+  properties:
+    no_drift:
+      type: integer
+    governance_drift:
+      type: integer
+    revocation_drift:
+      type: integer
+    drifted_tenants:
+      type: array
+      items:
+        type: object
+        properties:
+          tenant_id:
+            type: string
+          drift_type:
+            type: string
+          health_score:
+            type: number
+    cached_at:
+      type: string
+      format: date-time
+  required: [no_drift, governance_drift, revocation_drift, drifted_tenants, cached_at]
+
+TimeSeriesPoint:
+  type: object
+  properties:
+    timestamp:
+      type: string
+      format: date-time
+    value:
+      type: number
+  required: [timestamp, value]
+
+TimeSeriesResponse:
+  type: object
+  properties:
+    tenant_id:
+      nullable: true
+      type: string
+    metric:
+      type: string
+    period:
+      type: string
+    items:
+      type: array
+      items:
+        $ref: '#/TimeSeriesPoint'
+    comparison:
+      nullable: true
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required: [metric, period, items]
+
+PlatformOverviewResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+    total_tenants:
+      type: integer
+    average_health:
+      type: number
+    average_volatility:
+      type: number
+    updated_at:
+      type: string
+      format: date-time
+    cached_at:
+      type: integer
+  required: [items, total_tenants, average_health, average_volatility, updated_at, cached_at]
+
+TestScenarioRequest:
+  type: object
+  properties:
+    scenario:
+      type: string
+      enum: [healthy, degraded, drift, weighted, improved, risk, reset]
+  required: [scenario]
+
+TestScenarioResponse:
+  type: object
+  properties:
+    status:
+      type: string
+    scenario:
+      type: object
+      nullable: true
+  required: [status]
+
+DeleteResponse:
+  type: object
+  properties:
+    status:
+      type: string
+  required: [status]

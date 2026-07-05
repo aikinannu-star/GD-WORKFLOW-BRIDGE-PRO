@@ -21,6 +21,25 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./license-server/migrations/postgres.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
 
+  mysql:
+    image: mysql:8-alpine
+    container_name: gdwb_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: gdwb_decision_audit
+      MYSQL_USER: ${MYSQL_USER:-gdwb_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-gdwb_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   migrate:
     image: postgres:15-alpine
     container_name: gdwb_migrate
@@ -181,6 +200,56 @@ services:
       SERVICE: usage
       SERVICE_PORT: "8007"
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: gdwb_ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    environment:
+      OLLAMA_MODELS_PATH: /ollama/models
+    volumes:
+      - ./services/assistant/ollama:/ollama
+    command: ["serve", "--host", "0.0.0.0", "--port", "11434"]
+
+  assistant-service:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.php-service
+    container_name: gdwb_assistant_service
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    ports:
+      - "8017:8017"
+    volumes:
+      - ./services/assistant:/app/services/assistant
+      - ./services/lib:/app/services/lib
+      - ./services/data:/app/services/data
+    environment:
+      ASSISTANT_LLM_API_URL: ${ASSISTANT_LLM_API_URL:-http://ollama:11434/v1/completions}
+      ASSISTANT_LLM_MODEL: ${ASSISTANT_LLM_MODEL:-mistral}
+      SERVICE: assistant
+      SERVICE_PORT: "8017"
+
+  dispatcher-service:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.php-service
+    container_name: gdwb_dispatcher_service
+    restart: unless-stopped
+    depends_on:
+      - assistant-service
+    ports:
+      - "8020:8020"
+    volumes:
+      - ./services/dispatcher:/app/services/dispatcher
+      - ./services/lib:/app/services/lib
+      - ./services/data:/app/services/data
+    environment:
+      SERVICE: dispatcher
+      SERVICE_PORT: "8020"
+
   gateway-service:
     build:
       context: .
@@ -193,6 +262,7 @@ services:
       - cms-service
       - billing-service
       - usage-service
+      - assistant-service
       - redis
     ports:
       - "8000:8000"
@@ -213,6 +283,34 @@ services:
       retries: 10
       start_period: 5s
 
+  decision-audit-service:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.php-service
+    container_name: gdwb_decision_audit_service
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./services/decision-audit:/app/services/decision-audit
+      - ./services/lib:/app/services/lib
+      - ./services/data:/app/services/data
+    environment:
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${MYSQL_USER:-gdwb_user}
+      DB_PASS: ${MYSQL_PASSWORD:-gdwb_password}
+      SERVICE: decision-audit
+      SERVICE_PORT: "8004"
+    healthcheck:
+      test: ["CMD-SHELL", "php -r \"$$r=@file_get_contents('http://127.0.0.1:8004/health'); if (!$$r) exit(1);\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
   ci-runner:
     build:
       context: .
@@ -228,6 +326,8 @@ services:
 
 volumes:
   pgdata:
+    driver: local
+  mysql_data:
     driver: local
   redis_data:
     driver: local

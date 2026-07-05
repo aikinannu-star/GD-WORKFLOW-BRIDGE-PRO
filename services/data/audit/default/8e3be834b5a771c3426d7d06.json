@@ -1,0 +1,52 @@
+{
+    "workflowId": "conditional",
+    "tenantId": "default",
+    "version": 1,
+    "action": "execute",
+    "performedBy": "system",
+    "status": "completed",
+    "details": {
+        "trace": [
+            {
+                "id": "trigger",
+                "type": "trigger",
+                "status": "completed",
+                "output": {
+                    "message": "workflow_started"
+                },
+                "logs": []
+            },
+            {
+                "id": "check",
+                "type": "condition",
+                "status": "completed",
+                "output": {
+                    "condition_result": false
+                },
+                "logs": []
+            },
+            {
+                "id": "log_false",
+                "type": "action",
+                "status": "completed",
+                "output": {
+                    "message": "False branch executed"
+                },
+                "logs": [
+                    "False branch executed"
+                ]
+            },
+            {
+                "id": "end",
+                "type": "end",
+                "status": "completed",
+                "output": {
+                    "message": "workflow_finished"
+                },
+                "logs": []
+            }
+        ]
+    },
+    "eventId": "8e3be834b5a771c3426d7d06",
+    "timestamp": "2026-07-05T14:11:50+00:00"
+}

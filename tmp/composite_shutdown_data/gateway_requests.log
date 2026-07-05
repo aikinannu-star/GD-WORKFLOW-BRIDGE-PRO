@@ -1,0 +1,1 @@
+{"id":"81a63384d210ed03","method":"POST","path":"/api/v1/assistant/sessions","service":"assistant","client_ip":"127.0.0.1","status":201,"time_ms":30,"time":"2026-07-05T14:12:51+00:00","user":{"id":"test-key","email":"test-suite"}}

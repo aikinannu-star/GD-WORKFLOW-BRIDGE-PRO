@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GD Workflow",
+  "type": "object",
+  "required": ["workflow_id", "name", "version", "steps"],
+  "properties": {
+    "workflow_id": {"type": "string"},
+    "name": {"type": "string"},
+    "description": {"type": "string"},
+    "version": {"type": "string"},
+    "tenant_id": {"type": ["string", "null"]},
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "name"],
+        "properties": {
+          "id": {"type": "string"},
+          "type": {"type": "string"},
+          "name": {"type": "string"},
+          "settings": {"type": "object"},
+          "next": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "metadata": {"type": "object"}
+  }
+}

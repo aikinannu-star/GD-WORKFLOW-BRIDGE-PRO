@@ -1,0 +1,26 @@
+/api/v1/intelligence-health:
+  get:
+    summary: Intelligence health and anomaly summary
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Intelligence health summary
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/IntelligenceHealthResponse
+      '500':
+        description: Internal error
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ErrorResponse
+    operationId: intelligenceListIntelligencehealth
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

@@ -1,0 +1,897 @@
+/api/v1/marketplace/products:
+  get:
+    summary: List marketplace products
+    tags:
+    - Marketplace
+    parameters:
+    - name: tenant_id
+      in: query
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Product list
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ProductListResponse
+    operationId: marketplaceListMarketplaceProducts
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+  post:
+    summary: Create a marketplace product
+    tags:
+    - Marketplace
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/ProductCreateRequest
+    responses:
+      '201':
+        description: Product created
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/Product
+      '400':
+        $ref: '#/components/responses/BadRequest'
+    operationId: marketplaceCreateMarketplaceProducts
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/products/{productId}:
+  get:
+    summary: Get product by ID
+    tags:
+    - Marketplace
+    parameters:
+    - name: productId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Product detail
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/Product
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceGetMarketplaceProducts
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/products/{productId}/purchase:
+  post:
+    summary: Simulate product purchase
+    tags:
+    - Marketplace
+    parameters:
+    - name: productId
+      in: path
+      required: true
+      schema:
+        type: string
+    requestBody:
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              quantity:
+                type: integer
+                minimum: 1
+                default: 1
+    responses:
+      '200':
+        description: Purchase result
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PurchaseResponse
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplaceProductsPurchase
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins:
+  get:
+    summary: List plugins
+    tags:
+    - Marketplace
+    parameters:
+    - name: tenant_id
+      in: query
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin list
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginListResponse
+    operationId: marketplaceListMarketplacePlugins
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+  post:
+    summary: Create a plugin metadata record
+    tags:
+    - Marketplace
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/PluginCreateRequest
+    responses:
+      '201':
+        description: Plugin created
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/Plugin
+      '400':
+        $ref: '#/components/responses/BadRequest'
+      '409':
+        description: Duplicate plugin
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ErrorResponse
+    operationId: marketplaceCreateMarketplacePlugins
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}:
+  get:
+    summary: Get plugin metadata
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin metadata
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/Plugin
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceGetMarketplacePlugins
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+  put:
+    summary: Update plugin metadata
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/PluginUpdateRequest
+    responses:
+      '200':
+        description: Plugin updated
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/Plugin
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceUpdateMarketplacePlugins
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/publish:
+  post:
+    summary: Publish a plugin
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin published
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/Plugin
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsPublish
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/unpublish:
+  post:
+    summary: Unpublish a plugin
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin unpublished
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/Plugin
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsUnpublish
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/keys:
+  get:
+    summary: List plugin signing keys
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin key list
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginKeyListResponse
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceListMarketplacePluginsKeys
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+  post:
+    summary: Register a new plugin key
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/PluginKeyCreateRequest
+    responses:
+      '201':
+        description: Plugin key created
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginKey
+      '400':
+        $ref: '#/components/responses/BadRequest'
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsKeys
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}:
+  get:
+    summary: Get a plugin key by ID
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: keyId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin key
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginKey
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceGetMarketplacePluginsKeys
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+  delete:
+    summary: Delete a plugin key
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: keyId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Key deleted
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/DeleteResponse
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceDeleteMarketplacePluginsKeys
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}/revoke:
+  post:
+    summary: Revoke a plugin key
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: keyId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin key revoked
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginKey
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsKeysRevoke
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}/activate:
+  post:
+    summary: Reactivate a revoked plugin key
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: keyId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin key activated
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginKey
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsKeysActivate
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/versions:
+  get:
+    summary: List plugin versions
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin version list
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginVersionListResponse
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceListMarketplacePluginsVersions
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+  post:
+    summary: Publish a new plugin version
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/PluginVersionCreateRequest
+    responses:
+      '201':
+        description: Plugin version created
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginVersion
+      '400':
+        $ref: '#/components/responses/BadRequest'
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsVersions
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/versions/{identifier}:
+  get:
+    summary: Get plugin version detail by version identifier or ID
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: identifier
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin version detail
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginVersion
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceGetMarketplacePluginsVersions
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/installs:
+  get:
+    summary: List installs for a plugin
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: tenant_id
+      in: query
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin install list
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginInstallListResponse
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceGetMarketplacePluginsInstalls
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/install:
+  post:
+    summary: Install a plugin for a tenant
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tenant_id:
+                type: string
+              version:
+                type: string
+              auto_install_dependencies:
+                type: boolean
+                default: false
+    responses:
+      '200':
+        description: Plugin installed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                install:
+                  $ref: ./components/schemas.yaml#/PluginInstall
+      '400':
+        $ref: '#/components/responses/BadRequest'
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsInstall
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/uninstall:
+  post:
+    summary: Uninstall a plugin for a tenant
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tenant_id:
+                type: string
+    responses:
+      '200':
+        description: Plugin uninstalled
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                install:
+                  $ref: ./components/schemas.yaml#/PluginInstall
+      '400':
+        $ref: '#/components/responses/BadRequest'
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsUninstall
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/ratings:
+  get:
+    summary: List plugin ratings
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Plugin rating list
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: ./components/schemas.yaml#/PluginRating
+                total:
+                  type: integer
+                average:
+                  type: number
+                  nullable: true
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceGetMarketplacePluginsRatings
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+  post:
+    summary: Submit a plugin rating
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/PluginRatingCreateRequest
+    responses:
+      '201':
+        description: Rating created
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginRating
+      '400':
+        $ref: '#/components/responses/BadRequest'
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsRatings
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/versions/{version}/artifact:
+  get:
+    summary: List plugin artifacts for a version
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: version
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Artifact list
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: ./components/schemas.yaml#/PluginArtifact
+                total:
+                  type: integer
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceListMarketplacePluginsVersionsArtifact
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+  post:
+    summary: Upload a plugin artifact for a version
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: version
+      in: path
+      required: true
+      schema:
+        type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/PluginArtifactCreateRequest
+    responses:
+      '201':
+        description: Artifact uploaded
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginArtifact
+      '400':
+        $ref: '#/components/responses/BadRequest'
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceCreateMarketplacePluginsVersionsArtifact
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/plugins/{pluginId}/versions/{version}/artifact/{artifactId}:
+  get:
+    summary: Download plugin artifact metadata and base64 payload
+    tags:
+    - Marketplace
+    parameters:
+    - name: pluginId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: version
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: artifactId
+      in: path
+      required: true
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Artifact details and base64 payload
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginArtifact
+      '404':
+        $ref: '#/components/responses/NotFound'
+    operationId: marketplaceGetMarketplacePluginsVersionsArtifact
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/marketplace/installs:
+  get:
+    summary: List installs across tenants
+    tags:
+    - Marketplace
+    parameters:
+    - name: tenant_id
+      in: query
+      schema:
+        type: string
+    responses:
+      '200':
+        description: Install list
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/PluginInstallListResponse
+    operationId: marketplaceListMarketplaceInstalls
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

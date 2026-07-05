@@ -1,0 +1,32 @@
+[
+    {
+        "id": "5bcab8cc5e462d8513bb138413951a72",
+        "user_id": "endurance-cycle-1",
+        "created_at": "2026-07-05T14:12:52+00:00",
+        "messages": []
+    },
+    {
+        "id": "4223b14c29af1fb77b5b21dd9aa546d4",
+        "user_id": "endurance-cycle-2",
+        "created_at": "2026-07-05T14:12:52+00:00",
+        "messages": []
+    },
+    {
+        "id": "c677cfe938ab185e043d2e1c729e9afb",
+        "user_id": "endurance-cycle-3",
+        "created_at": "2026-07-05T14:12:52+00:00",
+        "messages": []
+    },
+    {
+        "id": "3a25986475b4d48c4bd3f2345e62f276",
+        "user_id": "endurance-cycle-4",
+        "created_at": "2026-07-05T14:12:52+00:00",
+        "messages": []
+    },
+    {
+        "id": "8f01b90e32c2a15672731da1bd5737e5",
+        "user_id": "endurance-cycle-5",
+        "created_at": "2026-07-05T14:12:53+00:00",
+        "messages": []
+    }
+]

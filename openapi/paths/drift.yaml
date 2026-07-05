@@ -1,0 +1,51 @@
+/api/v1/drift-analysis:
+  get:
+    summary: Compute drift analysis across tenants
+    tags:
+    - Drift Analysis
+    parameters:
+    - name: metric
+      in: query
+      schema:
+        type: string
+        enum:
+        - health_score
+        - install_count
+        - rating_count
+        default: health_score
+    - name: days_back
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 7
+    - name: sort_by
+      in: query
+      schema:
+        type: string
+        enum:
+        - drift_magnitude
+        - health_score
+        - tenant_id
+        default: drift_magnitude
+    responses:
+      '200':
+        description: Drift analysis result
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/DriftAnalysisResult
+      '500':
+        description: Internal error
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ErrorResponse
+    operationId: driftanalysisListDriftanalysis
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Analytics Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

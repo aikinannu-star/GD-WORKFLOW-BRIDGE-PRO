@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-06-25T22:51:55.849Z",
+  "environment": "ci",
+  "metrics": {
+    "recommendations": [
+      {
+        "type": "install_missing_dependencies",
+        "generated_count": 12,
+        "accepted_count": 11,
+        "adoption_rate": 0.92,
+        "executed_count": 10,
+        "success_count": 9,
+        "success_rate": 0.9,
+        "avg_health_improvement": 12.5,
+        "avg_resolution_hours": 1.2
+      }
+    ],
+    "mttd": {
+      "mttd_hours_avg": 2.1,
+      "mttd_hours_p95": 4.5,
+      "recent_detections": 8,
+      "anomalies_detected_7d": 12
+    },
+    "mttr": {
+      "mttr_hours_avg": 3.8,
+      "mttr_hours_p95": 6.2,
+      "resolved_count_7d": 10,
+      "unresolved_count": 2
+    },
+    "acceptance_rate": {
+      "overall_acceptance_rate": 0.88,
+      "by_type": {
+        "install_missing_dependencies": 0.92,
+        "reactivate_keys": 0.85
+      },
+      "trend_7d": 0.89,
+      "trend_30d": 0.87
+    },
+    "accuracy": {
+      "detected_anomalies_7d": 12,
+      "confirmed_true_anomalies": 10,
+      "false_positives": 2,
+      "precision": 0.83,
+      "false_positive_rate": 0.17
+    },
+    "computed_at": "2026-06-25T22:51:55.863Z"
+  },
+  "test_results": {
+    "contract_tests": {
+      "name": "Effectiveness Contract Tests",
+      "status": "PASS",
+      "note": "Skipped in offline mode",
+      "severity": "normal"
+    },
+    "sla_mttd": {
+      "name": "MTTD < 6 hours",
+      "status": "PASS",
+      "value": 2.1,
+      "target": 6,
+      "severity": "critical"
+    },
+    "sla_mttr": {
+      "name": "MTTR < 8 hours",
+      "status": "PASS",
+      "value": 3.8,
+      "target": 8,
+      "severity": "critical"
+    },
+    "sla_accuracy": {
+      "name": "Accuracy (Precision) > 85%",
+      "status": "WARN",
+      "value": "83.0",
+      "target": 85,
+      "severity": "critical"
+    },
+    "sla_false_positives": {
+      "name": "False Positive Rate < 15%",
+      "status": "WARN",
+      "value": "17.0",
+      "target": 15,
+      "severity": "critical"
+    },
+    "sla_acceptance": {
+      "name": "Recommendation Acceptance > 80%",
+      "status": "PASS",
+      "value": "88.0",
+      "target": 80,
+      "severity": "normal"
+    }
+  },
+  "status": "PASS",
+  "sla_targets": {
+    "mttd_hours_avg": {
+      "target": 6,
+      "unit": "hours",
+      "label": "Mean Time To Detect"
+    },
+    "mttr_hours_avg": {
+      "target": 8,
+      "unit": "hours",
+      "label": "Mean Time To Resolve"
+    },
+    "acceptance_rate": {
+      "target": 0.85,
+      "unit": "percentage",
+      "label": "Recommendation Acceptance"
+    },
+    "precision": {
+      "target": 0.85,
+      "unit": "percentage",
+      "label": "Intelligence Accuracy"
+    }
+  }
+}

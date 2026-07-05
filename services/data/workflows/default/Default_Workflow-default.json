@@ -1,0 +1,33 @@
+{
+    "id": "default",
+    "workflow_id": "default",
+    "name": "Default Workflow",
+    "version": 1,
+    "tenantId": "default",
+    "steps": [
+        {
+            "id": "trigger",
+            "type": "trigger",
+            "next": [
+                "log_action"
+            ]
+        },
+        {
+            "id": "log_action",
+            "type": "action",
+            "settings": {
+                "action_type": "log",
+                "message": "Workflow executed successfully by assistant."
+            },
+            "next": [
+                "end"
+            ]
+        },
+        {
+            "id": "end",
+            "type": "end"
+        }
+    ],
+    "createdAt": "2026-07-05T14:12:32+00:00",
+    "updatedAt": "2026-07-05T14:12:32+00:00"
+}

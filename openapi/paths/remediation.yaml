@@ -1,0 +1,74 @@
+/api/v1/remediation-events:
+  post:
+    summary: Record a remediation recommendation or action
+    tags:
+    - Remediation
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/RemediationEventRequest
+    responses:
+      '201':
+        description: Remediation event created
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/RemediationEvent
+      '400':
+        description: Invalid remediation event
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ErrorResponse
+    operationId: remediationCreateRemediationevents
+    x-maturity: stable
+    x-stabilitySince: 1.3.0
+    x-owner: Remediation Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/remediation-events/{eventId}/resolve:
+  post:
+    summary: Mark a remediation event as resolved
+    tags:
+    - Remediation
+    parameters:
+    - name: eventId
+      in: path
+      required: true
+      schema:
+        type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ./components/schemas.yaml#/RemediationResolveRequest
+    responses:
+      '200':
+        description: Remediation event resolved
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/RemediationEvent
+      '400':
+        description: Invalid resolve payload
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ErrorResponse
+      '404':
+        description: Event not found
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ErrorResponse
+    operationId: remediationCreateRemediationeventsResolve
+    x-maturity: stable
+    x-stabilitySince: 1.3.0
+    x-owner: Remediation Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

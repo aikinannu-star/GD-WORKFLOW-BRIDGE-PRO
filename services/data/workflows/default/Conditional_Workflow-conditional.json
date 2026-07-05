@@ -1,0 +1,57 @@
+{
+    "id": "conditional",
+    "workflow_id": "conditional",
+    "name": "Conditional Workflow",
+    "version": 1,
+    "tenantId": "default",
+    "steps": [
+        {
+            "id": "trigger",
+            "type": "trigger",
+            "next": [
+                "check"
+            ]
+        },
+        {
+            "id": "check",
+            "type": "condition",
+            "settings": {
+                "condition": "query == go_true",
+                "true_next": "log_true",
+                "false_next": "log_false"
+            },
+            "next": [
+                "log_true",
+                "log_false"
+            ]
+        },
+        {
+            "id": "log_true",
+            "type": "action",
+            "settings": {
+                "action_type": "log",
+                "message": "True branch executed"
+            },
+            "next": [
+                "end"
+            ]
+        },
+        {
+            "id": "log_false",
+            "type": "action",
+            "settings": {
+                "action_type": "log",
+                "message": "False branch executed"
+            },
+            "next": [
+                "end"
+            ]
+        },
+        {
+            "id": "end",
+            "type": "end"
+        }
+    ],
+    "createdAt": "2026-07-05T14:12:36+00:00",
+    "updatedAt": "2026-07-05T14:12:36+00:00"
+}

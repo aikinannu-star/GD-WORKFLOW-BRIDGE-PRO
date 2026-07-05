@@ -7,6 +7,20 @@ Set-Location $root
 $logs = Join-Path $root 'logs'
 if (-not (Test-Path $logs)) { New-Item -ItemType Directory -Path $logs | Out-Null }
 
+$env:GATEWAY_USE_LOCALHOST = '1'
+$env:AUTH_JWT_SECRET = 'local-development-secret'
+$env:GATEWAY_AUTH_BASE = 'http://127.0.0.1:8002'
+$env:GATEWAY_TENANT_BASE = 'http://127.0.0.1:8009'
+$env:GATEWAY_CMS_BASE = 'http://127.0.0.1:8004'
+$env:GATEWAY_BILLING_BASE = 'http://127.0.0.1:8003'
+$env:GATEWAY_MARKETPLACE_BASE = 'http://127.0.0.1:8006'
+$env:GATEWAY_MEDIA_BASE = 'http://127.0.0.1:8010'
+$env:GATEWAY_SOCIAL_BASE = 'http://127.0.0.1:8008'
+$env:GATEWAY_FEED_BASE = 'http://127.0.0.1:8011'
+$env:GATEWAY_REALTIME_BASE = 'http://127.0.0.1:8012'
+$env:GATEWAY_USAGE_BASE = 'http://127.0.0.1:8007'
+$env:GATEWAY_LICENSE_BASE = 'http://127.0.0.1:8001'
+
 $services = @(
     @{name='gateway'; port=8000; dir='services/gateway'; file='services/gateway/server.php'},
     @{name='license'; port=8001; dir='license-server'; file='license-server/server.php'},

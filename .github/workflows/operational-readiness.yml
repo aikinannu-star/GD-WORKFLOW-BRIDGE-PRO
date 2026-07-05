@@ -1,0 +1,68 @@
+name: Operational Readiness Suite
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  operational-readiness:
+    name: Run Operational Readiness Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Start marketplace server
+        run: |
+          php -S 127.0.0.1:8006 -t services/marketplace services/marketplace/server.php > /tmp/marketplace.log 2>&1 &
+          for i in {1..30}; do
+            if curl -sSf http://127.0.0.1:8006/operations-center >/dev/null; then
+              echo "server up"; break;
+            fi
+            sleep 1
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install readiness dependencies
+        working-directory: operational-readiness
+        run: |
+          if [ -f package.json ]; then npm ci; fi
+
+      - name: Run readiness suite
+        working-directory: operational-readiness
+        run: |
+          npm run operational:readiness
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: operational-readiness-artifacts
+          path: |
+            operational-readiness/results/**
+            operational-readiness/report/**
+
+      - name: Evaluate recovery SLAs
+        if: always()
+        working-directory: operational-readiness
+        run: |
+          node recovery/recovery-gate.js results
+
+      - name: Fail on critical failures
+        if: always()
+        run: |
+          SUMMARY=operational-readiness/results/summary.json
+          if [ -f "$SUMMARY" ]; then
+            node -e "const fs=require('fs');const s=JSON.parse(fs.readFileSync(process.argv[1])); if(s.some(x=>x.status==='fail'||x.status==='error')){console.error('Critical failures found'); process.exit(1);} console.log('No critical failures');" $SUMMARY
+          else
+            echo 'No summary file to evaluate.'
+          fi

@@ -1,0 +1,50 @@
+{
+    "assistant_timeout_active_requests": {
+        "type": "gauge",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 1,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "assistant_timeout_shutdown_in_progress_total": {
+        "type": "counter",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 8,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "assistant_timeout_shutdown_in_progress": {
+        "type": "gauge",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 0,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "assistant_timeout_shutdown_forced_total": {
+        "type": "counter",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 8,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "id": "memory_6a44bc1e986712.06927074",
+    "tenantId": "tenant-1",
+    "userId": "user-42",
+    "conversationId": null,
+    "type": "preference",
+    "content": "User prefers email updates",
+    "confidence": 0.92,
+    "tags": [
+        "preference"
+    ],
+    "sourceMessages": [],
+    "createdAt": "2026-07-01T07:05:02+00:00",
+    "lastConfirmedAt": "2026-07-01T07:12:03+00:00",
+    "expiresAt": null,
+    "metadata": {
+        "source": "memory",
+        "lastUsedAt": "2026-07-01T07:12:03+00:00"
+    }
+}

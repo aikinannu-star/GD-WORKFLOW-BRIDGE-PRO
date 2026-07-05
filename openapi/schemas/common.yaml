@@ -1,0 +1,28 @@
+HealthResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      enum:
+      - ok
+      - degraded
+      - failed
+    service:
+      type: string
+    version:
+      type: string
+    time:
+      type: string
+      format: date-time
+  required:
+  - status
+  - service
+  - version
+  - time
+DeleteResponse:
+  type: object
+  properties:
+    status:
+      type: string
+  required:
+  - status

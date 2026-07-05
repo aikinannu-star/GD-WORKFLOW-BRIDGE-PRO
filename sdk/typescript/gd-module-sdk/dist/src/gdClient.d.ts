@@ -1,0 +1,64 @@
+export interface GDClientOptions {
+    baseUrls?: Record<string, string>;
+    token?: string | null;
+}
+export declare class GDClient {
+    private baseUrls;
+    private token;
+    constructor(options?: GDClientOptions);
+    setToken(token: string | null): void;
+    getToken(): string | null;
+    private _base;
+    private _defaultPortFor;
+    private _headers;
+    private _sortKeysRecursively;
+    private _canonicalJson;
+    signManifest(manifest: any, privateKeyPem: string): string;
+    getHealth(service: string): Promise<any>;
+    listMarketplaceProducts(): Promise<any>;
+    evaluatePolicy(input: {
+        filePath: string;
+        content: string;
+    }): Promise<any>;
+    trackUsage(tenantId: string, event: string, count?: number): Promise<any>;
+    authRegister(tenantId: string, email: string, password: string): Promise<any>;
+    authLogin(tenantId: string, email: string, password: string): Promise<any>;
+    authIntrospect(token?: string | null): Promise<any>;
+    authRefresh(token?: string | null): Promise<any>;
+    billingCreateSubscription(tenantId: string, customerId: string, planId: string, gateway?: string, currency?: string): Promise<any>;
+    listProjects(query?: Record<string, any>, asUserId?: string | null): Promise<any>;
+    getProject(projectId: string, asUserId?: string | null): Promise<any>;
+    createProject(tenantId: string, title?: string, orderId?: string | null, asUserId?: string | null): Promise<any>;
+    grantProjectAccess(projectId: string, targetUserId: string, asUserId?: string | null): Promise<any>;
+    revokeProjectAccess(projectId: string, targetUserId: string, asUserId?: string | null): Promise<any>;
+    getVaultFiles(projectId: string, asUserId?: string | null): Promise<any>;
+    uploadProjectFile(projectId: string, fileMeta: Record<string, any>, asUserId?: string | null): Promise<any>;
+    listPlugins(): Promise<any>;
+    registerPlugin(pluginMeta?: Record<string, any>): Promise<any>;
+    marketplacePurchase(productId: string, quantity?: number): Promise<any>;
+    listPluginVersions(pluginId: string): Promise<any>;
+    addPluginVersion(pluginId: string, versionMeta?: Record<string, any>): Promise<any>;
+    registerPluginKey(pluginId: string, publicKeyPem: string, label?: string): Promise<any>;
+    listPluginKeys(pluginId: string): Promise<any>;
+    revokePluginKey(pluginId: string, keyId: string): Promise<any>;
+    activatePluginKey(pluginId: string, keyId: string): Promise<any>;
+    deletePluginKey(pluginId: string, keyId: string): Promise<any>;
+    uploadPluginArtifact(pluginId: string, version: string, artifactMeta?: Record<string, any>): Promise<any>;
+    listPluginArtifacts(pluginId: string, version: string): Promise<any>;
+    downloadPluginArtifact(pluginId: string, version: string, artifactId: string): Promise<any>;
+    verifyArtifact(pluginId: string, artifactPayload: any): Promise<boolean>;
+    installPlugin(pluginId: string, tenantId: string, version?: string | null, options?: Record<string, any>): Promise<any>;
+    uninstallPlugin(pluginId: string, tenantId: string): Promise<any>;
+    listPluginInstalls(pluginId: string, tenantId?: string | null): Promise<any>;
+    updatePlugin(pluginId: string, payload?: Record<string, any>): Promise<any>;
+    publishPlugin(pluginId: string): Promise<any>;
+    unpublishPlugin(pluginId: string): Promise<any>;
+    ratePlugin(pluginId: string, rating: number, comment?: string, tenantId?: string | null): Promise<any>;
+    listPluginRatings(pluginId: string): Promise<any>;
+    createTenant(name: string, domain: string, branding?: Record<string, any>, settings?: Record<string, any>, feature_flags?: Record<string, any>): Promise<any>;
+    getTenant(tenantId: string): Promise<any>;
+    updateTenant(tenantId: string, payload?: Record<string, any>): Promise<any>;
+    getTenantSettings(tenantId: string): Promise<any>;
+    listTenants(): Promise<any>;
+}
+export default GDClient;

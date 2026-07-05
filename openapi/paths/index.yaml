@@ -1,0 +1,106 @@
+/health:
+  $ref: ./health.yaml#/health
+/api/v1/risk-zones:
+  $ref: ./risk-zones.yaml#/api~1v1~1risk-zones
+/api/v1/risk-zones/classify:
+  $ref: ./risk-zones.yaml#/api~1v1~1risk-zones~1classify
+/api/v1/drift-analysis:
+  $ref: ./drift.yaml#/api~1v1~1drift-analysis
+/api/v1/intelligence-health:
+  $ref: ./intelligence.yaml#/api~1v1~1intelligence-health
+/api/v1/remediation-events:
+  $ref: ./remediation.yaml#/api~1v1~1remediation-events
+/api/v1/remediation-events/{eventId}/resolve:
+  $ref: ./remediation.yaml#/api~1v1~1remediation-events~1{eventId}~1resolve
+/api/v1/intelligence-effectiveness/recommendations:
+  $ref: ./effectiveness.yaml#/api~1v1~1intelligence-effectiveness~1recommendations
+/api/v1/intelligence-effectiveness/mttd:
+  $ref: ./effectiveness.yaml#/api~1v1~1intelligence-effectiveness~1mttd
+/api/v1/intelligence-effectiveness/mttr:
+  $ref: ./effectiveness.yaml#/api~1v1~1intelligence-effectiveness~1mttr
+/api/v1/intelligence-effectiveness/acceptance-rate:
+  $ref: ./effectiveness.yaml#/api~1v1~1intelligence-effectiveness~1acceptance-rate
+/api/v1/intelligence-effectiveness/accuracy:
+  $ref: ./effectiveness.yaml#/api~1v1~1intelligence-effectiveness~1accuracy
+/api/v1/intelligence-effectiveness:
+  $ref: ./effectiveness.yaml#/api~1v1~1intelligence-effectiveness
+/api/v1/intelligence-learning/performance:
+  $ref: ./learning.yaml#/api~1v1~1intelligence-learning~1performance
+/api/v1/intelligence-learning/adoption-gaps:
+  $ref: ./learning.yaml#/api~1v1~1intelligence-learning~1adoption-gaps
+/api/v1/intelligence-learning/recurring-issues:
+  $ref: ./learning.yaml#/api~1v1~1intelligence-learning~1recurring-issues
+/api/v1/intelligence-learning/trends:
+  $ref: ./learning.yaml#/api~1v1~1intelligence-learning~1trends
+/api/v1/intelligence-learning/effectiveness-score:
+  $ref: ./learning.yaml#/api~1v1~1intelligence-learning~1effectiveness-score
+/api/v1/intelligence-learning:
+  $ref: ./learning.yaml#/api~1v1~1intelligence-learning
+/api/v1/marketplace/products:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1products
+/api/v1/marketplace/products/{productId}:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1products~1{productId}
+/api/v1/marketplace/products/{productId}/purchase:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1products~1{productId}~1purchase
+/api/v1/marketplace/plugins:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins
+/api/v1/marketplace/plugins/{pluginId}:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}
+/api/v1/marketplace/plugins/{pluginId}/publish:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1publish
+/api/v1/marketplace/plugins/{pluginId}/unpublish:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1unpublish
+/api/v1/marketplace/plugins/{pluginId}/keys:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1keys
+/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1keys~1{keyId}
+/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}/revoke:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1keys~1{keyId}~1revoke
+/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}/activate:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1keys~1{keyId}~1activate
+/api/v1/marketplace/plugins/{pluginId}/versions:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1versions
+/api/v1/marketplace/plugins/{pluginId}/versions/{identifier}:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1versions~1{identifier}
+/api/v1/marketplace/plugins/{pluginId}/installs:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1installs
+/api/v1/marketplace/plugins/{pluginId}/install:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1install
+/api/v1/marketplace/plugins/{pluginId}/uninstall:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1uninstall
+/api/v1/marketplace/plugins/{pluginId}/ratings:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1ratings
+/api/v1/marketplace/plugins/{pluginId}/versions/{version}/artifact:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1versions~1{version}~1artifact
+/api/v1/marketplace/plugins/{pluginId}/versions/{version}/artifact/{artifactId}:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1plugins~1{pluginId}~1versions~1{version}~1artifact~1{artifactId}
+/api/v1/marketplace/snapshots:
+  $ref: ./snapshots.yaml#/api~1v1~1marketplace~1snapshots
+/api/v1/marketplace/tenants:
+  $ref: ./tenants.yaml#/api~1v1~1marketplace~1tenants
+/api/v1/marketplace/platform/dashboard:
+  $ref: ./operations.yaml#/api~1v1~1marketplace~1platform~1dashboard
+/api/v1/marketplace/platform/tenants-overview:
+  $ref: ./operations.yaml#/api~1v1~1marketplace~1platform~1tenants-overview
+/api/v1/marketplace/platform/rankings:
+  $ref: ./operations.yaml#/api~1v1~1marketplace~1platform~1rankings
+/api/v1/marketplace/platform/drift-summary:
+  $ref: ./operations.yaml#/api~1v1~1marketplace~1platform~1drift-summary
+/api/v1/marketplace/platform/timeseries:
+  $ref: ./operations.yaml#/api~1v1~1marketplace~1platform~1timeseries
+/api/v1/marketplace/platform/overview:
+  $ref: ./operations.yaml#/api~1v1~1marketplace~1platform~1overview
+/api/v1/marketplace/test/scenario:
+  $ref: ./operations.yaml#/api~1v1~1marketplace~1test~1scenario
+/api/v1/marketplace/installs:
+  $ref: ./marketplace.yaml#/api~1v1~1marketplace~1installs
+/api/v1/marketplace/tenants/{tenantId}:
+  $ref: ./tenants.yaml#/api~1v1~1marketplace~1tenants~1{tenantId}
+/api/v1/marketplace/tenants/{tenantId}/remediate/install-missing-deps:
+  $ref: ./tenants.yaml#/api~1v1~1marketplace~1tenants~1{tenantId}~1remediate~1install-missing-deps
+/api/v1/marketplace/tenants/{tenantId}/remediate/activate-keys:
+  $ref: ./tenants.yaml#/api~1v1~1marketplace~1tenants~1{tenantId}~1remediate~1activate-keys
+/api/v1/marketplace/tenants/{tenantId}/trends:
+  $ref: ./tenants.yaml#/api~1v1~1marketplace~1tenants~1{tenantId}~1trends
+/api/v1/marketplace/tenants/{tenantId}/remediate/{action}/preview:
+  $ref: ./tenants.yaml#/api~1v1~1marketplace~1tenants~1{tenantId}~1remediate~1{action}~1preview

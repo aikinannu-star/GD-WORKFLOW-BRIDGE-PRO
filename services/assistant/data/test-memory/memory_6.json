@@ -1,0 +1,17 @@
+{
+    "id": "memory_6",
+    "tenantId": "default",
+    "userId": "tester",
+    "conversationId": null,
+    "type": "note",
+    "content": "memory 6",
+    "confidence": 1,
+    "tags": [
+        "alpha"
+    ],
+    "sourceMessages": [],
+    "createdAt": "2026-07-05T14:12:42+00:00",
+    "lastConfirmedAt": "2026-07-05T14:12:42+00:00",
+    "expiresAt": null,
+    "metadata": []
+}

@@ -1,0 +1,30 @@
+{
+  "name": "gd-workflow-bridge-pro-reference-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "vitest run",
+    "test:workflows": "vitest run --run tests",
+    "ci:validate": "npm run build && npm run test:workflows",
+    "example:marketplace": "ts-node src/examples/marketplace/browse.ts",
+    "example:intelligence": "ts-node src/examples/intelligence/health.ts",
+    "example:learning": "ts-node src/examples/intelligence/learning.ts",
+    "example:platform": "ts-node src/examples/platform/overview.ts",
+    "example:tenant-health": "ts-node src/examples/tenant/tenant-health.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "@gd-workflow-bridge-pro/api-sdk": "file:../build/sdk-typescript"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.0",
+    "vitest": "^0.34.0",
+    "axios": "^1.6.0",
+    "@types/node": "^20.0.0"
+  }
+}

@@ -1,0 +1,263 @@
+{
+    "name": "assistantExecution",
+    "startedAt": 1783252103.557724,
+    "finishedAt": 1783252106.490034,
+    "duration": 2.932310104370117,
+    "stagesExecuted": [
+        {
+            "name": "planning",
+            "details": {
+                "priority": 200
+            }
+        },
+        {
+            "name": "memory",
+            "details": {
+                "priority": 180
+            }
+        },
+        {
+            "name": "context",
+            "details": {
+                "priority": 160
+            }
+        },
+        {
+            "name": "prompt",
+            "details": {
+                "priority": 140
+            }
+        },
+        {
+            "name": "providerRouting",
+            "details": {
+                "priority": 120
+            }
+        },
+        {
+            "name": "toolExecution",
+            "details": {
+                "priority": 100
+            }
+        },
+        {
+            "name": "modelExecution",
+            "details": {
+                "priority": 80
+            }
+        },
+        {
+            "name": "response",
+            "details": {
+                "priority": 60
+            }
+        },
+        {
+            "name": "persistence",
+            "details": {
+                "priority": 40
+            }
+        }
+    ],
+    "stagesSkipped": [],
+    "messages": [],
+    "warnings": [],
+    "errors": [],
+    "statistics": [],
+    "metadata": {
+        "execution_id": "exec-e288e04f",
+        "provider": "OllamaProvider",
+        "tools": [
+            {
+                "toolId": "workflow_execute",
+                "status": "started",
+                "arguments": {
+                    "workflowId": "default",
+                    "input": {
+                        "query": "me."
+                    }
+                },
+                "timestamp": 1783252103.598863
+            },
+            {
+                "toolId": "workflow_execute",
+                "status": "completed",
+                "result": {
+                    "success": true,
+                    "result": {
+                        "status": "completed",
+                        "workflowId": "default",
+                        "tenantId": "default",
+                        "executionId": "4f62092c5eb4613d05dfdd6f",
+                        "steps": [
+                            {
+                                "id": "trigger",
+                                "type": "trigger",
+                                "status": "completed",
+                                "output": {
+                                    "message": "workflow_started"
+                                },
+                                "logs": []
+                            },
+                            {
+                                "id": "log_action",
+                                "type": "action",
+                                "status": "completed",
+                                "output": {
+                                    "message": "Workflow executed successfully by assistant."
+                                },
+                                "logs": [
+                                    "Workflow executed successfully by assistant."
+                                ]
+                            },
+                            {
+                                "id": "end",
+                                "type": "end",
+                                "status": "completed",
+                                "output": {
+                                    "message": "workflow_finished"
+                                },
+                                "logs": []
+                            }
+                        ],
+                        "context": {
+                            "query": "me.",
+                            "workflowId": "default",
+                            "tenantId": "default",
+                            "workflowName": "Default Workflow"
+                        }
+                    },
+                    "error": null
+                },
+                "duration_ms": null,
+                "timestamp": 1783252103.66255
+            }
+        ],
+        "llm_usage": {
+            "promptTokens": 26,
+            "completionTokens": 0,
+            "totalTokens": 26,
+            "estimatedCost": 3.9e-5,
+            "currency": "USD"
+        },
+        "cost_source": "provider_pricing",
+        "usage_source": "estimated",
+        "tenant_id": "default",
+        "assistant_id": "support-assistant",
+        "conversation_id": "test-conv",
+        "workflow_id": "default",
+        "model": null
+    },
+    "executionId": "exec-e288e04f",
+    "traceId": null,
+    "requestId": null,
+    "tenantId": null,
+    "assistantId": null,
+    "conversationId": null,
+    "workflowId": null,
+    "userId": null,
+    "provider": {
+        "provider": "OllamaProvider",
+        "model": null
+    },
+    "llmUsage": {
+        "promptTokens": 26,
+        "completionTokens": 0,
+        "totalTokens": 26,
+        "estimatedCost": 3.9e-5,
+        "currency": "USD"
+    },
+    "usageSource": "estimated",
+    "costSource": "provider_pricing",
+    "cachedTokens": 0,
+    "embeddingTokens": 0,
+    "actualCost": null,
+    "queueTimeMs": null,
+    "toolCount": 0,
+    "streamed": false,
+    "providerVersion": null,
+    "retryCount": 0,
+    "tools": [
+        {
+            "toolId": "workflow_execute",
+            "status": "started",
+            "arguments": {
+                "workflowId": "default",
+                "input": {
+                    "query": "me."
+                }
+            },
+            "timestamp": 1783252103.598863
+        },
+        {
+            "toolId": "workflow_execute",
+            "status": "completed",
+            "result": {
+                "success": true,
+                "result": {
+                    "status": "completed",
+                    "workflowId": "default",
+                    "tenantId": "default",
+                    "executionId": "4f62092c5eb4613d05dfdd6f",
+                    "steps": [
+                        {
+                            "id": "trigger",
+                            "type": "trigger",
+                            "status": "completed",
+                            "output": {
+                                "message": "workflow_started"
+                            },
+                            "logs": []
+                        },
+                        {
+                            "id": "log_action",
+                            "type": "action",
+                            "status": "completed",
+                            "output": {
+                                "message": "Workflow executed successfully by assistant."
+                            },
+                            "logs": [
+                                "Workflow executed successfully by assistant."
+                            ]
+                        },
+                        {
+                            "id": "end",
+                            "type": "end",
+                            "status": "completed",
+                            "output": {
+                                "message": "workflow_finished"
+                            },
+                            "logs": []
+                        }
+                    ],
+                    "context": {
+                        "query": "me.",
+                        "workflowId": "default",
+                        "tenantId": "default",
+                        "workflowName": "Default Workflow"
+                    }
+                },
+                "error": null
+            },
+            "duration_ms": null,
+            "timestamp": 1783252103.66255
+        }
+    ],
+    "memory": {
+        "reads": 0,
+        "writes": 0,
+        "vectorQueries": 0,
+        "summaries": 0
+    },
+    "observability": {
+        "spans": [],
+        "metrics": [],
+        "events": []
+    },
+    "output": {
+        "responseSize": 0,
+        "success": null,
+        "errorType": null,
+        "warnings": []
+    }
+}

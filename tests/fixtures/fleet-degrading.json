@@ -1,0 +1,176 @@
+{
+  "scenario": "degrading-fleet",
+  "description": "Fleet experiencing systemic degradation: high volatility, dependency failures, revocation cascade",
+  "created_at": "2026-06-25T10:00:00Z",
+  "severity": "critical",
+  "items": [
+    {
+      "id": "degrading-tenant-1",
+      "name": "Legacy System A",
+      "health_score": 28,
+      "fleet_volatility": 68,
+      "at_risk_count": 12,
+      "critical_count": 5,
+      "trend_direction": "degrading",
+      "trend_velocity": -3.2,
+      "last_updated": "2026-06-25T09:30:00Z",
+      "remediations_7d": 15,
+      "remediation_success_rate": 0.33,
+      "total_installs": 342,
+      "drift_status": "revocation_drift",
+      "dependency_health": 18,
+      "dependency_failures": [
+        "database-connector-v2.1",
+        "api-gateway-v3.0",
+        "auth-service-v1.5"
+      ],
+      "governance_compliance": 32,
+      "revocation_issues": 12,
+      "revocation_cascade_active": true,
+      "estimated_recovery_time": "72h"
+    },
+    {
+      "id": "degrading-tenant-2",
+      "name": "Volatile Platform B",
+      "health_score": 38,
+      "fleet_volatility": 72,
+      "at_risk_count": 10,
+      "critical_count": 4,
+      "trend_direction": "degrading",
+      "trend_velocity": -2.8,
+      "last_updated": "2026-06-25T09:28:00Z",
+      "remediations_7d": 14,
+      "remediation_success_rate": 0.42,
+      "total_installs": 298,
+      "drift_status": "revocation_drift",
+      "dependency_health": 25,
+      "dependency_failures": [
+        "cache-layer-v2.2",
+        "queue-service-v1.8",
+        "load-balancer-v4.1"
+      ],
+      "governance_compliance": 38,
+      "revocation_issues": 10,
+      "revocation_cascade_active": true,
+      "estimated_recovery_time": "60h"
+    },
+    {
+      "id": "degrading-tenant-3",
+      "name": "Failing Infrastructure C",
+      "health_score": 32,
+      "fleet_volatility": 65,
+      "at_risk_count": 14,
+      "critical_count": 6,
+      "trend_direction": "degrading",
+      "trend_velocity": -3.5,
+      "last_updated": "2026-06-25T09:26:00Z",
+      "remediations_7d": 18,
+      "remediation_success_rate": 0.28,
+      "total_installs": 367,
+      "drift_status": "revocation_drift",
+      "dependency_health": 15,
+      "dependency_failures": [
+        "messaging-broker-v3.1",
+        "storage-service-v2.0",
+        "monitoring-agent-v1.9",
+        "backup-service-v2.3"
+      ],
+      "governance_compliance": 28,
+      "revocation_issues": 14,
+      "revocation_cascade_active": true,
+      "estimated_recovery_time": "96h"
+    },
+    {
+      "id": "degrading-tenant-4",
+      "name": "Unstable Services D",
+      "health_score": 45,
+      "fleet_volatility": 58,
+      "at_risk_count": 7,
+      "critical_count": 3,
+      "trend_direction": "degrading",
+      "trend_velocity": -2.1,
+      "last_updated": "2026-06-25T09:24:00Z",
+      "remediations_7d": 11,
+      "remediation_success_rate": 0.54,
+      "total_installs": 256,
+      "drift_status": "governance_drift",
+      "dependency_health": 42,
+      "dependency_failures": [
+        "config-service-v1.7",
+        "logging-service-v2.1"
+      ],
+      "governance_compliance": 45,
+      "revocation_issues": 5,
+      "revocation_cascade_active": false,
+      "estimated_recovery_time": "48h"
+    },
+    {
+      "id": "degrading-tenant-5",
+      "name": "Cascading Failure E",
+      "health_score": 29,
+      "fleet_volatility": 70,
+      "at_risk_count": 13,
+      "critical_count": 5,
+      "trend_direction": "degrading",
+      "trend_velocity": -3.1,
+      "last_updated": "2026-06-25T09:22:00Z",
+      "remediations_7d": 16,
+      "remediation_success_rate": 0.31,
+      "total_installs": 334,
+      "drift_status": "revocation_drift",
+      "dependency_health": 21,
+      "dependency_failures": [
+        "security-service-v2.4",
+        "audit-log-v1.6",
+        "notification-service-v3.0"
+      ],
+      "governance_compliance": 33,
+      "revocation_issues": 11,
+      "revocation_cascade_active": true,
+      "estimated_recovery_time": "84h"
+    }
+  ],
+  "summary": {
+    "total_tenants": 5,
+    "healthy_count": 0,
+    "at_risk_count": 1,
+    "critical_count": 4,
+    "average_health": 34.4,
+    "fleet_volatility_avg": 66.6,
+    "drift_free_count": 0,
+    "governance_drift_count": 1,
+    "revocation_drift_count": 4,
+    "revocation_cascade_active_count": 4,
+    "total_remediations_7d": 74,
+    "remediation_success_rate_avg": 0.378,
+    "total_installs": 1597,
+    "total_dependency_failures": 12,
+    "total_active_revocations": 52,
+    "system_alert": "CRITICAL: Multiple tenants experiencing revocation cascades. Estimated fleet recovery: 84-96 hours. Immediate remediation intervention required."
+  },
+  "recommended_actions": [
+    {
+      "priority": 1,
+      "action": "Isolate cascading failures - prevent cross-tenant contamination",
+      "tenants_affected": ["degrading-tenant-1", "degrading-tenant-2", "degrading-tenant-3", "degrading-tenant-5"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "priority": 2,
+      "action": "Restore dependency services in correct order",
+      "dependencies": ["auth-service", "api-gateway", "database-connector"],
+      "estimated_time": "45 minutes"
+    },
+    {
+      "priority": 3,
+      "action": "Validate governance compliance post-recovery",
+      "tenants_affected": ["degrading-tenant-4"],
+      "estimated_time": "30 minutes"
+    },
+    {
+      "priority": 4,
+      "action": "Monitor revocation status for cascading extensions",
+      "estimated_time": "ongoing"
+    }
+  ]
+}

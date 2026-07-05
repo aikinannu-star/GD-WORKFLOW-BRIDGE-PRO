@@ -7,7 +7,7 @@ Quick start
 -----------
 
 1. Open the `gd-workflow-bridge-pro` repository in GitHub and click **Code → Codespaces → New codespace** (or create a Codespace from this branch).
-2. Codespaces will read `.devcontainer/devcontainer.json` and start the specified compose services automatically.
+2. Codespaces will read `.devcontainer/devcontainer.json` and start the specified compose services automatically, including the RC1 candidate runtime stack.
 3. After the Codespace finishes provisioning, edit `.env` (a copy of `.env.example` is created automatically). IMPORTANT: do not commit `.env`.
 
 Note about the Node backend (`myApp-backend`)

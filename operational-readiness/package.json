@@ -1,0 +1,14 @@
+{
+  "name": "operational-readiness",
+  "version": "1.0.0",
+  "description": "Operational Readiness Suite for gd-workflow-bridge-pro",
+  "main": "operational-readiness.js",
+  "scripts": {
+    "operational:readiness": "node operational-readiness/operational-readiness.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "",
+  "license": "MIT"
+}

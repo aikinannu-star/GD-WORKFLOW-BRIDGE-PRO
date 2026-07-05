@@ -1,0 +1,140 @@
+/api/v1/intelligence-effectiveness/recommendations:
+  get:
+    summary: Recommendation effectiveness metrics
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Recommendation effectiveness
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recommendations:
+                  type: array
+                  items:
+                    $ref: ./components/schemas.yaml#/RecommendationEffectivenessItem
+                computed_at:
+                  type: string
+                  format: date-time
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligenceeffectivenessRecommendations
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-effectiveness/mttd:
+  get:
+    summary: Mean time to detect (MTTD)
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: MTTD metric
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/EffectivenessMetric
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligenceeffectivenessMttd
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-effectiveness/mttr:
+  get:
+    summary: Mean time to remediate (MTTR)
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: MTTR metric
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/EffectivenessMetric
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligenceeffectivenessMttr
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-effectiveness/acceptance-rate:
+  get:
+    summary: Recommendation acceptance rate
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Acceptance rate metric
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/EffectivenessMetric
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligenceeffectivenessAcceptancerate
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-effectiveness/accuracy:
+  get:
+    summary: Recommendation accuracy metric
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Accuracy metric
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/EffectivenessMetric
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligenceeffectivenessAccuracy
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-effectiveness:
+  get:
+    summary: Comprehensive intelligence effectiveness summary
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Comprehensive effectiveness report
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/IntelligenceEffectivenessSummary
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligenceeffectiveness
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

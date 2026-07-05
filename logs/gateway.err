@@ -1,1 +1,349 @@
-[Mon Jun 15 12:35:04 2026] Failed to listen on 0.0.0.0:8000 (reason: An attempt was made to access a socket in a way forbidden by its access permissions)
+[Sun Jul  5 14:11:17 2026] PHP 8.2.31 Development Server (http://0.0.0.0:8000) started
+[Sun Jul  5 14:11:25 2026] 127.0.0.1:53649 Accepted
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: runGatewayServer called
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after global registry
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got method=GET
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got uri=/health
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got queryString
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after ob_start if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: registry assigned
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: inside resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: leaving resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getRequestId helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getClientIp helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after logRequest helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after checkRateLimit helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getApiKeyInfo helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getTenantQuota helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after isPublicService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after introspectToken helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after proxyToService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to call sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::sendJson called status=200 payload={"status":"ok","service":"gateway","version":"1.0.0","time":"2026-07-05T14:11:25+00:00","services":["auth","tenant","cms","billing","marketplace","media","social","feed","realtime","usage","website-builder","mobile-builder","desktop-builder","workflow","assistant","dispatcher","analytics","deployment","license","licenses"]}
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::isTestMode returning false
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning new id=41641cfe3d270ebd
+[Sun Jul  5 14:11:25 2026] 127.0.0.1:53649 Closing
+[Sun Jul  5 14:11:25 2026] 127.0.0.1:53650 Accepted
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: runGatewayServer called
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after global registry
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got method=GET
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got uri=/api/v1/license/health
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got queryString
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after ob_start if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: registry assigned
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: inside resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: leaving resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getRequestId helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getClientIp helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after logRequest helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after checkRateLimit helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getApiKeyInfo helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getTenantQuota helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after isPublicService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after introspectToken helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after proxyToService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to call sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning new id=b2290f4230dd344a
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getOrCreateRequestId, requestId=b2290f4230dd344a
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getTraceContext
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: apiKeyInfo=null target=license
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] runGatewayServer tail GATEWAY_TEST_MODE=false
+[Sun Jul  5 14:11:25 2026] runGatewayServer exiting in non-test mode
+[Sun Jul  5 14:11:25 2026] 127.0.0.1:53650 Closing
+[Sun Jul  5 14:11:25 2026] 127.0.0.1:53656 Accepted
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: runGatewayServer called
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after global registry
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got method=GET
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got uri=/api/v1/license/openapi.yaml
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got queryString
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after ob_start if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: registry assigned
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: inside resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: leaving resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getRequestId helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getClientIp helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after logRequest helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after checkRateLimit helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getApiKeyInfo helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getTenantQuota helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after isPublicService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after introspectToken helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after proxyToService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to call sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] 127.0.0.1:53656 Closing
+[Sun Jul  5 14:11:25 2026] 127.0.0.1:53657 Accepted
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: runGatewayServer called
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after global registry
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got method=GET
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got uri=/api/v1/tenant/health
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got queryString
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after ob_start if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: registry assigned
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: inside resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: leaving resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getRequestId helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getClientIp helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after logRequest helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after checkRateLimit helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getApiKeyInfo helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getTenantQuota helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after isPublicService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after introspectToken helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after proxyToService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to call sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning new id=e7381276a56e3f32
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getOrCreateRequestId, requestId=e7381276a56e3f32
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getTraceContext
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: apiKeyInfo=null target=tenant
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::sendJson called status=401 payload={"error":"unauthorized","message":"Authorization header required","request_id":"e7381276a56e3f32"}
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::isTestMode returning false
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] 127.0.0.1:53657 Closing
+[Sun Jul  5 14:11:25 2026] 127.0.0.1:53658 Accepted
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: runGatewayServer called
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after global registry
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got method=POST
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got uri=/api/v1/auth/register
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: got queryString
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after ob_start if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: registry assigned
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getNormalizedHeaders if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to enter resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: inside resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: leaving resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after resolveTargetHost if block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getRequestId helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getClientIp helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after logRequest helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after checkRateLimit helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getApiKeyInfo helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getTenantQuota helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after isPublicService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after introspectToken helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after proxyToService helper block
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: about to call sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after sendCorsHeaders
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning new id=e6b9257b8f93a914
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getOrCreateRequestId, requestId=e6b9257b8f93a914
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: after getTraceContext
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:25 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:25 2026] GATEWAY_DEBUG: apiKeyInfo=null target=auth
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] runGatewayServer tail GATEWAY_TEST_MODE=false
+[Sun Jul  5 14:11:26 2026] runGatewayServer exiting in non-test mode
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53658 Closing
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53660 Accepted
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: runGatewayServer called
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after global registry
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: got method=POST
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: got uri=/api/v1/auth/login
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: got queryString
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after ob_start if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: registry assigned
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to enter sendCorsHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after sendCorsHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to enter getNormalizedHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getNormalizedHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to enter resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: inside resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: leaving resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getRequestId helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getClientIp helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after logRequest helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after checkRateLimit helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getApiKeyInfo helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getTenantQuota helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after isPublicService helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after introspectToken helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after proxyToService helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to call sendCorsHeaders
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after sendCorsHeaders
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning new id=136316b8c6fd65ef
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getOrCreateRequestId, requestId=136316b8c6fd65ef
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getTraceContext
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: apiKeyInfo=null target=auth
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] runGatewayServer tail GATEWAY_TEST_MODE=false
+[Sun Jul  5 14:11:26 2026] runGatewayServer exiting in non-test mode
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53660 Closing
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53662 Accepted
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: runGatewayServer called
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after global registry
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: got method=GET
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: got uri=/api/v1/tenant/health
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: got queryString
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after ob_start if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: registry assigned
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to enter sendCorsHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after sendCorsHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to enter getNormalizedHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getNormalizedHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to enter resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: inside resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: leaving resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getRequestId helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getClientIp helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after logRequest helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after checkRateLimit helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getApiKeyInfo helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getTenantQuota helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after isPublicService helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after introspectToken helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after proxyToService helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to call sendCorsHeaders
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after sendCorsHeaders
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning new id=1177536736a75dab
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getOrCreateRequestId, requestId=1177536736a75dab
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getTraceContext
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: apiKeyInfo=null target=tenant
+[Sun Jul  5 14:11:26 2026] [gateway] INTROSPECT -> http://127.0.0.1:8002/api/v1/auth/introspect TOKEN=eyJhbGci...
+[Sun Jul  5 14:11:26 2026] [gateway] INTROSPECT RESPONSE_CODE=200 RESP_BODY={"success":true,"valid":true,"user":{"id":"835ffb863da0002b608914b8d13057f6","email":"ci@example.com","role":"admin","tenant_id":"ci-tenant","license_key":"GDWB-5D7D59FE22232229","seats":1}}
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+[Sun Jul  5 14:11:26 2026] runGatewayServer tail GATEWAY_TEST_MODE=false
+[Sun Jul  5 14:11:26 2026] runGatewayServer exiting in non-test mode
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53662 Closing
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53666 Accepted
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: runGatewayServer called
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after global registry
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: got method=GET
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: got uri=/health/services
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: got queryString
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after ob_start if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: registry assigned
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to enter sendCorsHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after sendCorsHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to enter getNormalizedHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getNormalizedHeaders if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to enter resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: inside resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: leaving resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after resolveTargetHost if block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getRequestId helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getClientIp helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after logRequest helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after checkRateLimit helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getApiKeyInfo helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after getTenantQuota helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after isPublicService helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after introspectToken helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after proxyToService helper block
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: about to call sendCorsHeaders
+[Sun Jul  5 14:11:26 2026] GATEWAY_DEBUG: after sendCorsHeaders
+[Sun Jul  5 14:11:28 2026] ServiceHelpers::sendJson called status=200 payload={"services":{"auth":{"url":"http:\/\/127.0.0.1:8002\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"auth\",\"version\":\"1.0.0\",\"request_id\":\"6399c8c11e6ffa6c\",\"time\":\"2026-07-05T14:11:26+00:00\"}"},"tenant":{"url":"http:\/\/127.0.0.1:8009\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"tenant\",\"version\":\"1.0.0\",\"time\":\"2026-07-05T14:11:26+00:00\"}"},"cms":{"url":"http:\/\/127.0.0.1:8004\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"cms\",\"version\":\"1.0.0\",\"time\":\"2026-07-05T14:11:26+00:00\"}"},"billing":{"url":"http:\/\/127.0.0.1:8003\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"billing\",\"version\":\"1.0.0\",\"time\":\"2026-07-05T14:11:26+00:00\",\"providers\":[\"stripe\",\"paystack\",\"razorpay\",\"paypal\",\"flutterwave\"]}"},"marketplace":{"url":"http:\/\/127.0.0.1:8006\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"marketplace\",\"version\":\"1.0.0\",\"time\":\"2026-07-05T14:11:26+00:00\"}"},"media":{"url":"http:\/\/127.0.0.1:8010\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"media\",\"version\":\"1.1.0\",\"time\":\"2026-07-05T14:11:26+00:00\"}"},"social":{"url":"http:\/\/127.0.0.1:8008\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"social\",\"version\":\"1.0.0\",\"time\":\"2026-07-05T14:11:26+00:00\"}"},"feed":{"url":"http:\/\/127.0.0.1:8011\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"feed\",\"version\":\"1.0.0\",\"time\":\"2026-07-05T14:11:26+00:00\"}"},"realtime":{"url":"http:\/\/127.0.0.1:8012\/health","ok":true,"http_code":200,"time_ms":2015,"body":"<br \/>\n<b>Warning<\/b>:  Unknown: Failed to open stream: No such file or directory in <b>Unknown<\/b> on line <b>0<\/b><br \/>\n<br \/>\n<b>Fatal error<\/b>:  Failed opening required 'services\/realtime\/server.php' (include_path='.;C:\\php\\pear') in <b>Unknown<\/b> on line <b>0<\/b><br \/>\n"},"usage":{"url":"http:\/\/127.0.0.1:8007\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"usage\",\"version\":\"1.0.0\",\"time\":\"2026-07-05T14:11:26+00:00\"}"},"website-builder":{"url":"http:\/\/127.0.0.1:8013\/health","ok":false,"http_code":0,"time_ms":2015,"body":null},"mobile-builder":{"url":"http:\/\/127.0.0.1:8014\/health","ok":false,"http_code":0,"time_ms":2015,"body":null},"desktop-builder":{"url":"http:\/\/127.0.0.1:8015\/health","ok":false,"http_code":0,"time_ms":2015,"body":null},"workflow":{"url":"http:\/\/127.0.0.1:8016\/health","ok":false,"http_code":0,"time_ms":2015,"body":null},"assistant":{"url":"http:\/\/127.0.0.1:8017\/health","ok":false,"http_code":0,"time_ms":2015,"body":null},"dispatcher":{"url":"http:\/\/127.0.0.1:8020\/health","ok":false,"http_code":0,"time_ms":2015,"body":null},"analytics":{"url":"http:\/\/127.0.0.1:8018\/health","ok":false,"http_code":0,"time_ms":2015,"body":null},"deployment":{"url":"http:\/\/127.0.0.1:8019\/health","ok":false,"http_code":0,"time_ms":2015,"body":null},"license":{"url":"http:\/\/127.0.0.1:8001\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"license-server\",\"env\":\"dev\",\"db\":true,\"time\":\"2026-07-05T14:11:26+00:00\"}"},"licenses":{"url":"http:\/\/127.0.0.1:8001\/health","ok":true,"http_code":200,"time_ms":2015,"body":"{\"status\":\"ok\",\"service\":\"license-server\",\"env\":\"dev\",\"db\":true,\"time\":\"2026-07-05T14:11:27+00:00\"}"}},"gateway_time":"2026-07-05T14:11:28+00:00"}
+[Sun Jul  5 14:11:28 2026] ServiceHelpers::isTestMode returning false
+[Sun Jul  5 14:11:28 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:28 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:28 2026] ServiceHelpers::getOrCreateRequestId returning new id=9ef4f056d622d073
+[Sun Jul  5 14:11:28 2026] 127.0.0.1:53666 Closing

@@ -1,0 +1,44 @@
+{
+    "assistant_health_live_checks_total": {
+        "type": "counter",
+        "samples": {
+            "{\"status\":\"live\"}": {
+                "labels": {
+                    "status": "live"
+                },
+                "value": 10,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "assistant_health_ready_checks_total": {
+        "type": "counter",
+        "samples": {
+            "{\"status\":\"ready\"}": {
+                "labels": {
+                    "status": "ready"
+                },
+                "value": 10,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "assistant_health_checks_total": {
+        "type": "counter",
+        "samples": {
+            "{\"status\":\"ready\"}": {
+                "labels": {
+                    "status": "ready"
+                },
+                "value": 3,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    }
+}

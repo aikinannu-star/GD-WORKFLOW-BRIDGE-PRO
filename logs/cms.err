@@ -1,1 +1,8 @@
-[Mon Jun 15 12:35:04 2026] PHP 8.2.31 Development Server (http://0.0.0.0:8004) started
+[Sun Jul  5 14:11:18 2026] PHP 8.2.31 Development Server (http://0.0.0.0:8004) started
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53669 Accepted
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::sendJson called status=200 payload={"status":"ok","service":"cms","version":"1.0.0","time":"2026-07-05T14:11:26+00:00"}
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::isTestMode returning false
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning new id=cec63ad35e2be4c7
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53669 Closing

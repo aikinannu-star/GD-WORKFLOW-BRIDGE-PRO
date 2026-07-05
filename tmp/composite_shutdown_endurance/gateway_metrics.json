@@ -1,0 +1,121 @@
+{
+    "gateway_active_requests": {
+        "type": "gauge",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 0,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_auth_success_total": {
+        "type": "counter",
+        "samples": {
+            "{\"service\":\"assistant\"}": {
+                "labels": {
+                    "service": "assistant"
+                },
+                "value": 5,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_requests_forwarded_total": {
+        "type": "counter",
+        "samples": {
+            "{\"service\":\"assistant\"}": {
+                "labels": {
+                    "service": "assistant"
+                },
+                "value": 5,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_requests_total": {
+        "type": "counter",
+        "samples": {
+            "{\"method\":\"POST\",\"route\":\"\\/api\\/v1\\/assistant\\/sessions\",\"status\":\"2xx\"}": {
+                "labels": {
+                    "method": "POST",
+                    "route": "/api/v1/assistant/sessions",
+                    "status": "2xx"
+                },
+                "value": 5,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_request_duration_seconds": {
+        "type": "histogram",
+        "samples": {
+            "{\"method\":\"POST\",\"route\":\"\\/api\\/v1\\/assistant\\/sessions\",\"status\":\"2xx\"}": {
+                "labels": {
+                    "method": "POST",
+                    "route": "/api/v1/assistant/sessions",
+                    "status": "2xx"
+                },
+                "value": 0,
+                "sum": 0.24871230125427246,
+                "count": 5,
+                "buckets": {
+                    "0.025": 1,
+                    "0.05": 2,
+                    "0.1": 5,
+                    "0.2": 5,
+                    "0.5": 5,
+                    "1": 5,
+                    "2.5": 5,
+                    "5": 5,
+                    "10": 5,
+                    "+Inf": 5
+                }
+            }
+        }
+    },
+    "gateway_shutdown_in_progress_total": {
+        "type": "counter",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 5,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_shutdown_in_progress": {
+        "type": "gauge",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 0,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_requests_rejected_during_shutdown_total": {
+        "type": "counter",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 5,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    }
+}

@@ -108,7 +108,15 @@ $services = @(
     @{name='tenant'; port=8009; dir='services/tenant'; file='services/tenant/server.php'},
     @{name='media'; port=8010; dir='services/media'; file='services/media/server.php'},
     @{name='feed'; port=8011; dir='services/feed'; file='services/feed/server.php'},
-    @{name='realtime'; port=8012; dir='services/realtime'; file='services/realtime/server.php'}
+    @{name='realtime'; port=8012; dir='services/realtime'; file='services/realtime/server.php'},
+    @{name='website-builder'; port=8013; dir='services/website-builder'; file='services/website-builder/server.php'},
+    @{name='mobile-builder'; port=8014; dir='services/mobile-builder'; file='services/mobile-builder/server.php'},
+    @{name='desktop-builder'; port=8015; dir='services/desktop-builder'; file='services/desktop-builder/server.php'},
+    @{name='workflow'; port=8016; dir='services/workflow'; file='services/workflow/server.php'},
+    @{name='assistant'; port=8017; dir='services/assistant'; file='services/assistant/server.php'},
+    @{name='dispatcher'; port=8020; dir='services/dispatcher'; file='services/dispatcher/server.php'},
+    @{name='analytics'; port=8018; dir='services/analytics'; file='services/analytics/server.php'},
+    @{name='deployment'; port=8019; dir='services/deployment'; file='services/deployment/server.php'}
 )
 
 Write-Info "Starting PHP services (logs -> $logs)"

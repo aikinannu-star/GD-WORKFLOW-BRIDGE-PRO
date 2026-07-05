@@ -1,0 +1,49 @@
+{
+    "sessionId": "test-session",
+    "conversationId": "test-session",
+    "tenantId": "default",
+    "userId": null,
+    "metadata": {
+        "messageCount": 6
+    },
+    "history": [
+        {
+            "role": "user",
+            "text": "Please execute workflow for me.",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T11:48:23+00:00"
+        },
+        {
+            "role": "assistant",
+            "text": "{\"status\":\"completed\",\"workflowId\":\"default\",\"tenantId\":\"default\",\"executionId\":\"4f62092c5eb4613d05dfdd6f\",\"steps\":[{\"id\":\"trigger\",\"type\":\"trigger\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_started\"},\"logs\":[]},{\"id\":\"log_action\",\"type\":\"action\",\"status\":\"completed\",\"output\":{\"message\":\"Workflow executed successfully by assistant.\"},\"logs\":[\"Workflow executed successfully by assistant.\"]},{\"id\":\"end\",\"type\":\"end\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_finished\"},\"logs\":[]}],\"context\":{\"query\":\"me.\",\"workflowId\":\"default\",\"tenantId\":\"default\",\"workflowName\":\"Default Workflow\"}}",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T11:48:26+00:00"
+        },
+        {
+            "role": "user",
+            "text": "Please execute workflow for me.",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T14:11:44+00:00"
+        },
+        {
+            "role": "assistant",
+            "text": "{\"status\":\"completed\",\"workflowId\":\"default\",\"tenantId\":\"default\",\"executionId\":\"be724858fd56cd23d6449290\",\"steps\":[{\"id\":\"trigger\",\"type\":\"trigger\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_started\"},\"logs\":[]},{\"id\":\"log_action\",\"type\":\"action\",\"status\":\"completed\",\"output\":{\"message\":\"Workflow executed successfully by assistant.\"},\"logs\":[\"Workflow executed successfully by assistant.\"]},{\"id\":\"end\",\"type\":\"end\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_finished\"},\"logs\":[]}],\"context\":{\"query\":\"me.\",\"workflowId\":\"default\",\"tenantId\":\"default\",\"workflowName\":\"Default Workflow\"}}",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T14:11:47+00:00"
+        },
+        {
+            "role": "user",
+            "text": "Please execute workflow for me.",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T14:12:32+00:00"
+        },
+        {
+            "role": "assistant",
+            "text": "{\"status\":\"completed\",\"workflowId\":\"default\",\"tenantId\":\"default\",\"executionId\":\"4b054520417b7abb7b8b3f0d\",\"steps\":[{\"id\":\"trigger\",\"type\":\"trigger\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_started\"},\"logs\":[]},{\"id\":\"log_action\",\"type\":\"action\",\"status\":\"completed\",\"output\":{\"message\":\"Workflow executed successfully by assistant.\"},\"logs\":[\"Workflow executed successfully by assistant.\"]},{\"id\":\"end\",\"type\":\"end\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_finished\"},\"logs\":[]}],\"context\":{\"query\":\"me.\",\"workflowId\":\"default\",\"tenantId\":\"default\",\"workflowName\":\"Default Workflow\"}}",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T14:12:36+00:00"
+        }
+    ],
+    "createdAt": "2026-07-05T11:48:23+00:00",
+    "updatedAt": "2026-07-05T14:12:36+00:00"
+}

@@ -1,0 +1,22 @@
+
+> gd-workflow-bridge-pro-reference-client@0.1.0 test:workflows
+> vitest run --run tests
+
+
+[7m[1m[36m RUN [39m[22m[27m [36mv0.34.6[39m [90mC:/Users/USER/Downloads/New folder/gd-workflow-bridge-pro/reference-client[39m
+
+ [32mΓ£ô[39m tests/sdk-wrapper.test.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 157[2mms[22m[39m
+ [32mΓ£ô[39m tests/remediation-state.test.ts [2m ([22m[2m1 test[22m[2m)[22m[33m 491[2mms[22m[39m
+ [32mΓ£ô[39m tests/error-model.test.ts [2m ([22m[2m2 tests[22m[2m)[22m[33m 315[2mms[22m[39m
+ [32mΓ£ô[39m tests/operations-workflow.test.ts [2m ([22m[2m1 test[22m[2m)[22m[33m 590[2mms[22m[39m
+ [32mΓ£ô[39m tests/tenant-workflow.test.ts [2m ([22m[2m1 test[22m[2m)[22m[33m 474[2mms[22m[39m
+ [32mΓ£ô[39m tests/marketplace-workflow.test.ts [2m ([22m[2m1 test[22m[2m)[22m[33m 969[2mms[22m[39m
+ [32mΓ£ô[39m tests/error-injection.test.ts [2m ([22m[2m6 tests[22m[2m)[22m[33m 1002[2mms[22m[39m
+ [32mΓ£ô[39m tests/remediation-workflow.test.ts [2m ([22m[2m1 test[22m[2m)[22m[90m 101[2mms[22m[39m
+ [32mΓ£ô[39m tests/workflow.test.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 97[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m9 passed[39m[22m[90m (9)[39m
+[2m      Tests [22m [1m[32m18 passed[39m[22m[90m (18)[39m
+[2m   Start at [22m 07:25:17
+[2m   Duration [22m 3.43s[2m (transform 802ms, setup 0ms, collect 4.61s, tests 4.20s, environment 4ms, prepare 4.72s)[22m
+

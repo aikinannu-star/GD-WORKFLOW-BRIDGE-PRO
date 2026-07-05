@@ -1,0 +1,46 @@
+sequenceDiagram
+    participant Plugin as Dispatcher Plugin\n(`services/dispatcher/plugins/support-assistant/SupportAssistantEntry.php`)
+    participant Registrar as RuntimeRegistrar\n(`services/dispatcher/plugin/RuntimeRegistrar.php`)
+    participant Manager as AssistantManager\n(`services/assistant/AssistantManager.php`)
+    participant Support as SupportAssistant\n(`services/assistant/plugins/support-assistant/SupportAssistant.php`)
+    participant Service as AssistantService\n(`services/assistant/AssistantService.php`)
+    participant Pipeline as AssistantPipeline\n(`services/assistant/AssistantPipeline.php`)
+    participant Exec as AssistantExecutionPipeline\n(`services/assistant/execution/AssistantExecutionPipeline.php`)
+    participant ToolExec as ToolExecutionStage
+    participant ToolReg as Assistant ToolRegistry\n(`services/assistant/ToolRegistry.php`)
+    participant DispatcherAction as DispatcherActionTool\n(`services/assistant/tools/DispatcherActionTool.php`)
+    participant WorkflowTool as WorkflowTool\n(`services/assistant/tools/WorkflowTool.php`)
+    participant ActionReg as ActionRegistry\n(`services/dispatcher/actions/ActionRegistry.php`)
+    participant WorkflowSvc as WorkflowExecutionService\n(`services/dispatcher/services/WorkflowExecutionService.php`)
+
+    Plugin->>Registrar: register(RuntimeRegistrar) / registerAssistant()
+    Registrar->>Manager: registerAssistant(id, assistant)
+    Manager-->>Plugin: assistant available
+
+    Plugin->>Manager: handle(assistantId, {message,...})
+    Manager->>Support: call handleConversation(request)
+    Support->>Service: create `AssistantContext`, call handleMessage(context, message)
+    Service->>Pipeline: execute(context, message)
+    Pipeline->>Exec: build RuntimeExecutionContext -> execute(context)
+
+    Exec->>Exec: run stages (planning → context → prompt → providerRouting → toolExecution → modelExecution → response → persistence)
+    Exec->>ToolExec: planning stage may set `toolPlan`
+    ToolExec->>ToolReg: invoke(toolId, arguments)
+
+    ToolReg->>DispatcherAction: invoke `dispatcher_action` OR
+    ToolReg->>WorkflowTool: invoke `workflow_execute`
+
+    DispatcherAction->>ActionReg: ActionRegistry->execute(action, payload) -> ActionResult
+    WorkflowTool->>WorkflowSvc: executeById(workflowId, input)
+    WorkflowSvc->>ActionReg: run workflow steps -> ActionRegistry->execute(...)
+
+    ActionReg-->>DispatcherAction: ActionResult
+    WorkflowSvc-->>WorkflowTool: workflow result
+    DispatcherAction-->>ToolReg: tool result
+    WorkflowTool-->>ToolReg: tool result
+
+    ToolReg-->>ToolExec: return toolResult
+    Exec-->>Pipeline: final RuntimeExecutionResult (toolPlan/toolResults)
+    Pipeline-->>Service: return result array (assistantText, tool, toolResult, raw)
+    Service-->>Support: return to `SupportAssistant::handleConversation`
+    Support-->>Manager: Manager returns response to caller (dispatcher / API)

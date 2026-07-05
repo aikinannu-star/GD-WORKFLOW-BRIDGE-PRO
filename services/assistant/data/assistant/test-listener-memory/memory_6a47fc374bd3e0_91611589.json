@@ -1,0 +1,63 @@
+{
+    "id": "memory_6a47fc374bd3e0.91611589",
+    "tenantId": "tenant-1",
+    "userId": "user-42",
+    "conversationId": "conv-listener-1",
+    "type": "preference",
+    "content": "I prefer email updates",
+    "confidence": 0.6000000000000001,
+    "tags": [
+        "preference"
+    ],
+    "sourceMessages": [
+        "2026-01-01T00:00:00Z",
+        "user"
+    ],
+    "createdAt": "2026-07-03T18:15:19+00:00",
+    "lastConfirmedAt": "2026-07-03T18:15:19+00:00",
+    "expiresAt": null,
+    "metadata": {
+        "source": "conversation",
+        "sourceEvent": "conversation.completed",
+        "sourceOrigin": "runtime",
+        "status": "superseded",
+        "event": "conversation.completed",
+        "pipelineContext": {
+            "source": "conversation"
+        },
+        "pipelineStages": [
+            "MemoryNormalizeLifecycleStage",
+            "MemoryConfidenceLifecycleStage"
+        ],
+        "normalizedAt": "2026-07-02T07:15:18+00:00",
+        "normalized": true,
+        "confidenceScoredAt": "2026-07-02T07:15:18+00:00",
+        "persistedAt": "2026-07-02T07:15:18+00:00",
+        "lastUsedAt": "2026-07-01T07:12:28+00:00",
+        "lineage": [
+            {
+                "from": "I prefer email updates",
+                "to": "I prefer email updates",
+                "mergedAt": "2026-07-02T07:15:18+00:00"
+            },
+            {
+                "from": "I prefer email updates",
+                "to": "I prefer email updates",
+                "mergedAt": "2026-07-02T07:17:54+00:00"
+            },
+            {
+                "from": "I prefer email updates",
+                "to": "I prefer email updates",
+                "mergedAt": "2026-07-02T07:27:05+00:00"
+            },
+            {
+                "from": "I prefer email updates",
+                "to": "I prefer email updates",
+                "mergedAt": "2026-07-03T18:15:19+00:00"
+            }
+        ],
+        "supersededById": "merged",
+        "supersededAt": "2026-07-03T22:15:13+00:00",
+        "confidenceDecayedAt": "2026-07-03T22:15:13+00:00"
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "workflowId": "conditional",
+    "tenantId": "default",
+    "status": "completed",
+    "currentNode": "end",
+    "variables": {
+        "query": "do_other",
+        "workflowId": "conditional",
+        "tenantId": "default",
+        "workflowName": "Conditional Workflow"
+    },
+    "retryCount": 0,
+    "triggerSource": "manual",
+    "startedAt": "2026-07-05T14:11:50+00:00",
+    "executionId": "13845428bfc299b1d3a4e303",
+    "updatedAt": "2026-07-05T14:11:50+00:00",
+    "completedAt": "2026-07-05T14:11:50+00:00"
+}

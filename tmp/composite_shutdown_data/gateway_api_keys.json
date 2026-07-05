@@ -1,0 +1,10 @@
+{
+    "gateway-test-key": {
+        "id": "test-key",
+        "tenant_id": "test-tenant",
+        "scopes": [
+            "assistant:*"
+        ],
+        "owner": "test-suite"
+    }
+}

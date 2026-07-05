@@ -1,0 +1,19 @@
+{
+    "workflowId": "conditional",
+    "tenantId": "default",
+    "version": 1,
+    "action": "started",
+    "performedBy": "event-bus",
+    "status": "success",
+    "details": {
+        "executionId": "ba96249ddad0b297daea2035",
+        "details": {
+            "executionId": "ba96249ddad0b297daea2035",
+            "workflowId": "conditional",
+            "tenantId": "default",
+            "eventType": "workflow.started"
+        }
+    },
+    "eventId": "1893471a206b4658711dfb44",
+    "timestamp": "2026-07-05T11:48:29+00:00"
+}

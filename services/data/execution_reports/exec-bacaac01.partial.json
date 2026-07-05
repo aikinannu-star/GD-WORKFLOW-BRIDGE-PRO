@@ -1,0 +1,279 @@
+{
+    "name": "assistantExecution",
+    "startedAt": 1783260759.082144,
+    "finishedAt": null,
+    "duration": null,
+    "stagesExecuted": [
+        {
+            "name": "planning",
+            "details": {
+                "priority": 200
+            }
+        },
+        {
+            "name": "memory",
+            "details": {
+                "priority": 180
+            }
+        },
+        {
+            "name": "context",
+            "details": {
+                "priority": 160
+            }
+        },
+        {
+            "name": "prompt",
+            "details": {
+                "priority": 140
+            }
+        },
+        {
+            "name": "providerRouting",
+            "details": {
+                "priority": 120
+            }
+        },
+        {
+            "name": "toolExecution",
+            "details": {
+                "priority": 100
+            }
+        },
+        {
+            "name": "modelExecution",
+            "details": {
+                "priority": 80
+            }
+        },
+        {
+            "name": "response",
+            "details": {
+                "priority": 60
+            }
+        },
+        {
+            "name": "persistence",
+            "details": {
+                "priority": 40
+            }
+        }
+    ],
+    "stagesSkipped": [],
+    "messages": [],
+    "warnings": [],
+    "errors": [],
+    "statistics": [],
+    "metadata": {
+        "execution_id": "exec-bacaac01",
+        "provider": {
+            "provider": "OllamaProvider",
+            "model": null
+        },
+        "tools": [
+            {
+                "toolId": "workflow_execute",
+                "status": "started",
+                "arguments": {
+                    "workflowId": "conditional",
+                    "input": {
+                        "query": "do_other"
+                    }
+                },
+                "timestamp": 1783260759.122562
+            },
+            {
+                "toolId": "workflow_execute",
+                "status": "completed",
+                "result": {
+                    "success": true,
+                    "result": {
+                        "status": "completed",
+                        "workflowId": "conditional",
+                        "tenantId": "default",
+                        "executionId": "6431c29d891c89a65c75d751",
+                        "steps": [
+                            {
+                                "id": "trigger",
+                                "type": "trigger",
+                                "status": "completed",
+                                "output": {
+                                    "message": "workflow_started"
+                                },
+                                "logs": []
+                            },
+                            {
+                                "id": "check",
+                                "type": "condition",
+                                "status": "completed",
+                                "output": {
+                                    "condition_result": false
+                                },
+                                "logs": []
+                            },
+                            {
+                                "id": "log_false",
+                                "type": "action",
+                                "status": "completed",
+                                "output": {
+                                    "message": "False branch executed"
+                                },
+                                "logs": [
+                                    "False branch executed"
+                                ]
+                            },
+                            {
+                                "id": "end",
+                                "type": "end",
+                                "status": "completed",
+                                "output": {
+                                    "message": "workflow_finished"
+                                },
+                                "logs": []
+                            }
+                        ],
+                        "context": {
+                            "query": "do_other",
+                            "workflowId": "conditional",
+                            "tenantId": "default",
+                            "workflowName": "Conditional Workflow"
+                        }
+                    },
+                    "error": null
+                },
+                "duration_ms": null,
+                "timestamp": 1783260759.260499
+            }
+        ],
+        "llm_usage": {
+            "promptTokens": 26,
+            "completionTokens": 0,
+            "totalTokens": 26,
+            "estimatedCost": 3.9e-5,
+            "currency": "USD"
+        },
+        "cost_source": "provider_pricing",
+        "usage_source": "estimated"
+    },
+    "executionId": "exec-bacaac01",
+    "traceId": null,
+    "requestId": null,
+    "tenantId": null,
+    "assistantId": null,
+    "conversationId": null,
+    "workflowId": null,
+    "userId": null,
+    "provider": {
+        "provider": "OllamaProvider",
+        "model": null
+    },
+    "llmUsage": {
+        "promptTokens": 26,
+        "completionTokens": 0,
+        "totalTokens": 26,
+        "estimatedCost": 3.9e-5,
+        "currency": "USD"
+    },
+    "usageSource": "estimated",
+    "costSource": "provider_pricing",
+    "cachedTokens": 0,
+    "embeddingTokens": 0,
+    "actualCost": null,
+    "queueTimeMs": null,
+    "toolCount": 0,
+    "streamed": false,
+    "providerVersion": null,
+    "retryCount": 0,
+    "tools": [
+        {
+            "toolId": "workflow_execute",
+            "status": "started",
+            "arguments": {
+                "workflowId": "conditional",
+                "input": {
+                    "query": "do_other"
+                }
+            },
+            "timestamp": 1783260759.122562
+        },
+        {
+            "toolId": "workflow_execute",
+            "status": "completed",
+            "result": {
+                "success": true,
+                "result": {
+                    "status": "completed",
+                    "workflowId": "conditional",
+                    "tenantId": "default",
+                    "executionId": "6431c29d891c89a65c75d751",
+                    "steps": [
+                        {
+                            "id": "trigger",
+                            "type": "trigger",
+                            "status": "completed",
+                            "output": {
+                                "message": "workflow_started"
+                            },
+                            "logs": []
+                        },
+                        {
+                            "id": "check",
+                            "type": "condition",
+                            "status": "completed",
+                            "output": {
+                                "condition_result": false
+                            },
+                            "logs": []
+                        },
+                        {
+                            "id": "log_false",
+                            "type": "action",
+                            "status": "completed",
+                            "output": {
+                                "message": "False branch executed"
+                            },
+                            "logs": [
+                                "False branch executed"
+                            ]
+                        },
+                        {
+                            "id": "end",
+                            "type": "end",
+                            "status": "completed",
+                            "output": {
+                                "message": "workflow_finished"
+                            },
+                            "logs": []
+                        }
+                    ],
+                    "context": {
+                        "query": "do_other",
+                        "workflowId": "conditional",
+                        "tenantId": "default",
+                        "workflowName": "Conditional Workflow"
+                    }
+                },
+                "error": null
+            },
+            "duration_ms": null,
+            "timestamp": 1783260759.260499
+        }
+    ],
+    "memory": {
+        "reads": 0,
+        "writes": 0,
+        "vectorQueries": 0,
+        "summaries": 0
+    },
+    "observability": {
+        "spans": [],
+        "metrics": [],
+        "events": []
+    },
+    "output": {
+        "responseSize": 0,
+        "success": null,
+        "errorType": null,
+        "warnings": []
+    }
+}

@@ -1,0 +1,289 @@
+[
+    {
+        "id": "29a1e8dbede099f8f9f2c38d504b52fa",
+        "name": "Test Plugin",
+        "description": "A test plugin",
+        "author": "dev",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T09:15:28+00:00",
+        "published": true,
+        "updated_at": "2026-06-24T18:20:20+00:00"
+    },
+    {
+        "id": "2aa18a570704d95f6c365d89adbd1bcd",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T09:34:09+00:00"
+    },
+    {
+        "id": "a9407dc0b6de66d2798291f2566bfec7",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T09:35:01+00:00"
+    },
+    {
+        "id": "fb884411c2e50068218771c7a575c937",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:19:26+00:00"
+    },
+    {
+        "id": "31b38fa447a2259e6bf7fa6ac969da91",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:19:38+00:00"
+    },
+    {
+        "id": "40ad49d9758408b1d5ad9487ddc3707a",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:24:18+00:00"
+    },
+    {
+        "id": "d928486cb4f0f3e1d64e80bd9f70cc49",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:27:32+00:00"
+    },
+    {
+        "id": "09f863254167dd90434dbe6be1455531",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:28:51+00:00"
+    },
+    {
+        "id": "3ad3b59f76555674b38d145f4abda211",
+        "name": "SecTest Plugin",
+        "description": "security test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:34:23+00:00"
+    },
+    {
+        "id": "e42daf31dd3d2e284b0c3e856f9310a3",
+        "name": "RotateTest Plugin",
+        "description": "rotation test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:35:42+00:00"
+    },
+    {
+        "id": "9365d9ec91de60a8244c1c8128f7d0d0",
+        "name": "ArtifactTest Plugin",
+        "description": "artifact test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:37:09+00:00"
+    },
+    {
+        "id": "82412a0c8ab3c9c2c3888f589344a5e1",
+        "name": "WebhookTest Plugin",
+        "description": "webhook test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:38:12+00:00",
+        "webhook_url": "http://127.0.0.1:59999/webhook-test",
+        "updated_at": "2026-06-24T13:38:12+00:00"
+    },
+    {
+        "id": "f0d020917434b35943d77b1210de0f2a",
+        "name": "SecTest Plugin",
+        "description": "security test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:49:03+00:00"
+    },
+    {
+        "id": "6e386f7cc7178b42203e4e0686c07618",
+        "name": "RotateTest Plugin",
+        "description": "rotation test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:49:04+00:00"
+    },
+    {
+        "id": "c76e7d3e5d112156518e74d67b9d71ac",
+        "name": "ArtifactTest Plugin",
+        "description": "artifact test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:49:04+00:00"
+    },
+    {
+        "id": "136abc4710534ba8d20437a2c08c906c",
+        "name": "WebhookTest Plugin",
+        "description": "webhook test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:49:05+00:00",
+        "webhook_url": "http://127.0.0.1:59999/webhook-test",
+        "updated_at": "2026-06-24T13:49:05+00:00"
+    },
+    {
+        "id": "401703317d2769e7e05eb310f6d92b47",
+        "name": "ArtifactDL Plugin",
+        "description": "artifact download test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:50:03+00:00"
+    },
+    {
+        "id": "e6a1bbdf0993c61824b82f9cd134df11",
+        "name": "WebhookRecv Plugin",
+        "description": "webhook receive test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:50:22+00:00",
+        "webhook_url": "http://127.0.0.1:59999/webhook-test-1782309022893",
+        "updated_at": "2026-06-24T13:50:22+00:00"
+    },
+    {
+        "id": "e57ef3a640719ae060e13b2fd66ec756",
+        "name": "DepA",
+        "description": "dependency A",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:51:47+00:00"
+    },
+    {
+        "id": "19919147ab46469ceeaac8e32dc16865",
+        "name": "DepB",
+        "description": "dependency B",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:51:47+00:00"
+    },
+    {
+        "id": "cc6a8f48a5467dffaf2ad9274d61f6a7",
+        "name": "RatePub Plugin",
+        "description": "rating test",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:52:46+00:00"
+    },
+    {
+        "id": "875ee4a03d3c7a8f975c0fbf53959979",
+        "name": "RatePub Plugin",
+        "description": "rating test",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:54:01+00:00",
+        "updated_at": "2026-06-24T13:54:01+00:00"
+    },
+    {
+        "id": "64802e57aa291f81e28425e9291f1447",
+        "name": "DepA",
+        "description": "dependency A",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:04:19+00:00"
+    },
+    {
+        "id": "4a967db9fe32b042885408fb0815e446",
+        "name": "DepB",
+        "description": "dependency B",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:04:19+00:00"
+    },
+    {
+        "id": "e1e6eb34825eb62214ae1c34be811c09",
+        "name": "DepA",
+        "description": "dependency A",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:19:03+00:00"
+    },
+    {
+        "id": "1dd18f248c5c79b16a2249f4f9484d73",
+        "name": "DepB",
+        "description": "dependency B",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:19:03+00:00"
+    },
+    {
+        "id": "d361465456d3ec9f70ceaebd48456267",
+        "name": "RatePub Plugin",
+        "description": "rating test",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:19:10+00:00",
+        "updated_at": "2026-06-24T14:19:10+00:00"
+    }
+]

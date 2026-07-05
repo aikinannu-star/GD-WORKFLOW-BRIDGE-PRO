@@ -1,0 +1,25 @@
+/health:
+  get:
+    summary: Service health probe
+    tags:
+    - Health
+    responses:
+      '200':
+        description: Service is healthy
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/HealthResponse
+      '500':
+        description: Service health failure
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ErrorResponse
+    operationId: healthList
+    x-maturity: stable
+    x-stabilitySince: 1.0.0
+    x-owner: Health Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

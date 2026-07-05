@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health vs Volatility Matrix - GD Workflow Bridge Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #1e3a8a;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .controls {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .control-group select,
+        .control-group button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .control-group button {
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .control-group button:hover {
+            background: #1e40af;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .matrix-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .chart-wrapper {
+            flex: 1;
+            min-height: 600px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fafafa;
+            position: relative;
+        }
+
+        #scatterChart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .legend {
+            flex: 0 0 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .legend-title {
+            font-weight: 700;
+            color: #1e3a8a;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .legend-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            border: 1px solid #eee;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .legend-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .legend-item small {
+            color: #666;
+            display: block;
+        }
+
+        /* Risk Zone Colors */
+        .zone-healthy { background-color: #10b981; }
+        .zone-watch { background-color: #f59e0b; }
+        .zone-stagnant { background-color: #6366f1; }
+        .zone-critical { background-color: #ef4444; }
+        .zone-degrading { background-color: #dc2626; }
+
+        .stats {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            max-width: 250px;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tooltip.visible {
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .matrix-container {
+                flex-direction: column;
+            }
+
+            .legend {
+                flex: 1;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .legend-item {
+                flex: 1;
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Health vs Volatility Matrix</h1>
+            <p>Operational risk assessment across fleet tenants. Hover over points for details, click to drill down.</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="period">Time Period:</label>
+                <select id="period">
+                    <option value="1d">Last 24 hours</option>
+                    <option value="3d">Last 3 days</option>
+                    <option value="7d" selected>Last 7 days</option>
+                    <option value="14d">Last 14 days</option>
+                    <option value="30d">Last 30 days</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <button id="refreshBtn">🔄 Refresh</button>
+            </div>
+            <div class="control-group">
+                <button id="exportBtn">📥 Export Data</button>
+            </div>
+        </div>
+
+        <div id="errorContainer"></div>
+        <div id="loadingContainer" class="loading" style="display: none;">⏳ Loading fleet data...</div>
+
+        <div class="matrix-container" id="matrixContainer" style="display: none;">
+            <div class="chart-wrapper">
+                <svg id="scatterChart"></svg>
+                <div id="tooltip" class="tooltip"></div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-title">Risk Zones</div>
+                
+                <div class="legend-item">
+                    <div class="legend-color zone-healthy"></div>
+                    <div>
+                        <strong>Healthy</strong>
+                        <small>H > 75%, V < 30%</small>
+                    </div>
+                </div>
+
+                <div class="legend-item">
+                    <div class="legend-color zone-watch"></div>
+                    <div>
+                        <strong>Watch</strong>
+                        <small>H > 75%, V ≥ 30%</small>
+                    </div>
+                </div>
+
+                <div class="legend-item">
+                    <div class="legend-color zone-stagnant"></div>
+                    <div>
+                        <strong>Stagnant</strong>
+                        <small>50% ≤ H ≤ 75%, Any V</small>
+                    </div>
+                </div>
+
+                <div class="legend-item">
+                    <div class="legend-color zone-critical"></div>
+                    <div>
+                        <strong>Critical</strong>
+                        <small>H < 50%, V < 30%</small>
+                    </div>
+                </div>
+
+                <div class="legend-item">
+                    <div class="legend-color zone-degrading"></div>
+                    <div>
+                        <strong>Degrading</strong>
+                        <small>H < 50%, V ≥ 30%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats" id="statsContainer" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-label">Total Tenants</div>
+                <div class="stat-value" id="statTotalTenants">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Healthy Tenants</div>
+                <div class="stat-value" id="statHealthyTenants">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">At-Risk Tenants</div>
+                <div class="stat-value" id="statAtRiskTenants">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Avg Fleet Health</div>
+                <div class="stat-value" id="statAvgHealth">-</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // Health vs Volatility Matrix - Phase 1 Scatter Plot
+        // ============================================================
+
+        const CHART_CONFIG = {
+            margin: { top: 40, right: 40, bottom: 60, left: 60 },
+            width: 800,
+            height: 600,
+        };
+
+        let RISK_ZONES = {};
+
+        async function loadRiskZones() {
+            try {
+                const response = await fetch('/api/v1/risk-zones');
+                if (!response.ok) throw new Error(`Failed to load risk zones: ${response.status}`);
+                RISK_ZONES = await response.json();
+            } catch (err) {
+                // Fallback to local thresholds if central API is unavailable
+                RISK_ZONES = {
+                    healthy: { color: '#10b981', health_min: 75, health_max: 100, volatility_min: 0, volatility_max: 30, label: 'Healthy' },
+                    watch: { color: '#f59e0b', health_min: 75, health_max: 100, volatility_min: 30, volatility_max: 100, label: 'Watch' },
+                    stagnant: { color: '#6366f1', health_min: 50, health_max: 75, volatility_min: 0, volatility_max: 100, label: 'Stagnant' },
+                    critical: { color: '#ef4444', health_min: 0, health_max: 50, volatility_min: 0, volatility_max: 30, label: 'Critical' },
+                    degrading: { color: '#dc2626', health_min: 0, health_max: 50, volatility_min: 30, volatility_max: 100, label: 'Degrading' }
+                };
+                console.warn(err);
+            }
+        }
+
+        function calculateRiskZone(health, volatility) {
+            for (const zone of Object.values(RISK_ZONES)) {
+                if (health >= zone.health_min && health <= zone.health_max && volatility >= zone.volatility_min && volatility <= zone.volatility_max) {
+                    return { zone: zone.label.toLowerCase(), color: zone.color, label: zone.label };
+                }
+            }
+            return { zone: 'unknown', color: '#9ca3af', label: 'Unknown' };
+        }
+
+        // ============================================================
+        // Data Fetching & Processing
+        // ============================================================
+
+        async function fetchFleetData() {
+            try {
+                showLoading(true);
+                clearError();
+
+                const response = await fetch('/api/v1/marketplace/platform/overview');
+                if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+                const data = await response.json();
+                return data.items || [];
+            } catch (err) {
+                showError(`Failed to load fleet data: ${err.message}`);
+                return [];
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function enrichTenantData(tenants) {
+            return tenants.map(tenant => {
+                const health = tenant.health_score || 75;
+                const volatility = tenant.fleet_volatility || 0;
+                const riskInfo = calculateRiskZone(health, volatility);
+
+                return {
+                    ...tenant,
+                    health,
+                    volatility,
+                    ...riskInfo,
+                    display_name: tenant.name || tenant.id.substring(0, 8),
+                };
+            });
+        }
+
+        // ============================================================
+        // SVG Scatter Plot Rendering
+        // ============================================================
+
+        function renderScatterPlot(tenants) {
+            const svg = document.getElementById('scatterChart');
+            svg.innerHTML = ''; // Clear
+
+            if (tenants.length === 0) {
+                svg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#999">No data available</text>';
+                return;
+            }
+
+            const width = svg.clientWidth || CHART_CONFIG.width;
+            const height = svg.clientHeight || CHART_CONFIG.height;
+            const { margin } = CHART_CONFIG;
+
+            const plotWidth = width - margin.left - margin.right;
+            const plotHeight = height - margin.top - margin.bottom;
+
+            // Scale functions
+            const xScale = (value) => (value / 100) * plotWidth + margin.left;
+            const yScale = (value) => height - margin.bottom - (value / 100) * plotHeight;
+
+            // Background zones
+            const zones = [
+                { x1: 0, y1: 75, x2: 30, y2: 100, color: '#10b98122', label: 'Healthy' },
+                { x1: 30, y1: 75, x2: 100, y2: 100, color: '#f59e0b22', label: 'Watch' },
+                { x1: 0, y1: 50, x2: 100, y2: 75, color: '#6366f122', label: 'Stagnant' },
+                { x1: 0, y1: 0, x2: 30, y2: 50, color: '#ef444422', label: 'Critical' },
+                { x1: 30, y1: 0, x2: 100, y2: 50, color: '#dc262622', label: 'Degrading' },
+            ];
+
+            zones.forEach(zone => {
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', xScale(zone.x1));
+                rect.setAttribute('y', yScale(zone.y2));
+                rect.setAttribute('width', xScale(zone.x2) - xScale(zone.x1));
+                rect.setAttribute('height', yScale(zone.y1) - yScale(zone.y2));
+                rect.setAttribute('fill', zone.color);
+                rect.setAttribute('pointer-events', 'none');
+                svg.appendChild(rect);
+            });
+
+            // Axes
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            
+            // X axis line
+            const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            xAxis.setAttribute('x1', margin.left);
+            xAxis.setAttribute('y1', height - margin.bottom);
+            xAxis.setAttribute('x2', width - margin.right);
+            xAxis.setAttribute('y2', height - margin.bottom);
+            xAxis.setAttribute('stroke', '#ddd');
+            xAxis.setAttribute('stroke-width', '2');
+            svg.appendChild(xAxis);
+
+            // Y axis line
+            const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            yAxis.setAttribute('x1', margin.left);
+            yAxis.setAttribute('y1', margin.top);
+            yAxis.setAttribute('x2', margin.left);
+            yAxis.setAttribute('y2', height - margin.bottom);
+            yAxis.setAttribute('stroke', '#ddd');
+            yAxis.setAttribute('stroke-width', '2');
+            svg.appendChild(yAxis);
+
+            // Axis labels
+            const xLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            xLabel.setAttribute('x', width / 2);
+            xLabel.setAttribute('y', height - 10);
+            xLabel.setAttribute('text-anchor', 'middle');
+            xLabel.setAttribute('font-size', '14');
+            xLabel.setAttribute('font-weight', '600');
+            xLabel.setAttribute('fill', '#666');
+            xLabel.textContent = 'Volatility (%)';
+            svg.appendChild(xLabel);
+
+            const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            yLabel.setAttribute('x', -height / 2);
+            yLabel.setAttribute('y', 15);
+            yLabel.setAttribute('text-anchor', 'middle');
+            yLabel.setAttribute('font-size', '14');
+            yLabel.setAttribute('font-weight', '600');
+            yLabel.setAttribute('fill', '#666');
+            yLabel.setAttribute('transform', 'rotate(-90)');
+            yLabel.textContent = 'Health Score (%)';
+            svg.appendChild(yLabel);
+
+            // Grid lines
+            for (let i = 0; i <= 100; i += 25) {
+                // Vertical grid
+                const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                vLine.setAttribute('x1', xScale(i));
+                vLine.setAttribute('y1', margin.top);
+                vLine.setAttribute('x2', xScale(i));
+                vLine.setAttribute('y2', height - margin.bottom);
+                vLine.setAttribute('stroke', '#f3f4f6');
+                vLine.setAttribute('stroke-width', '1');
+                svg.appendChild(vLine);
+
+                // Horizontal grid
+                const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                hLine.setAttribute('x1', margin.left);
+                hLine.setAttribute('y1', yScale(i));
+                hLine.setAttribute('x2', width - margin.right);
+                hLine.setAttribute('y2', yScale(i));
+                hLine.setAttribute('stroke', '#f3f4f6');
+                hLine.setAttribute('stroke-width', '1');
+                svg.appendChild(hLine);
+
+                // Tick labels
+                const xTick = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                xTick.setAttribute('x', xScale(i));
+                xTick.setAttribute('y', height - margin.bottom + 20);
+                xTick.setAttribute('text-anchor', 'middle');
+                xTick.setAttribute('font-size', '12');
+                xTick.setAttribute('fill', '#999');
+                xTick.textContent = i;
+                svg.appendChild(xTick);
+
+                const yTick = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                yTick.setAttribute('x', margin.left - 10);
+                yTick.setAttribute('y', yScale(i) + 5);
+                yTick.setAttribute('text-anchor', 'end');
+                yTick.setAttribute('font-size', '12');
+                yTick.setAttribute('fill', '#999');
+                yTick.textContent = i;
+                svg.appendChild(yTick);
+            }
+
+            // Points
+            tenants.forEach(tenant => {
+                const cx = xScale(tenant.volatility);
+                const cy = yScale(tenant.health);
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', cx);
+                circle.setAttribute('cy', cy);
+                circle.setAttribute('r', '8');
+                circle.setAttribute('fill', tenant.color);
+                circle.setAttribute('opacity', '0.8');
+                circle.setAttribute('stroke', 'white');
+                circle.setAttribute('stroke-width', '2');
+                circle.setAttribute('cursor', 'pointer');
+                circle.setAttribute('data-tenant-id', tenant.id);
+                circle.setAttribute('data-tenant-name', tenant.display_name);
+
+                circle.addEventListener('mouseenter', (e) => {
+                    circle.setAttribute('r', '12');
+                    circle.setAttribute('opacity', '1');
+                    showTooltip(e, tenant);
+                });
+
+                circle.addEventListener('mouseleave', () => {
+                    circle.setAttribute('r', '8');
+                    circle.setAttribute('opacity', '0.8');
+                    hideTooltip();
+                });
+
+                circle.addEventListener('click', () => {
+                    const url = new URL('/tenant-trend-timeline', window.location.origin);
+                    url.searchParams.set('tenant_id', tenant.id);
+                    url.searchParams.set('tenant_name', tenant.display_name);
+                    window.location.href = url.toString();
+                });
+
+                svg.appendChild(circle);
+            });
+        }
+
+        // ============================================================
+        // UI Utilities
+        // ============================================================
+
+        function showLoading(show) {
+            document.getElementById('loadingContainer').style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            const container = document.getElementById('errorContainer');
+            container.innerHTML = `<div class="error">${message}</div>`;
+        }
+
+        function clearError() {
+            document.getElementById('errorContainer').innerHTML = '';
+        }
+
+        function showTooltip(event, tenant) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.add('visible');
+            tooltip.innerHTML = `
+                <strong>${tenant.display_name}</strong><br/>
+                Health: ${tenant.health.toFixed(1)}%<br/>
+                Volatility: ${tenant.volatility.toFixed(1)}%<br/>
+                Risk: <span style="color: ${tenant.color}">●</span> ${tenant.label}
+            `;
+            tooltip.style.left = (event.pageX + 10) + 'px';
+            tooltip.style.top = (event.pageY + 10) + 'px';
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').classList.remove('visible');
+        }
+
+        function updateStats(tenants) {
+            const healthyCount = tenants.filter(t => t.zone === 'healthy').length;
+            const atRiskCount = tenants.filter(t => ['critical', 'degrading', 'watch'].includes(t.zone)).length;
+            const avgHealth = (tenants.reduce((sum, t) => sum + t.health, 0) / tenants.length).toFixed(1);
+
+            document.getElementById('statTotalTenants').textContent = tenants.length;
+            document.getElementById('statHealthyTenants').textContent = healthyCount;
+            document.getElementById('statAtRiskTenants').textContent = atRiskCount;
+            document.getElementById('statAvgHealth').textContent = avgHealth + '%';
+
+            document.getElementById('statsContainer').style.display = 'grid';
+        }
+
+        // ============================================================
+        // Event Handlers
+        // ============================================================
+
+        document.getElementById('refreshBtn').addEventListener('click', loadAndRender);
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const data = document.querySelector('#scatterChart');
+            const svg = new XMLSerializer().serializeToString(data);
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'health-volatility-matrix.svg';
+            link.click();
+        });
+
+        // ============================================================
+        // Main Execution
+        // ============================================================
+
+        async function loadAndRender() {
+            await loadRiskZones();
+            const tenants = await fetchFleetData();
+            if (tenants.length === 0) return;
+
+            const enrichedTenants = enrichTenantData(tenants);
+            document.getElementById('matrixContainer').style.display = 'flex';
+            renderScatterPlot(enrichedTenants);
+            updateStats(enrichedTenants);
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', loadAndRender);
+        window.addEventListener('resize', loadAndRender);
+    </script>
+</body>
+</html>

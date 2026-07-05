@@ -1,14 +1,10 @@
 {
     "ip:127.0.0.1": {
-        "window_start": 1781530981,
+        "window_start": 1783260771,
         "count": 1
     },
-    "tenant:default": {
-        "window_start": 1781530976,
-        "count": 14
-    },
-    "tenant:local": {
-        "window_start": 1781461263,
-        "count": 14
+    "tenant:ci-tenant": {
+        "window_start": 1783260686,
+        "count": 1
     }
 }

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer Certification Report - GD Workflow Bridge Pro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        section {
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .status-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-certified {
+            background: #cfe2ff;
+            color: #084298;
+            border: 1px solid #b6d4fe;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 2px solid #667eea;
+        }
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        table tr:hover {
+            background: #f9f9f9;
+        }
+        .metric {
+            display: inline-block;
+            margin: 15px 30px 15px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            min-width: 200px;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .recommendation {
+            background: #f0f7ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .conclusion {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #155724;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .conclusion h3 {
+            color: #155724;
+            margin-bottom: 15px;
+        }
+        .conclusion p {
+            color: #155724;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Consumer Certification Report</h1>
+            <p>GD Workflow Bridge Pro v7.2</p>
+        </header>
+
+        <div class="content">
+            <!-- Summary Metrics -->
+            <section>
+                <h2>Certification Summary</h2>
+                <div>
+                    <div class="metric">
+                        <div class="metric-label">Total Tests</div>
+                        <div class="metric-value">18</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Passed</div>
+                        <div class="metric-value" style="color: #28a745;">18</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Failed</div>
+                        <div class="metric-value" style="color: #dc3545;">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Duration</div>
+                        <div class="metric-value">3.43s</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Platform & Consumer Info -->
+            <section>
+                <h2>Environment</h2>
+                <table>
+                    <tr>
+                        <td><strong>Platform</strong></td>
+                        <td>GD Workflow Bridge Pro v7.2</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Consumer</strong></td>
+                        <td>Reference Client (TypeScript SDK) v0.1.0</td>
+                    </tr>
+                    <tr>
+                        <td><strong>API Base URL</strong></td>
+                        <td>http://localhost:8006</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Authentication</strong></td>
+                        <td>Bearer JWT</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Certification Date</strong></td>
+                        <td>26/06/2026, 8:14:44 am</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Test Results by Workflow -->
+            <section>
+                <h2>Workflow Test Results</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Workflow</th>
+                            <th>Tests</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td><strong>SDK Wrapper Fundamentals</strong></td>
+                            <td>2</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Validates SDK factory creation and error wrapping</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Marketplace Workflow (End-to-End)</strong></td>
+                            <td>1</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Complete plugin install/uninstall lifecycle validation</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Tenant Operations</strong></td>
+                            <td>1</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Tenant health, trends, drift, and risk zone validation</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Remediation State Validation</strong></td>
+                            <td>1</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Remediation execution and health improvement polling</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Remediation Workflow</strong></td>
+                            <td>1</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>End-to-end remediation preview and execution</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Error Model Validation</strong></td>
+                            <td>2</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>SdkError wrapping and error contract validation</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Error Injection Testing</strong></td>
+                            <td>6</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Error scenarios (empty ID, invalid tenant, duplicate install)</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Operations Workflow</strong></td>
+                            <td>1</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Platform overview and effectiveness metrics</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Integration Tests</strong></td>
+                            <td>3</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Basic workflow and health check integration</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Endpoint Coverage -->
+            <section>
+                <h2>API Endpoint Validation</h2>
+                <p>All endpoints are validated for correct behavior, expected response structure, and error handling.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Endpoint</th>
+                            <th>Status</th>
+                            <th>Latency</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td><strong>GET</strong></td>
+                            <td><code>/marketplace/products</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Low</td>
+                            <td>List all marketplace products</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>GET</strong></td>
+                            <td><code>/marketplace/products/{productId}</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Low</td>
+                            <td>Get product details</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>GET</strong></td>
+                            <td><code>/marketplace/plugins</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Low</td>
+                            <td>List marketplace plugins</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>GET</strong></td>
+                            <td><code>/marketplace/plugins/{pluginId}/installs</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Low</td>
+                            <td>List plugin installations</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>POST</strong></td>
+                            <td><code>/marketplace/plugins/{pluginId}/install</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Medium</td>
+                            <td>Install plugin for tenant</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>POST</strong></td>
+                            <td><code>/marketplace/plugins/{pluginId}/uninstall</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Medium</td>
+                            <td>Uninstall plugin for tenant</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>GET</strong></td>
+                            <td><code>/marketplace/tenants/{tenantId}</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Low</td>
+                            <td>Get tenant details and health</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>GET</strong></td>
+                            <td><code>/marketplace/tenants/{tenantId}/trends</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Low</td>
+                            <td>Get tenant trend data</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>GET</strong></td>
+                            <td><code>/platform/overview</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Low</td>
+                            <td>Platform-wide overview metrics</td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>GET</strong></td>
+                            <td><code>/intelligence/consolidated</code></td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Low</td>
+                            <td>Consolidated intelligence scores</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Findings -->
+            <section>
+                <h2>Key Findings</h2>
+                <table>
+                    <tr>
+                        <td><strong>SDK Compatibility</strong></td>
+                        <td><span class="status-badge status-certified">CERTIFIED</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>API Contract</strong></td>
+                        <td><span class="status-badge status-certified">STABLE</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Authentication</strong></td>
+                        <td><span class="status-badge status-certified">FUNCTIONAL</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Error Handling</strong></td>
+                        <td><span class="status-badge status-certified">COMPREHENSIVE</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Performance</strong></td>
+                        <td><span class="status-badge status-certified">ACCEPTABLE</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Developer Experience</strong></td>
+                        <td><span class="status-badge status-certified">SMOOTH</span></td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Recommendations -->
+            <section>
+                <h2>Recommendations & Notes</h2>
+                <div class="recommendation">✅ SDK is ready for production use by external consumers</div><div class="recommendation">✅ API contract is stable and consistent across endpoints</div><div class="recommendation">✅ Error handling provides clear, actionable feedback</div><div class="recommendation">✅ Authentication via JWT Bearer tokens is working correctly</div><div class="recommendation">✅ Async operations (remediation polling) handle long-running tasks properly</div><div class="recommendation">📝 Consider documenting field name variations across tenant endpoints (health_score vs health vs status)</div><div class="recommendation">📝 Document retry logic for transient failures in documentation</div>
+            </section>
+
+            <!-- Conclusion -->
+            <section>
+                <div class="conclusion">
+                    <h3>✅ Certification Status: CERTIFIED</h3>
+                    <p><strong>Reference client certification complete. All 18 workflow tests passed.</strong></p>
+                    <p>The generated TypeScript SDK successfully demonstrates consumer usage patterns across all major platform capabilities: marketplace operations, tenant management, remediation workflows, and intelligence metrics. API contracts are stable, error handling is consistent, and the developer experience is smooth. Ready for external SDK publication.</p>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>Generated on 26/06/2026, 8:14:45 am | Consumer Certification Report for GD Workflow Bridge Pro</p>
+        </footer>
+    </div>
+</body>
+</html>

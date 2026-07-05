@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Audit Timeline - Operations Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            border-bottom: 1px solid #334155;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #f1f5f9;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .controls {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #cbd5e1;
+        }
+
+        input,
+        select {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #3b82f6 0%, transparent 100%);
+        }
+
+        .decision-item {
+            margin-bottom: 30px;
+            margin-left: 80px;
+            position: relative;
+        }
+
+        .decision-item::before {
+            content: '';
+            position: absolute;
+            left: -50px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            border: 2px solid #0f172a;
+        }
+
+        .decision-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .decision-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+
+        .decision-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .decision-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .decision-type.recommendation {
+            background: #1e40af;
+            color: #93c5fd;
+        }
+
+        .decision-type.remediation {
+            background: #7c2d12;
+            color: #fed7aa;
+        }
+
+        .decision-type.configuration {
+            background: #134e4a;
+            color: #99f6e4;
+        }
+
+        .decision-type.learning_update {
+            background: #3f3f46;
+            color: #d4d4d8;
+        }
+
+        .priority {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority.critical {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        .priority.high {
+            background: #92400e;
+            color: #fcd34d;
+        }
+
+        .priority.medium {
+            background: #1e40af;
+            color: #93c5fd;
+        }
+
+        .priority.low {
+            background: #065f46;
+            color: #86efac;
+        }
+
+        .decision-timestamp {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .decision-recommendation {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border-left: 3px solid #3b82f6;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .decision-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .metric {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .metric-label {
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .metric-value {
+            color: #e2e8f0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .decision-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #0f172a;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+        }
+
+        .action-badge.accepted {
+            background: #065f46;
+            color: #86efac;
+            border-color: #10b981;
+        }
+
+        .action-badge.rejected {
+            background: #7f1d1d;
+            color: #fca5a5;
+            border-color: #ef4444;
+        }
+
+        .action-badge.deferred {
+            background: #92400e;
+            color: #fcd34d;
+            border-color: #eab308;
+        }
+
+        .effectiveness {
+            margin-top: 15px;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 4px;
+            border-left: 3px solid #10b981;
+        }
+
+        .effectiveness-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .effectiveness-bar {
+            height: 20px;
+            background: #334155;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .effectiveness-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #06b6d4, #10b981);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+
+        .error {
+            background: #7f1d1d;
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            border-dashed: true;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .decision-header {
+                flex-direction: column;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .decision-item {
+                margin-left: 60px;
+            }
+
+            .decision-item::before {
+                left: -40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Decision Audit Timeline</h1>
+            <p class="subtitle">Comprehensive audit trail of all platform recommendations and decisions</p>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="tenantId">Tenant</label>
+                <input type="text" id="tenantId" placeholder="Enter tenant ID">
+            </div>
+            <div class="control-group">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate">
+            </div>
+            <div class="control-group">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate">
+            </div>
+            <div class="control-group">
+                <label for="decisionType">Decision Type</label>
+                <select id="decisionType">
+                    <option value="">All Types</option>
+                    <option value="recommendation">Recommendation</option>
+                    <option value="remediation">Remediation</option>
+                    <option value="configuration">Configuration</option>
+                    <option value="learning_update">Learning Update</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="operatorAction">Operator Action</label>
+                <select id="operatorAction">
+                    <option value="">All Actions</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="deferred">Deferred</option>
+                    <option value="overridden">Overridden</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>&nbsp;</label>
+                <button onclick="loadDecisions()">Load Timeline</button>
+            </div>
+        </div>
+
+        <div id="stats" class="stats"></div>
+
+        <div id="error" style="display: none;"></div>
+        <div id="loading" style="display: none;" class="loading">Loading decisions...</div>
+        <div id="timeline" class="timeline"></div>
+        <div id="empty" style="display: none;" class="empty">No decisions found for the selected criteria</div>
+    </div>
+
+    <script>
+        const AUDIT_SERVICE_URL = 'http://127.0.0.1:8004';
+
+        function initializeDefaults() {
+            const now = new Date();
+            const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+            document.getElementById('startDate').valueAsDate = sevenDaysAgo;
+            document.getElementById('endDate').valueAsDate = now;
+            document.getElementById('tenantId').value = new URLSearchParams(window.location.search).get('tenant_id') || '';
+        }
+
+        async function loadDecisions() {
+            const tenantId = document.getElementById('tenantId').value;
+            if (!tenantId) {
+                showError('Please enter a tenant ID');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const decisionType = document.getElementById('decisionType').value;
+                const operatorAction = document.getElementById('operatorAction').value;
+
+                let url = `${AUDIT_SERVICE_URL}/timeline?tenant_id=${encodeURIComponent(tenantId)}`;
+                if (startDate) url += `&start_date=${encodeURIComponent(startDate)}`;
+                if (endDate) url += `&end_date=${encodeURIComponent(endDate)}`;
+                if (decisionType) url += `&decision_type=${encodeURIComponent(decisionType)}`;
+                if (operatorAction) url += `&operator_action=${encodeURIComponent(operatorAction)}`;
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    showError(`API Error: ${response.statusText}`);
+                    return;
+                }
+
+                const data = await response.json();
+                displayTimeline(data.decisions || []);
+                displayStats(data.decisions || []);
+            } catch (err) {
+                showError('Failed to load decisions: ' + err.message);
+            }
+        }
+
+        function displayTimeline(decisions) {
+            const timeline = document.getElementById('timeline');
+            const empty = document.getElementById('empty');
+            const loading = document.getElementById('loading');
+
+            loading.style.display = 'none';
+
+            if (decisions.length === 0) {
+                timeline.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            timeline.innerHTML = decisions.map(d => `
+                <div class="decision-item">
+                    <div class="decision-card">
+                        <div class="decision-header">
+                            <div>
+                                <span class="decision-type ${d.decision_type}">${d.decision_type}</span>
+                                <span class="priority ${d.priority}">${d.priority}</span>
+                            </div>
+                            <span class="decision-timestamp">${new Date(d.timestamp).toLocaleString()}</span>
+                        </div>
+
+                        <div class="decision-recommendation">
+                            <strong>Recommendation:</strong> ${escapeHtml(d.recommendation)}
+                        </div>
+
+                        <div class="decision-metrics">
+                            <div class="metric">
+                                <div class="metric-label">Source Service</div>
+                                <div class="metric-value">${d.source_service}</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Confidence</div>
+                                <div class="metric-value">${(d.confidence * 100).toFixed(0)}%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Execution Status</div>
+                                <div class="metric-value">${d.execution_status || 'pending'}</div>
+                            </div>
+                            ${d.related_decisions_count ? `
+                            <div class="metric">
+                                <div class="metric-label">Related Decisions</div>
+                                <div class="metric-value">${d.related_decisions_count}</div>
+                            </div>
+                            ` : ''}
+                        </div>
+
+                        ${d.operator_action ? `
+                        <div class="decision-actions">
+                            <strong>Operator Action:</strong>
+                            <span class="action-badge ${d.operator_action}">${d.operator_action}</span>
+                            ${d.operator_timestamp ? `<span class="decision-timestamp">${new Date(d.operator_timestamp).toLocaleString()}</span>` : ''}
+                        </div>
+                        ` : ''}
+
+                        ${d.effectiveness_score !== null && d.effectiveness_score !== undefined ? `
+                        <div class="effectiveness">
+                            <div class="effectiveness-label">Effectiveness Score</div>
+                            <div class="effectiveness-bar">
+                                <div class="effectiveness-fill" style="width: ${d.effectiveness_score * 100}%">
+                                    ${(d.effectiveness_score * 100).toFixed(0)}%
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #334155;">
+                            <button onclick="viewDecisionDetails('${d.id}')" style="background: #0f172a; color: #3b82f6; border: 1px solid #3b82f6;">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayStats(decisions) {
+            if (decisions.length === 0) {
+                document.getElementById('stats').innerHTML = '';
+                return;
+            }
+
+            const total = decisions.length;
+            const accepted = decisions.filter(d => d.operator_action === 'accepted').length;
+            const effectiveness = decisions.filter(d => d.effectiveness_score !== null).length;
+            const avgEffectiveness = decisions
+                .filter(d => d.effectiveness_score !== null)
+                .reduce((sum, d) => sum + d.effectiveness_score, 0) / (effectiveness || 1);
+
+            document.getElementById('stats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${total}</div>
+                    <div class="stat-label">Total Decisions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${accepted}</div>
+                    <div class="stat-label">Accepted (${((accepted/total)*100).toFixed(0)}%)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${effectiveness}</div>
+                    <div class="stat-label">With Effectiveness Data</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(avgEffectiveness * 100).toFixed(0)}%</div>
+                    <div class="stat-label">Average Effectiveness</div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
+            document.getElementById('error').style.display = 'block';
+        }
+
+        function showLoading() {
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('timeline').innerHTML = '';
+            document.getElementById('empty').style.display = 'none';
+        }
+
+        function viewDecisionDetails(decisionId) {
+            window.open(`decision-detail.html?decision_id=${decisionId}`, '_blank');
+        }
+
+        function escapeHtml(text) {
+            const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'};
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initializeDefaults);
+    </script>
+</body>
+</html>

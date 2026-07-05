@@ -1,0 +1,16 @@
+{
+  "packageName": "@gd-workflow-bridge-pro/api-sdk",
+  "packageVersion": "1.0.0",
+  "npmName": "@gd-workflow-bridge-pro/api-sdk",
+  "npmRepository": "https://registry.npmjs.org",
+  "apiDocumentationUrl": "https://docs.example.com/api",
+  "supportsES6": true,
+  "typescriptThreePlus": true,
+  "modelPropertyNaming": "camelCase",
+  "apiModulePrefix": "api",
+  "modelModulePrefix": "model",
+  "sortParamsByRequiredFlag": true,
+  "sortModelProperties": false,
+  "withInterfaces": true,
+  "nullSafeAdditionalProps": true
+}

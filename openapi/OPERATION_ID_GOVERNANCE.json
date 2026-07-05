@@ -1,0 +1,498 @@
+[
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/drift-analysis",
+    "operation_id": "driftanalysisListDriftanalysis",
+    "domain": "Drift Analysis",
+    "summary": "Compute drift analysis across tenants",
+    "file": "drift.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-effectiveness/recommendations",
+    "operation_id": "intelligenceListIntelligenceeffectivenessRecommendations",
+    "domain": "Intelligence",
+    "summary": "Recommendation effectiveness metrics",
+    "file": "effectiveness.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-effectiveness/mttd",
+    "operation_id": "intelligenceListIntelligenceeffectivenessMttd",
+    "domain": "Intelligence",
+    "summary": "Mean time to detect (MTTD)",
+    "file": "effectiveness.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-effectiveness/mttr",
+    "operation_id": "intelligenceListIntelligenceeffectivenessMttr",
+    "domain": "Intelligence",
+    "summary": "Mean time to remediate (MTTR)",
+    "file": "effectiveness.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-effectiveness/acceptance-rate",
+    "operation_id": "intelligenceListIntelligenceeffectivenessAcceptancerate",
+    "domain": "Intelligence",
+    "summary": "Recommendation acceptance rate",
+    "file": "effectiveness.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-effectiveness/accuracy",
+    "operation_id": "intelligenceListIntelligenceeffectivenessAccuracy",
+    "domain": "Intelligence",
+    "summary": "Recommendation accuracy metric",
+    "file": "effectiveness.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-effectiveness",
+    "operation_id": "intelligenceListIntelligenceeffectiveness",
+    "domain": "Intelligence",
+    "summary": "Comprehensive intelligence effectiveness summary",
+    "file": "effectiveness.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/health",
+    "operation_id": "healthList",
+    "domain": "Health",
+    "summary": "Service health probe",
+    "file": "health.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-health",
+    "operation_id": "intelligenceListIntelligencehealth",
+    "domain": "Intelligence",
+    "summary": "Intelligence health and anomaly summary",
+    "file": "intelligence.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-learning/performance",
+    "operation_id": "intelligenceListIntelligencelearningPerformance",
+    "domain": "Intelligence",
+    "summary": "Learning performance metrics",
+    "file": "learning.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-learning/adoption-gaps",
+    "operation_id": "intelligenceListIntelligencelearningAdoptiongaps",
+    "domain": "Intelligence",
+    "summary": "Recommendation adoption gaps",
+    "file": "learning.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-learning/recurring-issues",
+    "operation_id": "intelligenceListIntelligencelearningRecurringissues",
+    "domain": "Intelligence",
+    "summary": "Recurring issue detection",
+    "file": "learning.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-learning/trends",
+    "operation_id": "intelligenceListIntelligencelearningTrends",
+    "domain": "Intelligence",
+    "summary": "Intelligence improvement trends",
+    "file": "learning.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-learning/effectiveness-score",
+    "operation_id": "intelligenceListIntelligencelearningEffectivenessscore",
+    "domain": "Intelligence",
+    "summary": "Intelligence effectiveness score",
+    "file": "learning.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/intelligence-learning",
+    "operation_id": "intelligenceListIntelligencelearning",
+    "domain": "Intelligence",
+    "summary": "Consolidated intelligence learning report",
+    "file": "learning.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/products",
+    "operation_id": "marketplaceListMarketplaceProducts",
+    "domain": "Marketplace",
+    "summary": "List marketplace products",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/products",
+    "operation_id": "marketplaceCreateMarketplaceProducts",
+    "domain": "Marketplace",
+    "summary": "Create a marketplace product",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/products/{productId}",
+    "operation_id": "marketplaceGetMarketplaceProductsById",
+    "domain": "Marketplace",
+    "summary": "Get product by ID",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/products/{productId}/purchase",
+    "operation_id": "marketplaceCreateMarketplaceProductsPurchase",
+    "domain": "Marketplace",
+    "summary": "Simulate product purchase",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins",
+    "operation_id": "marketplaceListMarketplacePlugins",
+    "domain": "Marketplace",
+    "summary": "List plugins",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins",
+    "operation_id": "marketplaceCreateMarketplacePlugins",
+    "domain": "Marketplace",
+    "summary": "Create a plugin metadata record",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}",
+    "operation_id": "marketplaceGetMarketplacePluginsById",
+    "domain": "Marketplace",
+    "summary": "Get plugin metadata",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "PUT",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}",
+    "operation_id": "marketplaceUpdateMarketplacePlugins",
+    "domain": "Marketplace",
+    "summary": "Update plugin metadata",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/publish",
+    "operation_id": "marketplaceCreateMarketplacePluginsPublish",
+    "domain": "Marketplace",
+    "summary": "Publish a plugin",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/unpublish",
+    "operation_id": "marketplaceCreateMarketplacePluginsUnpublish",
+    "domain": "Marketplace",
+    "summary": "Unpublish a plugin",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/keys",
+    "operation_id": "marketplaceGetMarketplacePluginsKeysById",
+    "domain": "Marketplace",
+    "summary": "List plugin signing keys",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/keys",
+    "operation_id": "marketplaceCreateMarketplacePluginsKeys",
+    "domain": "Marketplace",
+    "summary": "Register a new plugin key",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}",
+    "operation_id": "marketplaceGetMarketplacePluginsKeysById",
+    "domain": "Marketplace",
+    "summary": "Get a plugin key by ID",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "DELETE",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}",
+    "operation_id": "marketplaceDeleteMarketplacePluginsKeys",
+    "domain": "Marketplace",
+    "summary": "Delete a plugin key",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}/revoke",
+    "operation_id": "marketplaceCreateMarketplacePluginsKeysRevoke",
+    "domain": "Marketplace",
+    "summary": "Revoke a plugin key",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/keys/{keyId}/activate",
+    "operation_id": "marketplaceCreateMarketplacePluginsKeysActivate",
+    "domain": "Marketplace",
+    "summary": "Reactivate a revoked plugin key",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/versions",
+    "operation_id": "marketplaceGetMarketplacePluginsVersionsById",
+    "domain": "Marketplace",
+    "summary": "List plugin versions",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/versions",
+    "operation_id": "marketplaceCreateMarketplacePluginsVersions",
+    "domain": "Marketplace",
+    "summary": "Publish a new plugin version",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/versions/{identifier}",
+    "operation_id": "marketplaceGetMarketplacePluginsVersionsById",
+    "domain": "Marketplace",
+    "summary": "Get plugin version detail by version identifier or ID",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/installs",
+    "operation_id": "marketplaceGetMarketplacePluginsInstallsById",
+    "domain": "Marketplace",
+    "summary": "List installs for a plugin",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/install",
+    "operation_id": "marketplaceCreateMarketplacePluginsInstall",
+    "domain": "Marketplace",
+    "summary": "Install a plugin for a tenant",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/uninstall",
+    "operation_id": "marketplaceCreateMarketplacePluginsUninstall",
+    "domain": "Marketplace",
+    "summary": "Uninstall a plugin for a tenant",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/ratings",
+    "operation_id": "marketplaceGetMarketplacePluginsRatingsById",
+    "domain": "Marketplace",
+    "summary": "List plugin ratings",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/ratings",
+    "operation_id": "marketplaceCreateMarketplacePluginsRatings",
+    "domain": "Marketplace",
+    "summary": "Submit a plugin rating",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/versions/{version}/artifact",
+    "operation_id": "marketplaceGetMarketplacePluginsVersionsArtifactById",
+    "domain": "Marketplace",
+    "summary": "List plugin artifacts for a version",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/versions/{version}/artifact",
+    "operation_id": "marketplaceCreateMarketplacePluginsVersionsArtifact",
+    "domain": "Marketplace",
+    "summary": "Upload a plugin artifact for a version",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/plugins/{pluginId}/versions/{version}/artifact/{artifactId}",
+    "operation_id": "marketplaceGetMarketplacePluginsVersionsArtifactById",
+    "domain": "Marketplace",
+    "summary": "Download plugin artifact metadata and base64 payload",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/installs",
+    "operation_id": "marketplaceListMarketplaceInstalls",
+    "domain": "Marketplace",
+    "summary": "List installs across tenants",
+    "file": "marketplace.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/platform/dashboard",
+    "operation_id": "platformListMarketplacePlatformDashboard",
+    "domain": "Platform",
+    "summary": "Platform dashboard overview",
+    "file": "operations.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/platform/tenants-overview",
+    "operation_id": "platformListMarketplacePlatformTenantsoverview",
+    "domain": "Platform",
+    "summary": "Platform tenants overview",
+    "file": "operations.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/platform/rankings",
+    "operation_id": "platformListMarketplacePlatformRankings",
+    "domain": "Platform",
+    "summary": "Platform ranking reports",
+    "file": "operations.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/platform/drift-summary",
+    "operation_id": "platformListMarketplacePlatformDriftsummary",
+    "domain": "Platform",
+    "summary": "Platform drift summary",
+    "file": "operations.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/platform/timeseries",
+    "operation_id": "platformListMarketplacePlatformTimeseries",
+    "domain": "Platform",
+    "summary": "Platform time-series data",
+    "file": "operations.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/platform/overview",
+    "operation_id": "platformListMarketplacePlatformOverview",
+    "domain": "Platform",
+    "summary": "Health vs volatility overview",
+    "file": "operations.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/test/scenario",
+    "operation_id": "testingCreateMarketplaceTestScenario",
+    "domain": "Testing",
+    "summary": "Create or reset a synthetic test scenario",
+    "file": "operations.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/remediation-events",
+    "operation_id": "remediationCreateRemediationevents",
+    "domain": "Remediation",
+    "summary": "Record a remediation recommendation or action",
+    "file": "remediation.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/remediation-events/{eventId}/resolve",
+    "operation_id": "remediationCreateRemediationeventsResolve",
+    "domain": "Remediation",
+    "summary": "Mark a remediation event as resolved",
+    "file": "remediation.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/risk-zones",
+    "operation_id": "riskzonesListRiskzones",
+    "domain": "Risk Zones",
+    "summary": "List configured risk zones",
+    "file": "risk-zones.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/risk-zones/classify",
+    "operation_id": "riskzonesListRiskzonesClassify",
+    "domain": "Risk Zones",
+    "summary": "Classify health and volatility into a risk zone",
+    "file": "risk-zones.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/snapshots",
+    "operation_id": "marketplaceListMarketplaceSnapshots",
+    "domain": "Marketplace",
+    "summary": "List saved marketplace snapshots",
+    "file": "snapshots.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/snapshots",
+    "operation_id": "marketplaceCreateMarketplaceSnapshots",
+    "domain": "Marketplace",
+    "summary": "Create a marketplace snapshot",
+    "file": "snapshots.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/tenants",
+    "operation_id": "marketplaceListMarketplaceTenants",
+    "domain": "Marketplace",
+    "summary": "List tenant IDs",
+    "file": "tenants.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/tenants/{tenantId}",
+    "operation_id": "marketplaceGetMarketplaceTenantsById",
+    "domain": "Marketplace",
+    "summary": "Get tenant health and stats",
+    "file": "tenants.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/tenants/{tenantId}/remediate/install-missing-deps",
+    "operation_id": "marketplaceCreateMarketplaceTenantsRemediateInstallmissingdeps",
+    "domain": "Marketplace",
+    "summary": "Install missing dependencies for a tenant",
+    "file": "tenants.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/tenants/{tenantId}/remediate/activate-keys",
+    "operation_id": "marketplaceCreateMarketplaceTenantsRemediateActivatekeys",
+    "domain": "Marketplace",
+    "summary": "Activate revoked keys for a tenant",
+    "file": "tenants.yaml"
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/marketplace/tenants/{tenantId}/trends",
+    "operation_id": "marketplaceGetMarketplaceTenantsTrendsById",
+    "domain": "Marketplace",
+    "summary": "Tenant trend analysis",
+    "file": "tenants.yaml"
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/marketplace/tenants/{tenantId}/remediate/{action}/preview",
+    "operation_id": "marketplaceCreateMarketplaceTenantsRemediatePreview",
+    "domain": "Marketplace",
+    "summary": "Preview a remediation action for a tenant",
+    "file": "tenants.yaml"
+  }
+]

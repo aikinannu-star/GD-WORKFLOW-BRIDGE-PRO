@@ -1,0 +1,110 @@
+HealthResponse:
+  $ref: ./common.yaml#/HealthResponse
+DeleteResponse:
+  $ref: ./common.yaml#/DeleteResponse
+ErrorResponse:
+  $ref: ./errors.yaml#/ErrorResponse
+Product:
+  $ref: ./marketplace.yaml#/Product
+ProductCreateRequest:
+  $ref: ./marketplace.yaml#/ProductCreateRequest
+ProductListResponse:
+  $ref: ./marketplace.yaml#/ProductListResponse
+PurchaseResponse:
+  $ref: ./marketplace.yaml#/PurchaseResponse
+Plugin:
+  $ref: ./marketplace.yaml#/Plugin
+PluginCreateRequest:
+  $ref: ./marketplace.yaml#/PluginCreateRequest
+PluginUpdateRequest:
+  $ref: ./marketplace.yaml#/PluginUpdateRequest
+PluginListResponse:
+  $ref: ./marketplace.yaml#/PluginListResponse
+PluginKey:
+  $ref: ./marketplace.yaml#/PluginKey
+PluginKeyCreateRequest:
+  $ref: ./marketplace.yaml#/PluginKeyCreateRequest
+PluginKeyListResponse:
+  $ref: ./marketplace.yaml#/PluginKeyListResponse
+PluginVersion:
+  $ref: ./marketplace.yaml#/PluginVersion
+PluginVersionCreateRequest:
+  $ref: ./marketplace.yaml#/PluginVersionCreateRequest
+PluginVersionListResponse:
+  $ref: ./marketplace.yaml#/PluginVersionListResponse
+PluginInstall:
+  $ref: ./marketplace.yaml#/PluginInstall
+PluginInstallListResponse:
+  $ref: ./marketplace.yaml#/PluginInstallListResponse
+PluginRating:
+  $ref: ./marketplace.yaml#/PluginRating
+PluginRatingCreateRequest:
+  $ref: ./marketplace.yaml#/PluginRatingCreateRequest
+PluginArtifact:
+  $ref: ./marketplace.yaml#/PluginArtifact
+PluginArtifactCreateRequest:
+  $ref: ./marketplace.yaml#/PluginArtifactCreateRequest
+Snapshot:
+  $ref: ./marketplace.yaml#/Snapshot
+SnapshotListResponse:
+  $ref: ./marketplace.yaml#/SnapshotListResponse
+Tenant:
+  $ref: ./tenant.yaml#/Tenant
+TenantListResponse:
+  $ref: ./tenant.yaml#/TenantListResponse
+TenantStatsResponse:
+  $ref: ./tenant.yaml#/TenantStatsResponse
+TenantTrendResponse:
+  $ref: ./tenant.yaml#/TenantTrendResponse
+RemediationPreviewResponse:
+  $ref: ./tenant.yaml#/RemediationPreviewResponse
+Finding:
+  $ref: ./intelligence.yaml#/Finding
+IntelligenceHealthResponse:
+  $ref: ./intelligence.yaml#/IntelligenceHealthResponse
+RecommendationEffectivenessItem:
+  $ref: ./intelligence.yaml#/RecommendationEffectivenessItem
+EffectivenessMetric:
+  $ref: ./intelligence.yaml#/EffectivenessMetric
+IntelligenceEffectivenessSummary:
+  $ref: ./intelligence.yaml#/IntelligenceEffectivenessSummary
+LearningPerformance:
+  $ref: ./intelligence.yaml#/LearningPerformance
+AdoptionGapsResponse:
+  $ref: ./intelligence.yaml#/AdoptionGapsResponse
+RecurringIssuesResponse:
+  $ref: ./intelligence.yaml#/RecurringIssuesResponse
+LearningTrendsResponse:
+  $ref: ./intelligence.yaml#/LearningTrendsResponse
+LearningEffectivenessScore:
+  $ref: ./intelligence.yaml#/LearningEffectivenessScore
+ConsolidatedLearningResponse:
+  $ref: ./intelligence.yaml#/ConsolidatedLearningResponse
+RemediationEventRequest:
+  $ref: ./intelligence.yaml#/RemediationEventRequest
+RemediationEvent:
+  $ref: ./intelligence.yaml#/RemediationEvent
+RemediationResolveRequest:
+  $ref: ./intelligence.yaml#/RemediationResolveRequest
+PlatformDashboardResponse:
+  $ref: ./operations.yaml#/PlatformDashboardResponse
+PlatformOverviewItem:
+  $ref: ./operations.yaml#/PlatformOverviewItem
+PlatformRankingsResponse:
+  $ref: ./operations.yaml#/PlatformRankingsResponse
+PlatformDriftSummaryResponse:
+  $ref: ./operations.yaml#/PlatformDriftSummaryResponse
+PlatformOverviewResponse:
+  $ref: ./operations.yaml#/PlatformOverviewResponse
+TimeSeriesPoint:
+  $ref: ./operations.yaml#/TimeSeriesPoint
+TimeSeriesResponse:
+  $ref: ./operations.yaml#/TimeSeriesResponse
+RiskZone:
+  $ref: ./analytics.yaml#/RiskZone
+RiskZoneList:
+  $ref: ./analytics.yaml#/RiskZoneList
+DriftTenantSummary:
+  $ref: ./analytics.yaml#/DriftTenantSummary
+DriftAnalysisResult:
+  $ref: ./analytics.yaml#/DriftAnalysisResult

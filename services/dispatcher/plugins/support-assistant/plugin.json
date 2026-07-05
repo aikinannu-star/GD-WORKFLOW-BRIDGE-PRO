@@ -1,0 +1,9 @@
+{
+  "id": "support-assistant",
+  "name": "Support Assistant",
+  "version": "0.1.0",
+  "author": "Platform Team",
+  "description": "Demonstrates a support assistant that uses dispatcher-backed tools.",
+  "entry": "SupportAssistantEntry.php",
+  "minimumRuntimeVersion": "1.0.0"
+}

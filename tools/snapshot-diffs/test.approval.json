@@ -1,0 +1,9 @@
+{
+  "status": "pending",
+  "branch": "test",
+  "latestRunId": "test-123",
+  "requestedAt": "2026-06-24T22:35:39.190Z",
+  "approvedAt": null,
+  "approvedBy": null,
+  "reason": null
+}

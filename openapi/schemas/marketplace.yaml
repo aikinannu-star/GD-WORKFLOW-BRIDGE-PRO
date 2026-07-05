@@ -1,0 +1,428 @@
+Product:
+  type: object
+  properties:
+    id:
+      type: string
+    title:
+      type: string
+    description:
+      type: string
+    price:
+      type: number
+      format: float
+    category:
+      type: string
+    brand:
+      type: string
+    image:
+      type: string
+      format: uri
+    inventory:
+      type: integer
+    tenant_id:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+  required:
+  - id
+  - title
+  - price
+  - category
+  - brand
+  - created_at
+ProductCreateRequest:
+  type: object
+  properties:
+    title:
+      type: string
+    description:
+      type: string
+    price:
+      type: number
+      format: float
+    category:
+      type: string
+    brand:
+      type: string
+    image:
+      type: string
+      format: uri
+    inventory:
+      type: integer
+    tenant_id:
+      type: string
+  required:
+  - title
+  - price
+ProductListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Product'
+    total:
+      type: integer
+  required:
+  - items
+  - total
+PurchaseResponse:
+  type: object
+  properties:
+    status:
+      type: string
+    product:
+      $ref: '#/Product'
+    quantity:
+      type: integer
+    message:
+      type: string
+  required:
+  - status
+  - product
+  - quantity
+  - message
+Plugin:
+  type: object
+  properties:
+    id:
+      type: string
+    slug:
+      type: string
+    name:
+      type: string
+    description:
+      type: string
+    author:
+      type: string
+    version:
+      type: string
+    manifest_url:
+      type: string
+      format: uri
+    published:
+      type: boolean
+    tenant_id:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      nullable: true
+      type: string
+      format: date-time
+  required:
+  - id
+  - slug
+  - name
+  - version
+  - published
+  - created_at
+PluginCreateRequest:
+  type: object
+  properties:
+    name:
+      type: string
+    version:
+      type: string
+    description:
+      type: string
+    author:
+      type: string
+    manifest_url:
+      type: string
+      format: uri
+    tenant_id:
+      type: string
+  required:
+  - name
+  - version
+PluginUpdateRequest:
+  type: object
+  properties:
+    name:
+      type: string
+    version:
+      type: string
+    description:
+      type: string
+    author:
+      type: string
+    manifest_url:
+      type: string
+      format: uri
+    published:
+      type: boolean
+    tenant_id:
+      type: string
+PluginListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Plugin'
+    total:
+      type: integer
+  required:
+  - items
+  - total
+PluginKey:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    public_key:
+      type: string
+    label:
+      type: string
+    revoked:
+      type: boolean
+    created_at:
+      type: string
+      format: date-time
+    revoked_at:
+      nullable: true
+      type: string
+      format: date-time
+  required:
+  - id
+  - plugin_id
+  - public_key
+  - revoked
+  - created_at
+PluginKeyCreateRequest:
+  type: object
+  properties:
+    public_key:
+      type: string
+    label:
+      type: string
+  required:
+  - public_key
+PluginKeyListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/PluginKey'
+    total:
+      type: integer
+  required:
+  - items
+  - total
+PluginVersion:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    version:
+      type: string
+    manifest_url:
+      nullable: true
+      type: string
+      format: uri
+    manifest:
+      nullable: true
+      type: object
+      additionalProperties: true
+    manifest_validated:
+      type: boolean
+    signature_verified:
+      type: boolean
+    changelog:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+  required:
+  - id
+  - plugin_id
+  - version
+  - manifest_validated
+  - signature_verified
+  - created_at
+PluginVersionCreateRequest:
+  type: object
+  properties:
+    version:
+      type: string
+    manifest_url:
+      type: string
+      format: uri
+    manifest:
+      type: object
+      additionalProperties: true
+    signature:
+      type: string
+    public_key:
+      type: string
+    changelog:
+      type: string
+  required:
+  - version
+PluginVersionListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/PluginVersion'
+    total:
+      type: integer
+  required:
+  - items
+  - total
+PluginInstall:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    tenant_id:
+      type: string
+    version:
+      type: string
+    status:
+      type: string
+    installed_at:
+      type: string
+      format: date-time
+    uninstalled_at:
+      nullable: true
+      type: string
+      format: date-time
+    installed_by:
+      type: string
+  required:
+  - id
+  - plugin_id
+  - tenant_id
+  - status
+  - installed_at
+PluginInstallListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/PluginInstall'
+    total:
+      type: integer
+  required:
+  - items
+  - total
+PluginRating:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    tenant_id:
+      type: string
+    rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    comment:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+  required:
+  - id
+  - plugin_id
+  - rating
+  - created_at
+PluginRatingCreateRequest:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    comment:
+      type: string
+  required:
+  - rating
+PluginArtifact:
+  type: object
+  properties:
+    id:
+      type: string
+    plugin_id:
+      type: string
+    version:
+      type: string
+    file_name:
+      type: string
+    path:
+      type: string
+    signature_verified:
+      type: boolean
+    signature:
+      nullable: true
+      type: string
+    public_key:
+      nullable: true
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    download_base64:
+      nullable: true
+      type: string
+  required:
+  - id
+  - plugin_id
+  - version
+  - file_name
+  - signature_verified
+  - created_at
+PluginArtifactCreateRequest:
+  type: object
+  properties:
+    file_name:
+      type: string
+    artifact_base64:
+      type: string
+    signature:
+      type: string
+    public_key:
+      type: string
+  required:
+  - file_name
+  - artifact_base64
+Snapshot:
+  type: object
+  properties:
+    id:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+  required:
+  - id
+  - created_at
+SnapshotListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Snapshot'
+    total:
+      type: integer
+  required:
+  - items
+  - total

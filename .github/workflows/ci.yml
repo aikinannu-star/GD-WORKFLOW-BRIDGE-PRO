@@ -96,6 +96,37 @@ jobs:
           DB_PASS: root
         run: vendor/bin/phpunit -c phpunit.xml.dist --no-coverage || true
 
+  assistant-runtime:
+    needs: phpunit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: mbstring, mysqli
+
+      - name: Cache Composer
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run Assistant runtime regression tests
+        run: bash services/assistant/tests/run_assistant_tests.sh
+
+      - name: Run Gateway auth unit tests
+        run: php services/gateway/tests/ApiKeyGatewayAuthTest.php
+
+      - name: Run gateway→assistant end-to-end integration test
+        run: php services/gateway/tests/EndToEndGatewayAssistantTest.php
+
   license-integration:
     needs: phpunit
     runs-on: ubuntu-latest
@@ -140,3 +171,43 @@ jobs:
         run: |
           chmod +x tests/distributed-revocation-test.sh
           ./tests/distributed-revocation-test.sh
+
+  kpi-validation:
+    needs: license-integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Run synthetic KPI validation
+        run: |
+          php scripts/synthetic_harness.php
+          node scripts/validate_synthetic_kpis.js
+      - name: Run Node intelligence-health check
+        run: node scripts/test_intelligence_health_node.js
+      - name: Start Marketplace server for effectiveness validation
+        run: |
+          php -S 127.0.0.1:8006 -t services/marketplace services/marketplace/server.php > /tmp/marketplace.log 2>&1 &
+          echo $! > /tmp/mpid
+          sleep 2
+      - name: Run effectiveness governance validation
+        run: |
+          node scripts/effectiveness-ci-reporter.js
+      - name: Stop Marketplace server
+        if: always()
+        run: |
+          kill $(cat /tmp/mpid) || true
+      - name: Upload effectiveness reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: effectiveness-governance-${{ github.run_id }}
+          path: |
+            ci-artifacts/effectiveness-metrics.json
+            ci-artifacts/effectiveness-report.html

@@ -1,0 +1,85 @@
+{
+    "sessionId": "sess-1",
+    "conversationId": "sess-1",
+    "tenantId": "default",
+    "userId": null,
+    "metadata": {
+        "messageCount": 12
+    },
+    "history": [
+        {
+            "role": "user",
+            "text": "Please log this action and respond.",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T11:48:23+00:00"
+        },
+        {
+            "role": "assistant",
+            "text": "Tool error: unknown_action",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T11:48:23+00:00"
+        },
+        {
+            "role": "user",
+            "text": "execute workflow conditional go_true",
+            "conversationId": "conv-1",
+            "timestamp": "2026-07-05T11:48:26+00:00"
+        },
+        {
+            "role": "assistant",
+            "text": "{\"status\":\"completed\",\"workflowId\":\"conditional\",\"tenantId\":\"default\",\"executionId\":\"2652b98352e58d37d33997b8\",\"steps\":[{\"id\":\"trigger\",\"type\":\"trigger\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_started\"},\"logs\":[]},{\"id\":\"check\",\"type\":\"condition\",\"status\":\"completed\",\"output\":{\"condition_result\":true},\"logs\":[]},{\"id\":\"log_true\",\"type\":\"action\",\"status\":\"completed\",\"output\":{\"message\":\"True branch executed\"},\"logs\":[\"True branch executed\"]},{\"id\":\"end\",\"type\":\"end\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_finished\"},\"logs\":[]}],\"context\":{\"query\":\"go_true\",\"workflowId\":\"conditional\",\"tenantId\":\"default\",\"workflowName\":\"Conditional Workflow\"}}",
+            "conversationId": "conv-1",
+            "timestamp": "2026-07-05T11:48:29+00:00"
+        },
+        {
+            "role": "user",
+            "text": "Please log this action and respond.",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T14:11:43+00:00"
+        },
+        {
+            "role": "assistant",
+            "text": "Tool error: unknown_action",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T14:11:43+00:00"
+        },
+        {
+            "role": "user",
+            "text": "execute workflow conditional go_true",
+            "conversationId": "conv-1",
+            "timestamp": "2026-07-05T14:11:47+00:00"
+        },
+        {
+            "role": "assistant",
+            "text": "{\"status\":\"completed\",\"workflowId\":\"conditional\",\"tenantId\":\"default\",\"executionId\":\"79326945221edb6974e240e0\",\"steps\":[{\"id\":\"trigger\",\"type\":\"trigger\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_started\"},\"logs\":[]},{\"id\":\"check\",\"type\":\"condition\",\"status\":\"completed\",\"output\":{\"condition_result\":true},\"logs\":[]},{\"id\":\"log_true\",\"type\":\"action\",\"status\":\"completed\",\"output\":{\"message\":\"True branch executed\"},\"logs\":[\"True branch executed\"]},{\"id\":\"end\",\"type\":\"end\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_finished\"},\"logs\":[]}],\"context\":{\"query\":\"go_true\",\"workflowId\":\"conditional\",\"tenantId\":\"default\",\"workflowName\":\"Conditional Workflow\"}}",
+            "conversationId": "conv-1",
+            "timestamp": "2026-07-05T14:11:50+00:00"
+        },
+        {
+            "role": "user",
+            "text": "Please log this action and respond.",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T14:12:32+00:00"
+        },
+        {
+            "role": "assistant",
+            "text": "Tool error: unknown_action",
+            "conversationId": "test-conv",
+            "timestamp": "2026-07-05T14:12:32+00:00"
+        },
+        {
+            "role": "user",
+            "text": "execute workflow conditional go_true",
+            "conversationId": "conv-1",
+            "timestamp": "2026-07-05T14:12:36+00:00"
+        },
+        {
+            "role": "assistant",
+            "text": "{\"status\":\"completed\",\"workflowId\":\"conditional\",\"tenantId\":\"default\",\"executionId\":\"7081c4a3f36d8722b800f2d4\",\"steps\":[{\"id\":\"trigger\",\"type\":\"trigger\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_started\"},\"logs\":[]},{\"id\":\"check\",\"type\":\"condition\",\"status\":\"completed\",\"output\":{\"condition_result\":true},\"logs\":[]},{\"id\":\"log_true\",\"type\":\"action\",\"status\":\"completed\",\"output\":{\"message\":\"True branch executed\"},\"logs\":[\"True branch executed\"]},{\"id\":\"end\",\"type\":\"end\",\"status\":\"completed\",\"output\":{\"message\":\"workflow_finished\"},\"logs\":[]}],\"context\":{\"query\":\"go_true\",\"workflowId\":\"conditional\",\"tenantId\":\"default\",\"workflowName\":\"Conditional Workflow\"}}",
+            "conversationId": "conv-1",
+            "timestamp": "2026-07-05T14:12:39+00:00"
+        }
+    ],
+    "createdAt": "2026-07-05T11:48:23+00:00",
+    "updatedAt": "2026-07-05T14:12:39+00:00"
+}

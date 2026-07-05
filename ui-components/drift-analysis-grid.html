@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drift Analysis Grid</title>
+    <style>
+        .drift-analysis-container {
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-top: 24px;
+        }
+
+        .drift-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 500;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .control-group select,
+        .control-group input {
+            padding: 6px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .drift-table-wrapper {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .drift-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .drift-table th {
+            background: #f1f5f9;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #1e293b;
+            border-bottom: 2px solid #cbd5e1;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .drift-table th:hover {
+            background: #e2e8f0;
+        }
+
+        .drift-table th.sortable::after {
+            content: ' ⇅';
+            font-size: 11px;
+            opacity: 0.5;
+        }
+
+        .drift-table th.sorted-asc::after {
+            content: ' ↑';
+            opacity: 1;
+        }
+
+        .drift-table th.sorted-desc::after {
+            content: ' ↓';
+            opacity: 1;
+        }
+
+        .drift-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .drift-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .tenant-cell {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .health-value {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 3px;
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .drift-value {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+
+        .drift-positive {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .drift-negative {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .drift-neutral {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .anomaly-indicator {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .anomaly-flag {
+            background: #fca5a5;
+            color: #7f1d1d;
+        }
+
+        .anomaly-normal {
+            background: #d1d5db;
+            color: #6b7280;
+            opacity: 0.3;
+        }
+
+        .trend-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .trend-improving {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .trend-degrading {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .trend-stable {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .drift-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-swatch {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .drift-stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="drift-analysis-container">
+        <h2 style="margin-top: 0; color: #1e293b;">📊 Drift Analysis Grid</h2>
+        <p style="margin-top: 6px; color: #64748b; font-size: 14px;">
+            Fleet baseline comparison — identify tenants deviating from system average behavior
+        </p>
+
+        <div class="drift-stats" id="driftStats"></div>
+
+        <div class="drift-controls">
+            <div class="control-group">
+                <label for="driftMetricSelect">Metric:</label>
+                <select id="driftMetricSelect">
+                    <option value="health_score">Health Score</option>
+                    <option value="volatility">Volatility</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="driftDaysSelect">Period:</label>
+                <select id="driftDaysSelect">
+                    <option value="7">Last 7 days</option>
+                    <option value="14">Last 14 days</option>
+                    <option value="30">Last 30 days</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="driftSortSelect">Sort by:</label>
+                <select id="driftSortSelect">
+                    <option value="drift_magnitude">Drift magnitude</option>
+                    <option value="current_health">Current health</option>
+                    <option value="trend_velocity">Trend velocity</option>
+                </select>
+            </div>
+            <button id="refreshDriftButton" style="padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500;">
+                ↻ Refresh
+            </button>
+        </div>
+
+        <div class="drift-table-wrapper">
+            <table class="drift-table" id="driftTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="name">Tenant</th>
+                        <th class="sortable" data-sort="current_health">Current Health</th>
+                        <th class="sortable" data-sort="fleet_average">Fleet Average</th>
+                        <th class="sortable" data-sort="drift_magnitude">Drift</th>
+                        <th class="sortable" data-sort="drift_sigma">Sigma (σ)</th>
+                        <th>Anomalous</th>
+                        <th class="sortable" data-sort="trend_direction">Trend</th>
+                    </tr>
+                </thead>
+                <tbody id="driftTableBody">
+                    <tr><td colspan="7" style="text-align: center; color: #94a3b8;">Loading drift analysis...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="drift-legend">
+            <div class="legend-item">
+                <span class="legend-swatch" style="background: #dcfce7;"></span>
+                <span>Above fleet average (positive drift)</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-swatch" style="background: #fee2e2;"></span>
+                <span>Below fleet average (negative drift)</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-swatch anomaly-flag"></span>
+                <span>Anomalous (|σ| > 1.5)</span>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { RISK_ZONES, fetchRiskZonesFromAPI } from '/risk-zones.js';
+
+        const driftMetricSelect = document.getElementById('driftMetricSelect');
+        const driftDaysSelect = document.getElementById('driftDaysSelect');
+        const driftSortSelect = document.getElementById('driftSortSelect');
+        const refreshDriftButton = document.getElementById('refreshDriftButton');
+        const driftTable = document.getElementById('driftTable');
+        const driftTableBody = document.getElementById('driftTableBody');
+        const driftStats = document.getElementById('driftStats');
+
+        let currentSortColumn = 'drift_magnitude';
+        let currentSortDirection = 'desc';
+
+        async function fetchDriftAnalysis() {
+            const metric = driftMetricSelect.value || 'health_score';
+            const daysBack = Number(driftDaysSelect.value) || 7;
+            const sortBy = driftSortSelect.value || 'drift_magnitude';
+
+            try {
+                const endpoint = new URL('/api/v1/drift-analysis', window.location.origin);
+                endpoint.searchParams.set('metric', metric);
+                endpoint.searchParams.set('days_back', String(daysBack));
+                endpoint.searchParams.set('sort_by', sortBy);
+
+                const response = await fetch(endpoint.toString());
+                if (!response.ok) {
+                    throw new Error(`Drift API returned ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Failed to fetch drift analysis:', error);
+                return null;
+            }
+        }
+
+        function renderDriftStats(analysis) {
+            driftStats.innerHTML = '';
+
+            const fleetAvg = analysis.fleet_average ?? 'N/A';
+            const fleetStdDev = analysis.fleet_stddev ?? 'N/A';
+            const tenantCount = analysis.tenant_count ?? 0;
+            const anomalousCount = analysis.anomalous_count ?? 0;
+
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Fleet Average</div>
+                    <div class="stat-value">${typeof fleetAvg === 'number' ? fleetAvg.toFixed(1) : fleetAvg}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Fleet Std Dev (σ)</div>
+                    <div class="stat-value">${typeof fleetStdDev === 'number' ? fleetStdDev.toFixed(2) : fleetStdDev}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Tenant Count</div>
+                    <div class="stat-value">${tenantCount}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Anomalous Tenants</div>
+                    <div class="stat-value" style="color: ${anomalousCount > 0 ? '#dc2626' : '#16a34a'};">${anomalousCount}</div>
+                </div>
+            `;
+
+            driftStats.innerHTML = statsHTML;
+        }
+
+        function renderDriftTable(analysis) {
+            if (!analysis || !Array.isArray(analysis.tenants) || analysis.tenants.length === 0) {
+                driftTableBody.innerHTML = '<tr><td colspan="7" class="empty-state">No drift data available</td></tr>';
+                return;
+            }
+
+            renderDriftStats(analysis);
+
+            driftTableBody.innerHTML = analysis.tenants.map(tenant => {
+                const health = tenant.current_health ?? 50;
+                const fleetAvg = tenant.fleet_average ?? 50;
+                const drift = tenant.drift_magnitude ?? 0;
+                const sigma = tenant.drift_sigma ?? 0;
+                const isAnomalous = tenant.is_anomalous ?? false;
+                const trend = tenant.trend_direction ?? 'stable';
+                const driftDirection = tenant.drift_direction ?? 'at_baseline';
+
+                const driftClass = drift > 0 ? 'drift-positive' : (drift < 0 ? 'drift-negative' : 'drift-neutral');
+                const trendClass = trend === 'improving' ? 'trend-improving' : (trend === 'degrading' ? 'trend-degrading' : 'trend-stable');
+
+                return `
+                    <tr>
+                        <td class="tenant-cell">${tenant.name || tenant.tenant_id}</td>
+                        <td><span class="health-value">${health.toFixed(1)}%</span></td>
+                        <td><span class="health-value">${fleetAvg.toFixed(1)}%</span></td>
+                        <td><span class="drift-value ${driftClass}">${drift > 0 ? '+' : ''}${drift.toFixed(2)}</span></td>
+                        <td><span class="drift-value ${driftClass}">${sigma > 0 ? '+' : ''}${sigma.toFixed(2)}σ</span></td>
+                        <td><span class="anomaly-indicator ${isAnomalous ? 'anomaly-flag' : 'anomaly-normal'}">${isAnomalous ? '⚠' : '✓'}</span></td>
+                        <td><span class="trend-badge ${trendClass}">${trend}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function updateDriftView() {
+            const analysis = await fetchDriftAnalysis();
+            if (analysis) {
+                renderDriftTable(analysis);
+            }
+        }
+
+        // Event listeners
+        driftMetricSelect.addEventListener('change', updateDriftView);
+        driftDaysSelect.addEventListener('change', updateDriftView);
+        driftSortSelect.addEventListener('change', updateDriftView);
+        refreshDriftButton.addEventListener('click', updateDriftView);
+
+        // Column sorting (client-side re-sort of current data)
+        Array.from(driftTable.querySelectorAll('th.sortable')).forEach(th => {
+            th.addEventListener('click', () => {
+                const sortColumn = th.dataset.sort;
+                if (sortColumn === currentSortColumn) {
+                    currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSortColumn = sortColumn;
+                    currentSortDirection = 'desc';
+                }
+
+                Array.from(driftTable.querySelectorAll('th.sortable')).forEach(h => {
+                    h.classList.remove('sorted-asc', 'sorted-desc');
+                });
+                th.classList.add(currentSortDirection === 'asc' ? 'sorted-asc' : 'sorted-desc');
+
+                // Re-fetch with new sort
+                driftSortSelect.value = sortColumn;
+                updateDriftView();
+            });
+        });
+
+        // Initial load
+        updateDriftView();
+    </script>
+</body>
+</html>

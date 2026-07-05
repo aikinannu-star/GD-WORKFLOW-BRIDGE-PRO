@@ -1,0 +1,85 @@
+{
+    "auth_requests_total": {
+        "type": "counter",
+        "samples": {
+            "{\"method\":\"POST\",\"route\":\"\\/api\\/v1\\/auth\\/register\",\"status\":\"2xx\"}": {
+                "labels": {
+                    "method": "POST",
+                    "route": "/api/v1/auth/register",
+                    "status": "2xx"
+                },
+                "value": 7,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            },
+            "{\"method\":\"POST\",\"route\":\"\\/api\\/v1\\/auth\\/register\",\"status\":\"4xx\"}": {
+                "labels": {
+                    "method": "POST",
+                    "route": "/api/v1/auth/register",
+                    "status": "4xx"
+                },
+                "value": 7,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            },
+            "{\"method\":\"POST\",\"route\":\"\\/api\\/v1\\/auth\\/introspect\",\"status\":\"4xx\"}": {
+                "labels": {
+                    "method": "POST",
+                    "route": "/api/v1/auth/introspect",
+                    "status": "4xx"
+                },
+                "value": 1,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            },
+            "{\"method\":\"POST\",\"route\":\"\\/api\\/v1\\/auth\\/login\",\"status\":\"2xx\"}": {
+                "labels": {
+                    "method": "POST",
+                    "route": "/api/v1/auth/login",
+                    "status": "2xx"
+                },
+                "value": 3,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "auth_errors_total": {
+        "type": "counter",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 7,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            },
+            "{\"method\":\"POST\",\"route\":\"\\/api\\/v1\\/auth\\/register\",\"status\":\"4xx\"}": {
+                "labels": {
+                    "method": "POST",
+                    "route": "/api/v1/auth/register",
+                    "status": "4xx"
+                },
+                "value": 7,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            },
+            "{\"method\":\"POST\",\"route\":\"\\/api\\/v1\\/auth\\/introspect\",\"status\":\"4xx\"}": {
+                "labels": {
+                    "method": "POST",
+                    "route": "/api/v1/auth/introspect",
+                    "status": "4xx"
+                },
+                "value": 1,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    }
+}

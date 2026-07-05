@@ -1,0 +1,202 @@
+PlatformDashboardResponse:
+  type: object
+  properties:
+    platform_health_score:
+      type: number
+    platform_health_status:
+      type: string
+    at_risk_tenants:
+      type: integer
+    critical_alerts:
+      type: integer
+    total_active_installs:
+      type: integer
+    total_remediations_7d:
+      type: integer
+    fleet_volatility:
+      type: number
+    health_distribution:
+      type: object
+      additionalProperties:
+        type: integer
+    drift_summary:
+      type: object
+      properties:
+        governance_drift:
+          type: integer
+        revocation_drift:
+          type: integer
+    tenant_count:
+      type: integer
+    cached_at:
+      type: string
+      format: date-time
+  required:
+  - platform_health_score
+  - platform_health_status
+  - at_risk_tenants
+  - critical_alerts
+  - total_active_installs
+  - total_remediations_7d
+  - fleet_volatility
+  - health_distribution
+  - drift_summary
+  - tenant_count
+  - cached_at
+PlatformOverviewItem:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    health_score:
+      type: number
+    health_status:
+      type: string
+    install_count:
+      type: integer
+    finding_count:
+      type: integer
+    critical_finding_count:
+      type: integer
+    missing_deps_count:
+      type: integer
+    revoked_key_count:
+      type: integer
+    health_trend:
+      type: string
+    health_delta:
+      type: integer
+    volatility_score:
+      type: number
+    volatility_status:
+      type: string
+    drift_status:
+      type: string
+    last_updated:
+      type: string
+      format: date-time
+  required:
+  - tenant_id
+  - health_score
+  - health_status
+  - install_count
+  - finding_count
+  - critical_finding_count
+  - health_trend
+  - health_delta
+  - volatility_score
+  - drift_status
+  - last_updated
+PlatformRankingsResponse:
+  type: object
+  properties:
+    healthiest_tenants:
+      type: array
+      items:
+        $ref: '#/PlatformOverviewItem'
+    most_improved_tenants:
+      type: array
+      items:
+        $ref: '#/PlatformOverviewItem'
+    highest_risk_tenants:
+      type: array
+      items:
+        $ref: '#/PlatformOverviewItem'
+    cached_at:
+      type: string
+      format: date-time
+  required:
+  - healthiest_tenants
+  - most_improved_tenants
+  - highest_risk_tenants
+  - cached_at
+PlatformDriftSummaryResponse:
+  type: object
+  properties:
+    no_drift:
+      type: integer
+    governance_drift:
+      type: integer
+    revocation_drift:
+      type: integer
+    drifted_tenants:
+      type: array
+      items:
+        type: object
+        properties:
+          tenant_id:
+            type: string
+          drift_type:
+            type: string
+          health_score:
+            type: number
+    cached_at:
+      type: string
+      format: date-time
+  required:
+  - no_drift
+  - governance_drift
+  - revocation_drift
+  - drifted_tenants
+  - cached_at
+PlatformOverviewResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+    total_tenants:
+      type: integer
+    average_health:
+      type: number
+    average_volatility:
+      type: number
+    updated_at:
+      type: string
+      format: date-time
+    cached_at:
+      type: integer
+  required:
+  - items
+  - total_tenants
+  - average_health
+  - average_volatility
+  - updated_at
+  - cached_at
+TimeSeriesPoint:
+  type: object
+  properties:
+    timestamp:
+      type: string
+      format: date-time
+    value:
+      type: number
+  required:
+  - timestamp
+  - value
+TimeSeriesResponse:
+  type: object
+  properties:
+    tenant_id:
+      nullable: true
+      type: string
+    metric:
+      type: string
+    period:
+      type: string
+    items:
+      type: array
+      items:
+        $ref: '#/TimeSeriesPoint'
+    comparison:
+      nullable: true
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required:
+  - metric
+  - period
+  - items

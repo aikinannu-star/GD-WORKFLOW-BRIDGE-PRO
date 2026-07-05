@@ -1,0 +1,18 @@
+{
+    "workflowId": "default",
+    "tenantId": "default",
+    "status": "completed",
+    "currentNode": "end",
+    "variables": {
+        "query": "me.",
+        "workflowId": "default",
+        "tenantId": "default",
+        "workflowName": "Default Workflow"
+    },
+    "retryCount": 0,
+    "triggerSource": "manual",
+    "startedAt": "2026-07-05T14:12:33+00:00",
+    "executionId": "4b054520417b7abb7b8b3f0d",
+    "updatedAt": "2026-07-05T14:12:33+00:00",
+    "completedAt": "2026-07-05T14:12:33+00:00"
+}

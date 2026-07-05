@@ -1,0 +1,114 @@
+Tenant:
+  type: object
+  properties:
+    id:
+      type: string
+  required:
+  - id
+TenantListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Tenant'
+    total:
+      type: integer
+  required:
+  - items
+  - total
+TenantStatsResponse:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    health_score:
+      type: number
+    health_status:
+      type: string
+    install_count:
+      type: integer
+    findings:
+      type: array
+      items:
+        $ref: '#/Finding'
+    missing_deps:
+      type: array
+      items:
+        type: string
+    revoked_key_count:
+      type: integer
+    health_trend:
+      type: string
+    health_delta:
+      type: integer
+    volatility_score:
+      type: number
+    volatility_status:
+      type: string
+    drift_status:
+      type: string
+    last_updated:
+      type: string
+      format: date-time
+  required:
+  - tenant_id
+  - health_score
+  - health_status
+  - install_count
+  - findings
+  - revoked_key_count
+  - health_trend
+  - health_delta
+  - volatility_score
+  - drift_status
+TenantTrendResponse:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    history_points:
+      type: integer
+    current_snapshot:
+      type: object
+      additionalProperties: true
+    trends:
+      type: object
+      additionalProperties: true
+    history:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required:
+  - tenant_id
+  - history_points
+  - current_snapshot
+  - trends
+  - history
+RemediationPreviewResponse:
+  type: object
+  properties:
+    action:
+      type: string
+    current_health:
+      type: integer
+    projected_health:
+      type: integer
+    health_impact:
+      type: integer
+    changes:
+      type: array
+      items:
+        type: string
+    confidence:
+      type: string
+    safe_to_execute:
+      type: boolean
+  required:
+  - action
+  - current_health
+  - projected_health
+  - health_impact
+  - confidence
+  - safe_to_execute

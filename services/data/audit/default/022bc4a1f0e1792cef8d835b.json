@@ -1,0 +1,43 @@
+{
+    "workflowId": "default",
+    "tenantId": "default",
+    "version": 1,
+    "action": "execute",
+    "performedBy": "system",
+    "status": "completed",
+    "details": {
+        "trace": [
+            {
+                "id": "trigger",
+                "type": "trigger",
+                "status": "completed",
+                "output": {
+                    "message": "workflow_started"
+                },
+                "logs": []
+            },
+            {
+                "id": "log_action",
+                "type": "action",
+                "status": "completed",
+                "output": {
+                    "message": "Workflow executed successfully by assistant."
+                },
+                "logs": [
+                    "Workflow executed successfully by assistant."
+                ]
+            },
+            {
+                "id": "end",
+                "type": "end",
+                "status": "completed",
+                "output": {
+                    "message": "workflow_finished"
+                },
+                "logs": []
+            }
+        ]
+    },
+    "eventId": "022bc4a1f0e1792cef8d835b",
+    "timestamp": "2026-07-05T14:11:44+00:00"
+}

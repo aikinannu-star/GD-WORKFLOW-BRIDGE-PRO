@@ -1,0 +1,1 @@
+{"root":["./src/config.ts","./src/errors.ts","./src/index.ts","./src/sdk.ts","./src/auth/authenticate.ts","./src/examples/intelligence/health.ts","./src/examples/intelligence/learning.ts","./src/examples/marketplace/browse.ts","./src/examples/platform/overview.ts","./src/examples/tenant/tenant-health.ts","./src/workflows/marketplace.ts"],"version":"5.9.3"}

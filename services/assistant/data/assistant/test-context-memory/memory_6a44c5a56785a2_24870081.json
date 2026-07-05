@@ -1,0 +1,24 @@
+{
+    "id": "memory_6a44c5a56785a2.24870081",
+    "tenantId": "tenant-1",
+    "userId": "user-42",
+    "conversationId": null,
+    "type": "preference",
+    "content": "User prefers email updates",
+    "confidence": 0.8,
+    "tags": [
+        "preference"
+    ],
+    "sourceMessages": [],
+    "createdAt": "2026-07-01T07:45:41+00:00",
+    "lastConfirmedAt": "2026-07-01T07:48:03+00:00",
+    "expiresAt": null,
+    "metadata": {
+        "source": "memory",
+        "lastUsedAt": "2026-07-01T07:48:03+00:00",
+        "status": "superseded",
+        "supersededById": "merged",
+        "supersededAt": "2026-07-01T07:53:50+00:00",
+        "confidenceDecayedAt": "2026-07-01T07:53:50+00:00"
+    }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@gd-workflow-bridge-pro/api-sdk",
+  "version": "1.0.0",
+  "description": "Canonical OpenAPI contract for the Marketplace service and its operational intelligence APIs.\nThis spec is the source of truth for API stabilization, SDK generation, and compatibility gating.\n",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Tests: No-op for generated SDK\""
+  },
+  "keywords": [
+    "api",
+    "sdk",
+    "marketplace",
+    "governance"
+  ],
+  "author": "GD Workflow Bridge Pro",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}

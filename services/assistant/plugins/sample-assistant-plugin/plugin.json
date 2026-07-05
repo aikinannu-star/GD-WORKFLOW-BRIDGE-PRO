@@ -1,0 +1,11 @@
+{
+  "id": "sample-assistant",
+  "version": "0.1.0",
+  "name": "Sample Assistant Plugin",
+  "description": "A minimal assistant plugin demonstrating registration with the AssistantManager.",
+  "entry": "Entry.php",
+  "permissions": ["assistant.basic"],
+  "capabilities": {
+    "assistant": ["sample-assistant"]
+  }
+}

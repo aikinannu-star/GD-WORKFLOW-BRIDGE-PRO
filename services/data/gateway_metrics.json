@@ -1,0 +1,107 @@
+{
+    "gateway_active_requests": {
+        "type": "gauge",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 0,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_requests_forwarded_total": {
+        "type": "counter",
+        "samples": {
+            "{\"service\":\"license\"}": {
+                "labels": {
+                    "service": "license"
+                },
+                "value": 1,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_requests_total": {
+        "type": "counter",
+        "samples": {
+            "{\"method\":\"GET\",\"route\":\"\\/api\\/v1\\/license\\/status\",\"status\":\"2xx\"}": {
+                "labels": {
+                    "method": "GET",
+                    "route": "/api/v1/license/status",
+                    "status": "2xx"
+                },
+                "value": 1,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_request_duration_seconds": {
+        "type": "histogram",
+        "samples": {
+            "{\"method\":\"GET\",\"route\":\"\\/api\\/v1\\/license\\/status\",\"status\":\"2xx\"}": {
+                "labels": {
+                    "method": "GET",
+                    "route": "/api/v1/license/status",
+                    "status": "2xx"
+                },
+                "value": 0,
+                "sum": 0.01131296157836914,
+                "count": 1,
+                "buckets": {
+                    "0.025": 1,
+                    "0.05": 1,
+                    "0.1": 1,
+                    "0.2": 1,
+                    "0.5": 1,
+                    "1": 1,
+                    "2.5": 1,
+                    "5": 1,
+                    "10": 1,
+                    "+Inf": 1
+                }
+            }
+        }
+    },
+    "gateway_requests_rejected_during_shutdown_total": {
+        "type": "counter",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 1,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_shutdown_in_progress_total": {
+        "type": "counter",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 1,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "gateway_shutdown_in_progress": {
+        "type": "gauge",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 0,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    }
+}

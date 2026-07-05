@@ -1,0 +1,66 @@
+{
+    "id": "memory_6a44cb623d2a90.75812766",
+    "tenantId": "tenant-1",
+    "userId": "user-42",
+    "conversationId": null,
+    "type": "preference",
+    "content": "User prefers email updates",
+    "confidence": 0.8,
+    "tags": [
+        "preference"
+    ],
+    "sourceMessages": [],
+    "createdAt": "2026-07-01T08:10:10+00:00",
+    "lastConfirmedAt": "2026-07-01T08:10:10+00:00",
+    "expiresAt": null,
+    "metadata": {
+        "source": "memory",
+        "lastUsedAt": "2026-07-01T07:48:03+00:00",
+        "lineage": [
+            {
+                "from": "User prefers email updates",
+                "to": "User prefers email updates",
+                "mergedAt": "2026-07-01T07:53:50+00:00"
+            },
+            {
+                "from": "User prefers email updates",
+                "to": "User prefers email updates",
+                "mergedAt": "2026-07-01T07:54:56+00:00"
+            },
+            {
+                "from": "User prefers email updates",
+                "to": "User prefers email updates",
+                "mergedAt": "2026-07-01T08:02:14+00:00"
+            },
+            {
+                "from": "User prefers email updates",
+                "to": "User prefers email updates",
+                "mergedAt": "2026-07-01T08:02:44+00:00"
+            },
+            {
+                "from": "User prefers email updates",
+                "to": "User prefers email updates",
+                "mergedAt": "2026-07-01T08:03:38+00:00"
+            },
+            {
+                "from": "User prefers email updates",
+                "to": "User prefers email updates",
+                "mergedAt": "2026-07-01T08:04:54+00:00"
+            },
+            {
+                "from": "User prefers email updates",
+                "to": "User prefers email updates",
+                "mergedAt": "2026-07-01T08:05:57+00:00"
+            },
+            {
+                "from": "User prefers email updates",
+                "to": "User prefers email updates",
+                "mergedAt": "2026-07-01T08:10:10+00:00"
+            }
+        ],
+        "status": "superseded",
+        "supersededById": "merged",
+        "supersededAt": "2026-07-01T08:10:52+00:00",
+        "confidenceDecayedAt": "2026-07-01T08:10:52+00:00"
+    }
+}

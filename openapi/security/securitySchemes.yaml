@@ -1,0 +1,8 @@
+bearerAuth:
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+X-Tenant-Id:
+  type: apiKey
+  in: header
+  name: X-Tenant-Id

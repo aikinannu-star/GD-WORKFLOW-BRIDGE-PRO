@@ -1,0 +1,132 @@
+/api/v1/intelligence-learning/performance:
+  get:
+    summary: Learning performance metrics
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Learning performance
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/LearningPerformance
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligencelearningPerformance
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-learning/adoption-gaps:
+  get:
+    summary: Recommendation adoption gaps
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Adoption gaps
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/AdoptionGapsResponse
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligencelearningAdoptiongaps
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-learning/recurring-issues:
+  get:
+    summary: Recurring issue detection
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Recurring issues
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/RecurringIssuesResponse
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligencelearningRecurringissues
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-learning/trends:
+  get:
+    summary: Intelligence improvement trends
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Learning trends
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/LearningTrendsResponse
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligencelearningTrends
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-learning/effectiveness-score:
+  get:
+    summary: Intelligence effectiveness score
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Effectiveness score
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/LearningEffectivenessScore
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligencelearningEffectivenessscore
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/intelligence-learning:
+  get:
+    summary: Consolidated intelligence learning report
+    tags:
+    - Intelligence
+    responses:
+      '200':
+        description: Consolidated learning
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ConsolidatedLearningResponse
+      '500':
+        $ref: '#/components/responses/InternalError'
+    operationId: intelligenceListIntelligencelearning
+    x-maturity: beta
+    x-stabilitySince: 1.5.0-beta.1
+    x-owner: Intelligence Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.6.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

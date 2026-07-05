@@ -1,1 +1,20 @@
-[Mon Jun 15 12:35:04 2026] PHP 8.2.31 Development Server (http://0.0.0.0:8009) started
+[Sun Jul  5 14:11:18 2026] PHP 8.2.31 Development Server (http://0.0.0.0:8009) started
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53664 Accepted
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::sendJson called status=404 payload={"error":"not_found"}
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::isTestMode returning false
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=present
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53664 Closing
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53665 Accepted
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::sendJson called status=200 payload={"status":"ok","service":"tenant","version":"1.0.0","time":"2026-07-05T14:11:26+00:00"}
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::isTestMode returning false
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=present
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53665 Closing
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53668 Accepted
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::sendJson called status=200 payload={"status":"ok","service":"tenant","version":"1.0.0","time":"2026-07-05T14:11:26+00:00"}
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::isTestMode returning false
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning new id=c923f47aad33856d
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53668 Closing

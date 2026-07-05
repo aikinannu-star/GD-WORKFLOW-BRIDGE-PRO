@@ -1,0 +1,25 @@
+{
+    "id": "memory_6a4610a35acad2.65920916",
+    "tenantId": "tenant-1",
+    "userId": "user-42",
+    "conversationId": "conv-memory-1",
+    "type": "goal",
+    "content": "My goal is to automate the billing workflow",
+    "confidence": 0.75,
+    "tags": [
+        "goal"
+    ],
+    "sourceMessages": [
+        "2026-01-01T00:00:02Z",
+        "user"
+    ],
+    "createdAt": "2026-07-02T07:17:55+00:00",
+    "lastConfirmedAt": "2026-07-02T07:17:55+00:00",
+    "expiresAt": null,
+    "metadata": {
+        "source": "conversation",
+        "sourceEvent": "conversation.completed",
+        "sourceOrigin": "runtime",
+        "lastUsedAt": "2026-07-02T07:17:55+00:00"
+    }
+}

@@ -1,0 +1,735 @@
+{
+  "id": "manualdiff",
+  "created_at": "2026-06-24T18:29:12.469Z",
+  "files": {
+    "plugins.json": [
+      {
+        "id": "29a1e8dbede099f8f9f2c38d504b52fa",
+        "name": "Test Plugin",
+        "description": "A test plugin",
+        "author": "dev",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T09:15:28+00:00"
+      },
+      {
+        "id": "2aa18a570704d95f6c365d89adbd1bcd",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T09:34:09+00:00"
+      },
+      {
+        "id": "a9407dc0b6de66d2798291f2566bfec7",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T09:35:01+00:00"
+      },
+      {
+        "id": "fb884411c2e50068218771c7a575c937",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:19:26+00:00"
+      },
+      {
+        "id": "31b38fa447a2259e6bf7fa6ac969da91",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:19:38+00:00"
+      },
+      {
+        "id": "40ad49d9758408b1d5ad9487ddc3707a",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:24:18+00:00"
+      },
+      {
+        "id": "d928486cb4f0f3e1d64e80bd9f70cc49",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:27:32+00:00"
+      },
+      {
+        "id": "09f863254167dd90434dbe6be1455531",
+        "name": "Example Plugin",
+        "description": "Example plugin",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "https://example.com/manifest.json",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:28:51+00:00"
+      },
+      {
+        "id": "3ad3b59f76555674b38d145f4abda211",
+        "name": "SecTest Plugin",
+        "description": "security test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:34:23+00:00"
+      },
+      {
+        "id": "e42daf31dd3d2e284b0c3e856f9310a3",
+        "name": "RotateTest Plugin",
+        "description": "rotation test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:35:42+00:00"
+      },
+      {
+        "id": "9365d9ec91de60a8244c1c8128f7d0d0",
+        "name": "ArtifactTest Plugin",
+        "description": "artifact test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:37:09+00:00"
+      },
+      {
+        "id": "82412a0c8ab3c9c2c3888f589344a5e1",
+        "name": "WebhookTest Plugin",
+        "description": "webhook test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:38:12+00:00",
+        "webhook_url": "http://127.0.0.1:59999/webhook-test",
+        "updated_at": "2026-06-24T13:38:12+00:00"
+      },
+      {
+        "id": "f0d020917434b35943d77b1210de0f2a",
+        "name": "SecTest Plugin",
+        "description": "security test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:49:03+00:00"
+      },
+      {
+        "id": "6e386f7cc7178b42203e4e0686c07618",
+        "name": "RotateTest Plugin",
+        "description": "rotation test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:49:04+00:00"
+      },
+      {
+        "id": "c76e7d3e5d112156518e74d67b9d71ac",
+        "name": "ArtifactTest Plugin",
+        "description": "artifact test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:49:04+00:00"
+      },
+      {
+        "id": "136abc4710534ba8d20437a2c08c906c",
+        "name": "WebhookTest Plugin",
+        "description": "webhook test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:49:05+00:00",
+        "webhook_url": "http://127.0.0.1:59999/webhook-test",
+        "updated_at": "2026-06-24T13:49:05+00:00"
+      },
+      {
+        "id": "401703317d2769e7e05eb310f6d92b47",
+        "name": "ArtifactDL Plugin",
+        "description": "artifact download test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:50:03+00:00"
+      },
+      {
+        "id": "e6a1bbdf0993c61824b82f9cd134df11",
+        "name": "WebhookRecv Plugin",
+        "description": "webhook receive test",
+        "author": "sec",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:50:22+00:00",
+        "webhook_url": "http://127.0.0.1:59999/webhook-test-1782309022893",
+        "updated_at": "2026-06-24T13:50:22+00:00"
+      },
+      {
+        "id": "e57ef3a640719ae060e13b2fd66ec756",
+        "name": "DepA",
+        "description": "dependency A",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:51:47+00:00"
+      },
+      {
+        "id": "19919147ab46469ceeaac8e32dc16865",
+        "name": "DepB",
+        "description": "dependency B",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:51:47+00:00"
+      },
+      {
+        "id": "cc6a8f48a5467dffaf2ad9274d61f6a7",
+        "name": "RatePub Plugin",
+        "description": "rating test",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:52:46+00:00"
+      },
+      {
+        "id": "875ee4a03d3c7a8f975c0fbf53959979",
+        "name": "RatePub Plugin",
+        "description": "rating test",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T13:54:01+00:00",
+        "updated_at": "2026-06-24T13:54:01+00:00"
+      },
+      {
+        "id": "64802e57aa291f81e28425e9291f1447",
+        "name": "DepA",
+        "description": "dependency A",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:04:19+00:00"
+      },
+      {
+        "id": "4a967db9fe32b042885408fb0815e446",
+        "name": "DepB",
+        "description": "dependency B",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:04:19+00:00"
+      },
+      {
+        "id": "e1e6eb34825eb62214ae1c34be811c09",
+        "name": "DepA",
+        "description": "dependency A",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:19:03+00:00"
+      },
+      {
+        "id": "1dd18f248c5c79b16a2249f4f9484d73",
+        "name": "DepB",
+        "description": "dependency B",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:19:03+00:00"
+      },
+      {
+        "id": "d361465456d3ec9f70ceaebd48456267",
+        "name": "RatePub Plugin",
+        "description": "rating test",
+        "author": "dev",
+        "version": "0.0.1",
+        "manifest_url": "",
+        "published": true,
+        "tenant_id": "",
+        "created_at": "2026-06-24T14:19:10+00:00",
+        "updated_at": "2026-06-24T14:19:10+00:00"
+      }
+    ],
+    "plugins_versions.json": [
+      {
+        "id": "aeed44cc568644f59f04bd9d0d6861fa",
+        "plugin_id": "2aa18a570704d95f6c365d89adbd1bcd",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest-v0.1.json",
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T09:34:09+00:00"
+      },
+      {
+        "id": "dec7d2b461316dc5730e922483f2a668",
+        "plugin_id": "a9407dc0b6de66d2798291f2566bfec7",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest-v0.1.json",
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T09:35:01+00:00"
+      },
+      {
+        "id": "e64bbc485f2551cd942b303861bdb472",
+        "plugin_id": "fb884411c2e50068218771c7a575c937",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest-v0.1.json",
+        "manifest": null,
+        "manifest_validated": false,
+        "signature_verified": false,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:19:27+00:00"
+      },
+      {
+        "id": "d51a10666c474fd58bb50280fe7a1aad",
+        "plugin_id": "31b38fa447a2259e6bf7fa6ac969da91",
+        "version": "0.1.0",
+        "manifest_url": "https://example.com/manifest-v0.1.json",
+        "manifest": null,
+        "manifest_validated": false,
+        "signature_verified": false,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:19:38+00:00"
+      },
+      {
+        "id": "5e3eeb0ce65de652efdeed54dc55f9e6",
+        "plugin_id": "40ad49d9758408b1d5ad9487ddc3707a",
+        "version": "0.1.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "Example Plugin",
+          "version": "0.1.0",
+          "entrypoint": "index.js",
+          "permissions": [],
+          "assets": []
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:24:18+00:00"
+      },
+      {
+        "id": "2f6ce632fa6160fc835ab3f09145a22e",
+        "plugin_id": "d928486cb4f0f3e1d64e80bd9f70cc49",
+        "version": "0.1.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "Example Plugin",
+          "version": "0.1.0",
+          "entrypoint": "index.js",
+          "permissions": [],
+          "assets": []
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:27:33+00:00"
+      },
+      {
+        "id": "1f53ced2247a7c5cd38d5a3d7b631fba",
+        "plugin_id": "09f863254167dd90434dbe6be1455531",
+        "version": "0.1.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "Example Plugin",
+          "version": "0.1.0",
+          "entrypoint": "index.js",
+          "permissions": [],
+          "assets": []
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "Initial release",
+        "created_at": "2026-06-24T13:28:51+00:00"
+      },
+      {
+        "id": "b6f55aa7312c367e80e6e5f133eed322",
+        "plugin_id": "e42daf31dd3d2e284b0c3e856f9310a3",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "RotateTest Plugin",
+          "version": "1.0.0",
+          "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "",
+        "created_at": "2026-06-24T13:35:42+00:00"
+      },
+      {
+        "id": "eae099a21898e30e58b0fb22430b75dd",
+        "plugin_id": "e42daf31dd3d2e284b0c3e856f9310a3",
+        "version": "1.2.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "RotateTest Plugin",
+          "version": "1.2.0",
+          "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "",
+        "created_at": "2026-06-24T13:35:42+00:00"
+      },
+      {
+        "id": "44ad802fbfd96d5b0cfdc29d915ff933",
+        "plugin_id": "6e386f7cc7178b42203e4e0686c07618",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "RotateTest Plugin",
+          "version": "1.0.0",
+          "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "",
+        "created_at": "2026-06-24T13:49:04+00:00"
+      },
+      {
+        "id": "abfeaeb5cf0ff95dea7fb8d1fe11a22d",
+        "plugin_id": "6e386f7cc7178b42203e4e0686c07618",
+        "version": "1.2.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "RotateTest Plugin",
+          "version": "1.2.0",
+          "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": true,
+        "changelog": "",
+        "created_at": "2026-06-24T13:49:04+00:00"
+      },
+      {
+        "id": "35849299d3a61aa10faf6eca3a0f2b4e",
+        "plugin_id": "e57ef3a640719ae060e13b2fd66ec756",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "DepA",
+          "version": "1.0.0",
+          "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T13:51:47+00:00"
+      },
+      {
+        "id": "b4539966c43fb86717cc9aa48adc113e",
+        "plugin_id": "19919147ab46469ceeaac8e32dc16865",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "DepB",
+          "version": "1.0.0",
+          "entrypoint": "index.js",
+          "dependencies": [
+            {
+              "plugin_id": "e57ef3a640719ae060e13b2fd66ec756",
+              "version": "1.0.0"
+            }
+          ]
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T13:51:47+00:00"
+      },
+      {
+        "id": "30a909313718165344ffade28d69fe0f",
+        "plugin_id": "64802e57aa291f81e28425e9291f1447",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "DepA",
+          "version": "1.0.0",
+          "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T14:04:19+00:00"
+      },
+      {
+        "id": "9e5cad40a292193983c91f4ebaa253b2",
+        "plugin_id": "4a967db9fe32b042885408fb0815e446",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "DepB",
+          "version": "1.0.0",
+          "entrypoint": "index.js",
+          "dependencies": [
+            {
+              "plugin_id": "64802e57aa291f81e28425e9291f1447",
+              "version": "1.0.0"
+            }
+          ]
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T14:04:19+00:00"
+      },
+      {
+        "id": "533476958c965a15f96d2d0466bfef9d",
+        "plugin_id": "e1e6eb34825eb62214ae1c34be811c09",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "DepA",
+          "version": "1.0.0",
+          "entrypoint": "index.js"
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T14:19:03+00:00"
+      },
+      {
+        "id": "ec0229b790319bde0b2821d1ab17af93",
+        "plugin_id": "1dd18f248c5c79b16a2249f4f9484d73",
+        "version": "1.0.0",
+        "manifest_url": "",
+        "manifest": {
+          "name": "DepB",
+          "version": "1.0.0",
+          "entrypoint": "index.js",
+          "dependencies": [
+            {
+              "plugin_id": "e1e6eb34825eb62214ae1c34be811c09",
+              "version": "1.0.0"
+            }
+          ]
+        },
+        "manifest_validated": true,
+        "signature_verified": false,
+        "changelog": "",
+        "created_at": "2026-06-24T14:19:03+00:00"
+      }
+    ],
+    "plugin_installs.json": [
+      {
+        "id": "426f4b2477710548fc4253fefd124c4f",
+        "plugin_id": "2aa18a570704d95f6c365d89adbd1bcd",
+        "tenant_id": "f95a1f4782b223f38932c69d8c8ef612",
+        "version": "0.1.0",
+        "status": "uninstalled",
+        "installed_at": "2026-06-24T09:34:09+00:00",
+        "uninstalled_at": "2026-06-24T09:34:09+00:00"
+      },
+      {
+        "id": "b2c8dd5aa79f2038e011752e224499cd",
+        "plugin_id": "09f863254167dd90434dbe6be1455531",
+        "tenant_id": "ee37e7e0108b5542e30f6883cbd0b6e4",
+        "version": "0.1.0",
+        "status": "uninstalled",
+        "installed_at": "2026-06-24T13:28:51+00:00",
+        "uninstalled_at": "2026-06-24T13:28:51+00:00"
+      },
+      {
+        "id": "0deeefe1ada71c3e071a8875f60630f6",
+        "plugin_id": "e6a1bbdf0993c61824b82f9cd134df11",
+        "tenant_id": "93c4241f2b023d8764bbdf8094a07352",
+        "version": "0.0.1",
+        "status": "uninstalled",
+        "installed_at": "2026-06-24T13:50:22+00:00",
+        "uninstalled_at": "2026-06-24T13:50:23+00:00"
+      },
+      {
+        "id": "145f1a1d5a9715496065995305db372f",
+        "plugin_id": "e57ef3a640719ae060e13b2fd66ec756",
+        "tenant_id": "1bcc23207609ff8f77b94c42447cf618",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T13:51:47+00:00"
+      },
+      {
+        "id": "559baee5d868806226d2a6bab42de879",
+        "plugin_id": "19919147ab46469ceeaac8e32dc16865",
+        "tenant_id": "1bcc23207609ff8f77b94c42447cf618",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T13:51:47+00:00"
+      },
+      {
+        "id": "866a96e4b4618a74166a725b66dc4ccb",
+        "plugin_id": "64802e57aa291f81e28425e9291f1447",
+        "tenant_id": "33f4eb56c798faa01b2406c1d8d19a45",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T14:04:19+00:00"
+      },
+      {
+        "id": "2092bf9c510332b7ceb1191425336b94",
+        "plugin_id": "4a967db9fe32b042885408fb0815e446",
+        "tenant_id": "33f4eb56c798faa01b2406c1d8d19a45",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T14:04:19+00:00"
+      },
+      {
+        "id": "57a3e73130af963f15962b44c3ed02b5",
+        "plugin_id": "e1e6eb34825eb62214ae1c34be811c09",
+        "tenant_id": "142368570ac415c28ed4554082e865cd",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T14:19:03+00:00"
+      },
+      {
+        "id": "547de161c9c8b281326e1476fc6a381a",
+        "plugin_id": "1dd18f248c5c79b16a2249f4f9484d73",
+        "tenant_id": "142368570ac415c28ed4554082e865cd",
+        "version": "1.0.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T14:19:03+00:00"
+      },
+      {
+        "id": "7c294f1b4b7332b40e6f51212f7a49ff",
+        "plugin_id": "29a1e8dbede099f8f9f2c38d504b52fa",
+        "tenant_id": "test-tenant-1",
+        "version": "0.1.0",
+        "status": "installed",
+        "installed_at": "2026-06-24T18:11:22+00:00"
+      }
+    ],
+    "plugin_keys.json": [
+      {
+        "id": "b34bda573b75e056cd7dfdd809199e1d",
+        "plugin_id": "40ad49d9758408b1d5ad9487ddc3707a",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjk0/B+sfn9Ca7NN72j/k\nBH/qG2aOPuYWvvYanejkY4qLmSvHfVoPq2NSMsLTYxVFRZVhX3RdUvfdzkcFT1J0\nNZraprVy1mIgh5HUJLm4sgGk+T6Jnp+a4thx72idl0N1kWnp7Dxbm8V2cnLtq4nm\nKtdwFgI4rAnibIar4+UkAUt3Umx4gAhTcwVhOoC4jJJWNSSezD0tpm8Bt4ntyvUv\nc/tqE7jRvQYy1HwmQji0ZQbWC9QU5Amx/GONCYia2cJ8P3CDlpwf5nFJh38QrzM2\nsUCUGsrcuTKnFjfSwoXl8xeI8kemFmTV+gtYdNJ74ECAC+B1dv9F/ILtx/FVciuO\n1QIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "example-key",
+        "created_at": "2026-06-24T13:24:18+00:00"
+      },
+      {
+        "id": "93d56c862adeb7f582dda2641306ead2",
+        "plugin_id": "d928486cb4f0f3e1d64e80bd9f70cc49",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2/MvbBRww+vkHRLeS0eO\n7xPyyfn5qn4B5Hv3MTP43tX/OBBWEGIsQxdyCuGlsMzafqFZrJFFMLQFZ5axGNhE\nDzFiIIbWpHrlOkt736b6cIkIJWBJqVzmWufePKYK1N5cc68xi9Jgguf3NMRZL7sj\nQ9O3PFZjuc4op6wVAl9/aBuniIrBEGzqTtXmU8Jbl/EER0kRgsoLPItQMFak8S2a\nuqlm8sP+h5GXvGLqxH8ds1+AjmGbuGG5b5xhtF/n7dzojkCOKRQwR7U3FI3iGBPl\nx/AfNkp1E7xn7j9m2LkGygfQPWfMFRmDRBbUOwtkNVR/+0IA1DmlwAOq06W7hFks\nwwIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "example-key",
+        "created_at": "2026-06-24T13:27:33+00:00"
+      },
+      {
+        "id": "872fdefc4fb15d2e1a4ea44e26062c61",
+        "plugin_id": "09f863254167dd90434dbe6be1455531",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtYfGfV5VQcml7+pOUd//\nEwIjkAX3NzhAaLx85J16/wSeYnxhP4VfOz4Y5b9wPCnFgyXXT6/8htNt+HZ6wn25\nzpKMDsVRO5xio6G8RYuCMmhZddMDpyGBExJgIuxhEkmysrlbGJNHLGEY1xt/GAkI\nu7rx1bT9ukPiz1zRu38IcOwIEcS/yjIkvLzHlnp0F7PFtTiM5Pll0dKy7Wcc/6H/\nghV9ld1zQGD8WcHUFDr/v6NjkLYLMTd4dkpB28DfKyB7GkT2gJsaBCxf0mAI/l4q\ns0zNgX6B9dfbJXqeGgfBZ4dFusxEFEPiD9e+8u8CrkDgOcWSEfcLphTVsaQKvMVO\nqwIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "example-key",
+        "created_at": "2026-06-24T13:28:51+00:00"
+      },
+      {
+        "id": "78317e9c487009ad0890d89242bb08ba",
+        "plugin_id": "3ad3b59f76555674b38d145f4abda211",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuMvTtdcxbTf4a1eMuBUR\nSHvSoK0TOzTSC7DBzJxTpRJhPlm9/KEhFVodNVq3fx8BCs2fIUGwHn4ljL/g1uch\nNGBqH2UMAaH09IfYZKRC6qO4VmK9KCPW68epOEHnkjP/yWAXdvMzktF7ZJGUCO6x\narhXOb1eITCWPQ45icTSrvWcvGGWDEcH0+5mPRBQBOdba/qb37Ol5CwOak1U89l+\ngG13e2G82xbpbYckcI1KScj4YK/w3ywmQXDdmGOJ0544KKn/NmFeyToWlErhwhRk\nUEWqDFmugBc11RAiiEREQhCrrwpaLlIGOT5biu9XfjtduzrHbeOsrg2T7I0c559J\nbQIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "keyA",
+        "created_at": "2026-06-24T13:34:23+00:00",
+        "revoked": false
+      },
+      {
+        "id": "175cd3d790cae86917994df082b411d5",
+        "plugin_id": "e42daf31dd3d2e284b0c3e856f9310a3",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtot2prD41EgK8EvofPXj\nT8xJdvYrwk6JKvaXVOqYvcs05xApAU/wls0eAB9mfXHEeACyKzOGWY6ozr1ZKJUG\na7xSRifJ/g+5QZ1vS4MbxejNMcYsbo3e0uEoEYogsldkjrJ6DAIdhNALXmh390g+\nxaPKWKmbd1S76xOoTqhycwtXO/S/O62xdwAid4oML7x1OYtTU4MFmmuor1A9JNqh\nbMecuRH6BFD+8WutVIuKgnssyZsGmfvrd7fntlBmQt/rrqMCjZFGJUqdrPZs7o+D\nKHICFG2vg5F1/oc89X47wTiN5TNUlrcsTC3p/ZC6O89+/GiGsNMf7RA217V0amAA\nBwIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "keyA",
+        "revoked": false,
+        "created_at": "2026-06-24T13:35:42+00:00"
+      },
+      {
+        "id": "caa293f7ac01670d7db7a587f2f8094d",
+        "plugin_id": "9365d9ec91de60a8244c1c8128f7d0d0",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwbP4mlehxGDFY6jgiVKw\nEyLh2NNUUfidQE09d/K1I/eCnc1ZtjfdWNS/KhGHn2jG/G5BTmbgbS2zVIJ6qiDi\n6Ci80XSKCyQf62qlaBZsJW2fTaHPbL0rwV1Qb5hRsWVphU8ID0jos0uwC5ere133\nLffgWkvfr6dfXVgHLaWeqKcnaXWiQwwXRb1gkGsR3m8c2+cuuQaZHzmO8I8tFbrT\n78Z6f/rR5fY92m2QIKFTwOGdv5NhlCadYSZZhDJ+ABGxfYfvdCd2o34vpDztDVZl\nnQQiYDhVcxGhbzgiboNz16zdOMF1HEOKSqsCqsimQObI+cZRFmAtiDZ5YZnXyUqS\nRwIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "artifact-key",
+        "revoked": false,
+        "created_at": "2026-06-24T13:37:10+00:00"
+      },
+      {
+        "id": "75981c39108ca294fef3f3db270dfa84",
+        "plugin_id": "f0d020917434b35943d77b1210de0f2a",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2YNcVRKSAM6pJpAi2W7f\n1YgA7himtGMfQIO1I3HeurbgxhXXzpn2uiK4aA2bfqL/bIIo+igRtDNWvaXpQXz0\nwaUQJY7myxuVf1rcjJxMJImw6ZEHFkHKGuRJNyUwAI1/PquoXyTJSY1TG2Cs6S4c\nRU2R9ri6b54+Ah7iIUCNmC7nZlZgfKM/3Yk8RcLchHp7mx1JXzG4nIRB35hsQUuj\nzMYOH12GvLKtbx3uhg24iIGAJDNG9YPnRTN+dy4by1fF0berN9G3T1QarFGZkDZ9\n+7uUYRBU7KfN0168sdQdigyKEkYfD6S9UiFPxED8ObdJdquk/qEHMgbzvXVvKeFI\n7QIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "keyA",
+        "revoked": false,
+        "created_at": "2026-06-24T13:49:04+00:00"
+      },
+      {
+        "id": "6d7452a46442d1353387cc38aa2cd97f",
+        "plugin_id": "6e386f7cc7178b42203e4e0686c07618",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmTyVOL/BBoqvIAXd/UJf\nJt3azvYGjAoAEYn0dZP3UO+9/dVvnpWyh0w/whQMF/UTZISPt+3NtXdERZL6i7Bc\nzE1w3+qNK/htqAJJ02ONyIRMofTJ0myZeF/PUVGhywRXjLfrUJTHgV5/hMDjl7tG\n4DUWYFolqzuoxdtmrJkJuU48vzfMN3LgxiVzBbuQjomgn5Dqrpyun73vMD1D9a96\nF+zURNgnbUF5TSLE832tYIrzUZXuG/8NirzpZZOR7YXmFj7UXzZlobyIwdThyGxK\ncdV+ttdbYs5SDrvhcXp7RjZ8KcMZYRiCOHEiVIkIaNBQVnRXzAZTB5WfPSjNwImM\n6QIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "keyA",
+        "revoked": false,
+        "created_at": "2026-06-24T13:49:04+00:00"
+      },
+      {
+        "id": "fa57bcb6aaf84b4d06f445fece99fbd7",
+        "plugin_id": "c76e7d3e5d112156518e74d67b9d71ac",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw/5WPcwS3/UyRl9/LyfB\n8sOSnvxpeRPDU5dY1Nh02VlYYplOEaaM+Kr3OCJEMvEvuUwBqZUGRe9cp7DeUBP5\ncgEjH97/NzX/HdZMih6YHwEGPmLdr4aOVoSaSg44NUAUOOKZEq/nfyjTz3GUf6w1\nbiz2wB3eOnZ3/lBMSZA7Q2QxAci6t1fkWGkm6EGDjsAgvrv0E9hizp9NSpK5Qq+w\njtdtRhBD6vrl7Z7wU1dSQ8+cI3Xs/LlD4WobA17+ZVR0Inr1vQDSD83P5CY86I7v\nutjmjJkk3GwDf8f9B9C+UNqg2Jp4+7ABdBsFEfKktjg7kv61Q020mgsTHub0SS4+\ntwIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "artifact-key",
+        "revoked": false,
+        "created_at": "2026-06-24T13:49:05+00:00"
+      },
+      {
+        "id": "42b80a3b0283b5a7ef56e626e21e350f",
+        "plugin_id": "401703317d2769e7e05eb310f6d92b47",
+        "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArLkrzvR+0ggCoaTio2cy\nIjKq11Auc8ecyJWKB/flAyTqALtL78PIQazBDyOyxfs9o5OEWZ07q5zd0p9HJTBK\n+LVxC656Zq4sd9B4IMQtw7KaoDlEy5HmqOQxd5F/3gfM9s9FhblxdGSZmLduW1Pg\nYAI+LC3UzySjmUq1XZJvT1T9lBnwxPxExn1gBJIYk+YG9b9LWLZDs3uiEub+y/Gi\nBmqkMhaju47cwg1ctm1peyeSMqNSpH13YzBLJ6FU/yicvK6aUzh+CzhPsiWb7Q0I\nUKJ+Z/UwUQenlaLcTmINX4kC6S883A5LeAiOv+3sngTMjETaRJ92HA6vK2bhvf3L\nywIDAQAB\n-----END PUBLIC KEY-----",
+        "label": "artifact-dl-key",
+        "revoked": false,
+        "created_at": "2026-06-24T13:50:03+00:00"
+      }
+    ],
+    "plugin_ratings.json": [
+      {
+        "id": "debe1fa5a8e571f97db7b34ad30ea312",
+        "plugin_id": "875ee4a03d3c7a8f975c0fbf53959979",
+        "tenant_id": "",
+        "rating": 5,
+        "comment": "Excellent",
+        "created_at": "2026-06-24T13:54:01+00:00"
+      },
+      {
+        "id": "4d4dc07333b5f7bd3c43d04607415f73",
+        "plugin_id": "d361465456d3ec9f70ceaebd48456267",
+        "tenant_id": "",
+        "rating": 5,
+        "comment": "Excellent",
+        "created_at": "2026-06-24T14:19:10+00:00"
+      }
+    ],
+    "injected_test_change": "changed"
+  }
+}

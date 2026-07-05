@@ -1,0 +1,136 @@
+groups:
+  - name: gdwb_alerts
+    interval: 30s
+    rules:
+      # Gateway: High error rate
+      - alert: GatewayHighErrorRate
+        expr: |
+          (sum(rate(gateway_errors_total[5m])) by (instance)) 
+          / 
+          (sum(rate(gateway_requests_total[5m])) by (instance))
+          > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          component: gateway
+        annotations:
+          summary: "High error rate on {{ $labels.instance }}"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+
+      # Gateway: 5xx errors spike
+      - alert: Gateway5xxErrorsSpike
+        expr: |
+          sum(rate(gateway_errors_total{status=~"5xx"}[5m])) by (instance) > 0.01
+        for: 1m
+        labels:
+          severity: critical
+          component: gateway
+        annotations:
+          summary: "5xx errors spike on {{ $labels.instance }}"
+          description: "5xx error rate: {{ $value }} errors/sec"
+
+      # Gateway: High latency (P95)
+      - alert: GatewayHighLatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(gateway_request_duration_seconds_bucket[5m])) by (le, instance))
+          > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: gateway
+        annotations:
+          summary: "High latency on {{ $labels.instance }}"
+          description: "P95 latency: {{ $value | humanizeDuration }} (threshold: 1s)"
+
+      # Auth: High failure rate
+      - alert: AuthHighFailureRate
+        expr: |
+          (sum(rate(auth_errors_total[5m])) by (instance))
+          /
+          (sum(rate(auth_requests_total[5m])) by (instance))
+          > 0.02
+        for: 3m
+        labels:
+          severity: warning
+          component: auth
+        annotations:
+          summary: "High auth failure rate on {{ $labels.instance }}"
+          description: "Auth failure rate: {{ $value | humanizePercentage }} (threshold: 2%)"
+
+      # Auth: Login failures spike
+      - alert: AuthLoginFailuresSpike
+        expr: |
+          sum(rate(auth_errors_total{endpoint="/login"}[5m])) by (instance) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          component: auth
+        annotations:
+          summary: "Login failures spike on {{ $labels.instance }}"
+          description: "Login failure rate: {{ $value }} failures/sec"
+
+      # Service down: No metrics received
+      - alert: ServiceDown
+        expr: |
+          up{job=~"api-gateway|auth-service|marketplace-service|billing-service|license-server"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: monitoring
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "No metrics received from {{ $labels.job }} for the last minute"
+
+      # Marketplace: High install failure rate
+      - alert: MarketplaceHighInstallFailureRate
+        expr: |
+          (sum(rate(marketplace_install_errors_total[5m])) by (instance))
+          /
+          (sum(rate(marketplace_installs_total[5m])) by (instance))
+          > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          component: marketplace
+        annotations:
+          summary: "High install failure rate on {{ $labels.instance }}"
+          description: "Install failure rate: {{ $value | humanizePercentage }} (threshold: 1%)"
+
+      # License Server: High error rate
+      - alert: LicenseServerHighErrorRate
+        expr: |
+          (sum(rate(license_errors_total[5m])) by (instance))
+          /
+          (sum(rate(license_requests_total[5m])) by (instance))
+          > 0.02
+        for: 3m
+        labels:
+          severity: warning
+          component: license-server
+        annotations:
+          summary: "High error rate on license server {{ $labels.instance }}"
+          description: "Error rate: {{ $value | humanizePercentage }} (threshold: 2%)"
+
+      # System: High CPU usage
+      - alert: HighCPUUsage
+        expr: |
+          (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance)) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage: {{ $value | humanizePercentage }} (threshold: 80%)"
+
+      # System: High memory usage
+      - alert: HighMemoryUsage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage: {{ $value | humanizePercentage }} (threshold: 85%)"

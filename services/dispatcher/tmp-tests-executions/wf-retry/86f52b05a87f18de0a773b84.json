@@ -1,0 +1,11 @@
+{
+    "workflowId": "wf-retry",
+    "tenantId": "tenant-a",
+    "status": "failed",
+    "error": "temporary_error",
+    "retryCount": 2,
+    "triggerSource": "scheduler",
+    "executionId": "86f52b05a87f18de0a773b84",
+    "startedAt": "2026-06-29T15:09:00+00:00",
+    "updatedAt": "2026-06-29T15:09:00+00:00"
+}

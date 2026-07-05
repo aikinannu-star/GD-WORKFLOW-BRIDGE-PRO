@@ -1,0 +1,82 @@
+RiskZone:
+  type: object
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    severity:
+      type: string
+      enum:
+      - low
+      - medium
+      - high
+      - critical
+    description:
+      type: string
+    health_range:
+      type: string
+    volatility_range:
+      type: string
+  required:
+  - id
+  - name
+  - severity
+RiskZoneList:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/RiskZone'
+    total:
+      type: integer
+  required:
+  - items
+  - total
+DriftTenantSummary:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    drift_magnitude:
+      type: number
+    drift_sigma:
+      type: number
+    is_anomalous:
+      type: boolean
+  required:
+  - tenant_id
+  - drift_magnitude
+  - drift_sigma
+  - is_anomalous
+DriftAnalysisResult:
+  type: object
+  properties:
+    metric:
+      type: string
+    days_back:
+      type: integer
+    sort_by:
+      type: string
+    tenants:
+      type: array
+      items:
+        $ref: '#/DriftTenantSummary'
+    fleet_average:
+      type: number
+    fleet_stddev:
+      type: number
+    tenant_count:
+      type: integer
+    anomalous_count:
+      type: integer
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - metric
+  - days_back
+  - sort_by
+  - tenants
+  - computed_at

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Trend Timeline - GD Workflow Bridge Pro</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #f4f7fb; color: #111827; }
+        .container { max-width: 1280px; margin: 24px auto; padding: 24px; background: white; border-radius: 20px; box-shadow: 0 18px 45px rgba(15, 23, 42, .08); }
+        .header { margin-bottom: 24px; }
+        .header h1 { font-size: 32px; color: #111827; margin-bottom: 10px; }
+        .header p { font-size: 15px; color: #475569; line-height: 1.7; }
+        .toolbar { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+        .toolbar a { color: #2563eb; text-decoration: none; font-weight: 600; }
+        .toolbar a:hover { text-decoration: underline; }
+        .blank-state { padding: 32px; border: 1px dashed #cbd5e1; border-radius: 16px; background: #f8fafc; color: #475569; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { padding: 20px; border-radius: 18px; background: #f8fafc; border: 1px solid #e2e8f0; }
+        .stat-card .label { display: block; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+        .stat-card .value { font-size: 28px; font-weight: 700; color: #0f172a; }
+        .stat-card .subtext { font-size: 13px; color: #475569; margin-top: 6px; }
+        .chart-wrapper { border-radius: 18px; border: 1px solid #e2e8f0; background: #ffffff; padding: 22px; min-height: 520px; position: relative; overflow: hidden; }
+        .chart-header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 18px; }
+        .chart-header h2 { font-size: 20px; color: #111827; }
+        .chart-legend { display: flex; flex-wrap: wrap; gap: 10px; }
+        .legend-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; border: 1px solid #e2e8f0; background: #f8fafc; color: #334155; font-size: 13px; }
+        .legend-swatch { width: 12px; height: 12px; border-radius: 999px; display: inline-block; }
+        #trendChart { width: 100%; height: 380px; }
+        .chart-tooltip { position: absolute; pointer-events: none; background: rgba(15, 23, 42, 0.92); color: #fff; padding: 12px 14px; border-radius: 12px; font-size: 13px; box-shadow: 0 22px 48px rgba(15, 23, 42, 0.18); display: none; z-index: 10; max-width: 260px; }
+        .risk-details { margin-top: 22px; background: #f8fafc; padding: 18px; border-radius: 18px; border: 1px solid #e2e8f0; }
+        .risk-details h3 { font-size: 18px; margin-bottom: 12px; }
+        .risk-details p { font-size: 14px; color: #475569; line-height: 1.75; }
+        .risk-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; font-weight: 700; color: white; }
+        .loading { padding: 18px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; margin-bottom: 18px; }
+        .error { padding: 18px; background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; border-radius: 16px; margin-bottom: 18px; }
+        .detail-list { margin-top: 16px; display: grid; gap: 12px; }
+        .detail-item { display: flex; justify-content: space-between; padding: 14px 16px; border-radius: 14px; background: #fff; border: 1px solid #e2e8f0; }
+        .detail-item strong { color: #0f172a; }
+        .detail-item span { color: #475569; }
+        .controls { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; align-items: flex-end; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; min-width: 200px; }
+        .control-group label { font-size: 13px; color: #475569; font-weight: 700; }
+        .control-group select,
+        .control-group input[type="number"] { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; color: #111827; }
+        .checkbox-group { align-items: center; flex-direction: row; gap: 8px; }
+        .comparison-panel,
+        .forecast-panel { margin-top: 18px; padding: 18px; border-radius: 18px; background: #f8fafc; border: 1px solid #e2e8f0; }
+        .comparison-panel h3,
+        .forecast-panel h3 { margin-top: 0; font-size: 18px; }
+        .comparison-list { display: grid; gap: 12px; margin-top: 12px; }
+        .comparison-item { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px; background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; }
+        .forecast-list { display: grid; gap: 10px; margin-top: 12px; }
+        .forecast-item { display: flex; justify-content: space-between; padding: 12px 14px; border-radius: 14px; background: #fff; border: 1px solid #e2e8f0; }
+        @media (max-width: 820px) { .chart-wrapper { min-height: 420px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <div>
+                <a href="/health-volatility-matrix">← Back to Health vs Volatility Matrix</a>
+            </div>
+            <div>
+                <a href="/operations-center">Open Operations Center</a>
+            </div>
+        </div>
+        <div class="header">
+            <h1>📈 Tenant Trend Timeline</h1>
+            <p>This tenant-level trend view consumes centralized risk semantics from <code>/api/v1/risk-zones</code> and uses the marketplace time series API for trend labeling.</p>
+        </div>
+
+        <div id="messageContainer"></div>
+        <div class="controls">
+            <div class="control-group">
+                <label for="compareTenantSelect">Compare with tenant</label>
+                <select id="compareTenantSelect">
+                    <option value="">None</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="forecastHorizonInput">Forecast horizon</label>
+                <input id="forecastHorizonInput" type="number" min="0" max="12" value="3" />
+            </div>
+            <div class="control-group checkbox-group">
+                <label><input id="showFleetAggregate" type="checkbox" /> Show fleet average</label>
+            </div>
+        </div>
+        <div id="statusMessage" class="loading" style="display:none;">Loading tenant trends...</div>
+        <div id="errorContainer" class="error" style="display:none;"></div>
+
+        <div id="summaryContainer" style="display:none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="label">Tenant</span>
+                    <span class="value" id="statTenantName">-</span>
+                    <span class="subtext">Trend history for this tenant</span>
+                </div>
+                <div class="stat-card">
+                    <span class="label">Current Health</span>
+                    <span class="value" id="statCurrentHealth">-</span>
+                    <span class="subtext">Last recorded health score</span>
+                </div>
+                <div class="stat-card">
+                    <span class="label">Current Volatility</span>
+                    <span class="value" id="statCurrentVolatility">-</span>
+                    <span class="subtext">Last recorded volatility</span>
+                </div>
+                <div class="stat-card">
+                    <span class="label">Trend Direction</span>
+                    <span class="value" id="statTrendDirection">-</span>
+                    <span class="subtext">Calculated from recent data</span>
+                </div>
+            </div>
+
+            <div class="chart-wrapper">
+                <div class="chart-header">
+                    <h2>Health Timeline</h2>
+                    <div class="chart-legend" id="seriesLegend"></div>
+                    <div class="chart-legend" id="riskLegend"></div>
+                </div>
+                <svg id="trendChart"></svg>
+                <div id="chartTooltip" class="chart-tooltip"></div>
+            </div>
+
+            <div class="risk-details" id="riskDetails">
+                <h3>Risk Labeling</h3>
+                <p>This timeline uses the same centralized risk classification system as the Health vs Volatility Matrix. Each plotted point is color-coded by the zone that matches the recorded health and volatility values.</p>
+            </div>
+
+            <div class="comparison-panel" id="comparisonPanel" style="display:none;"></div>
+            <div class="forecast-panel" id="forecastPanel" style="display:none;"></div>
+            <div class="detail-list" id="trendPointDetails"></div>
+
+            <div class="drift-analysis-panel" id="driftAnalysisPanel" style="margin-top: 32px;"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { RISK_ZONES, fetchRiskZonesFromAPI } from '/risk-zones.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const tenantId = urlParams.get('tenant_id');
+        const tenantName = urlParams.get('tenant_name') || 'Unknown Tenant';
+
+        const messageContainer = document.getElementById('messageContainer');
+        const statusMessage = document.getElementById('statusMessage');
+        const errorContainer = document.getElementById('errorContainer');
+        const summaryContainer = document.getElementById('summaryContainer');
+        const trendChart = document.getElementById('trendChart');
+        const chartTooltip = document.getElementById('chartTooltip');
+        const statTenantName = document.getElementById('statTenantName');
+        const statCurrentHealth = document.getElementById('statCurrentHealth');
+        const statCurrentVolatility = document.getElementById('statCurrentVolatility');
+        const statTrendDirection = document.getElementById('statTrendDirection');
+        const riskLegend = document.getElementById('riskLegend');
+        const trendPointDetails = document.getElementById('trendPointDetails');
+        const compareTenantSelect = document.getElementById('compareTenantSelect');
+        const forecastHorizonInput = document.getElementById('forecastHorizonInput');
+        const showFleetAggregateCheckbox = document.getElementById('showFleetAggregate');
+        const comparisonPanel = document.getElementById('comparisonPanel');
+        const forecastPanel = document.getElementById('forecastPanel');
+        const driftAnalysisPanel = document.getElementById('driftAnalysisPanel');
+
+        let activeRiskZones = RISK_ZONES;
+        let compareTenantId = '';
+        let forecastHorizon = 3;
+        let showFleetAggregate = false;
+        let tenantOptionsLoaded = false;
+        let isUpdating = false;
+
+        async function updateTrendView({ tenant = tenantId, compare = '', horizon = 3, fleetMode = false } = {}) {
+            if (isUpdating) return;
+            isUpdating = true;
+
+            try {
+                compareTenantId = compare;
+                forecastHorizon = Math.max(0, Math.min(12, horizon));
+                showFleetAggregate = fleetMode;
+
+                if (!tenant) {
+                    messageContainer.innerHTML = `<div class="blank-state">No tenant selected. Choose a tenant from the <a href="/health-volatility-matrix">Health vs Volatility Matrix</a> or load this page with <code>?tenant_id=&lt;id&gt;&tenant_name=&lt;name&gt;</code>.</div>`;
+                    return;
+                }
+
+                hideError();
+                showStatus('Updating trend analytics...');
+
+                await loadRiskZones();
+                if (!tenantOptionsLoaded) {
+                    await loadTenantOptions();
+                    tenantOptionsLoaded = true;
+                }
+
+                const trendPayload = await fetchTrendData();
+                let points = [];
+                let trendStats = {};
+                let forecast = [];
+                const seriesSet = [];
+
+                if (Array.isArray(trendPayload.comparisons)) {
+                    const primary = trendPayload.comparisons.find(item => item.tenant_id === tenant) || trendPayload.comparisons[0];
+                    points = primary?.data_points || [];
+                    trendStats = primary?.statistics || {};
+                    forecast = primary?.forecast || [];
+
+                    trendPayload.comparisons.forEach(item => {
+                        const label = item.tenant_id === tenant ? tenantName : item.tenant_id;
+                        seriesSet.push({ label, data_points: item.data_points || [], color: item.tenant_id === tenant ? '#2563eb' : '#6b7280' });
+                    });
+                } else {
+                    points = trendPayload.data_points || [];
+                    trendStats = trendPayload.statistics || {};
+                    forecast = trendPayload.forecast || [];
+                    seriesSet.push({ label: tenantName, data_points: points, color: '#2563eb' });
+                }
+
+                if (fleetMode) {
+                    const fleetPayload = await fetchFleetTrendData();
+                    seriesSet.push({ label: 'Fleet average', data_points: fleetPayload.data_points || [], color: '#10b981' });
+                }
+
+                const latest = points.length ? points[points.length - 1] : null;
+                const volatility = latest ? (latest.volatility ?? latest.fleet_volatility ?? 0) : 0;
+
+                statTenantName.textContent = tenantName;
+                statCurrentHealth.textContent = latest ? `${latest.health_score.toFixed(1)}%` : 'N/A';
+                statCurrentVolatility.textContent = latest ? `${volatility.toFixed(1)}%` : 'N/A';
+                statTrendDirection.textContent = ((trendStats.trend_direction || 'stable')).replace(/^[a-z]/, c => c.toUpperCase());
+
+                renderRiskLegend();
+                renderTrendChart(seriesSet);
+                renderComparison(Array.isArray(trendPayload.comparisons) ? trendPayload : null);
+                renderForecast(forecast);
+                renderPointDetails(points);
+                renderDriftAnalysis();
+
+                summaryContainer.style.display = 'block';
+                messageContainer.innerHTML = '';
+            } catch (error) {
+                showError(`Failed to update trend view: ${error.message}`);
+                messageContainer.innerHTML = '';
+            } finally {
+                hideStatus();
+                isUpdating = false;
+            }
+        }
+
+        compareTenantSelect.addEventListener('change', (event) => {
+            updateTrendView({ compare: event.target.value || '' });
+        });
+
+        forecastHorizonInput.addEventListener('input', (event) => {
+            updateTrendView({ horizon: Number(event.target.value) || 0 });
+        });
+
+        showFleetAggregateCheckbox.addEventListener('change', (event) => {
+            updateTrendView({ fleetMode: event.target.checked });
+        });
+
+        function showError(message) {
+            errorContainer.style.display = 'block';
+            errorContainer.textContent = message;
+        }
+
+        function hideError() {
+            errorContainer.style.display = 'none';
+            errorContainer.textContent = '';
+        }
+
+        function showStatus(message) {
+            statusMessage.style.display = 'block';
+            statusMessage.textContent = message;
+        }
+
+        function hideStatus() {
+            statusMessage.style.display = 'none';
+        }
+
+        function normalizeRiskValue(value) {
+            const normalized = Number(value);
+            if (Number.isNaN(normalized)) {
+                return 0;
+            }
+            if (normalized > 0 && normalized <= 1) {
+                return normalized * 100;
+            }
+            return Math.max(0, Math.min(100, normalized));
+        }
+
+        function getRiskZoneForPoint(health, volatility) {
+            const healthValue = normalizeRiskValue(health);
+            const volValue = normalizeRiskValue(volatility);
+
+            for (const zone of Object.values(activeRiskZones)) {
+                if (healthValue >= zone.health_min && healthValue <= zone.health_max && volValue >= zone.volatility_min && volValue <= zone.volatility_max) {
+                    return zone;
+                }
+            }
+
+            return {
+                id: 'unknown',
+                name: 'Unknown',
+                color: '#94a3b8',
+                light_color: '#f1f5f9',
+                icon: '⚪',
+                description: 'Health or volatility values are outside known thresholds.',
+                remediation_priority: 0,
+                status: 'unknown',
+                action: 'Verify input values',
+            };
+        }
+
+        async function loadRiskZones() {
+            try {
+                const zones = await fetchRiskZonesFromAPI();
+                if (zones && Object.keys(zones).length > 0) {
+                    activeRiskZones = zones;
+                }
+            } catch (error) {
+                console.warn('Risk zones API unavailable, using bundled defaults.', error);
+            }
+        }
+
+        async function loadTenantOptions() {
+            try {
+                const response = await fetch('/api/v1/marketplace/platform/tenants-overview');
+                if (!response.ok) throw new Error('Failed to load tenant list');
+                const body = await response.json();
+                const tenants = body.items || [];
+                tenants.forEach(tenant => {
+                    const tenantIdValue = tenant.tenant_id || tenant.id || '';
+                    const label = tenant.tenant_id || tenant.name || tenantIdValue;
+                    if (!tenantIdValue || tenantIdValue === tenantId) return;
+                    const option = document.createElement('option');
+                    option.value = tenantIdValue;
+                    option.textContent = label;
+                    compareTenantSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.warn('Could not load tenant options for comparison', error);
+            }
+        }
+
+        async function fetchTrendData() {
+            const endpoint = new URL('/api/v1/marketplace/platform/timeseries', window.location.origin);
+
+            if (compareTenantId) {
+                endpoint.searchParams.set('tenant_ids', [tenantId, compareTenantId].join(','));
+            } else {
+                endpoint.searchParams.set('tenant_id', tenantId);
+            }
+
+            endpoint.searchParams.set('metric', 'health_score');
+            endpoint.searchParams.set('period', 'hourly');
+            endpoint.searchParams.set('days_back', '30');
+            endpoint.searchParams.set('forecast_horizon', String(forecastHorizon));
+
+            const response = await fetch(endpoint.toString());
+            if (!response.ok) {
+                throw new Error(`Trend API returned ${response.status}`);
+            }
+            return response.json();
+        }
+
+        async function fetchFleetTrendData() {
+            const endpoint = new URL('/api/v1/marketplace/platform/timeseries', window.location.origin);
+            endpoint.searchParams.set('metric', 'health_score');
+            endpoint.searchParams.set('period', 'hourly');
+            endpoint.searchParams.set('days_back', '30');
+            endpoint.searchParams.set('forecast_horizon', String(forecastHorizon));
+
+            const response = await fetch(endpoint.toString());
+            if (!response.ok) {
+                throw new Error(`Fleet trend API returned ${response.status}`);
+            }
+            return response.json();
+        }
+
+        function getLatestValue(points, key) {
+            for (let i = points.length - 1; i >= 0; i--) {
+                if (points[i] && typeof points[i][key] !== 'undefined') {
+                    return points[i][key];
+                }
+            }
+            return null;
+        }
+
+        function formatTimestamp(timestamp) {
+            try {
+                const date = new Date(timestamp);
+                return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            } catch (error) {
+                return String(timestamp);
+            }
+        }
+
+        function getDataPointValue(point) {
+            return Number(point.health_score || 0);
+        }
+
+        function renderRiskLegend() {
+            riskLegend.innerHTML = '';
+            Object.values(activeRiskZones).forEach(zone => {
+                const chip = document.createElement('div');
+                chip.className = 'legend-chip';
+                chip.innerHTML = `<span class="legend-swatch" style="background:${zone.color}"></span>${zone.name}`;
+                riskLegend.appendChild(chip);
+            });
+        }
+
+        function renderSeriesLegend(seriesSet) {
+            const seriesLegend = document.getElementById('seriesLegend');
+            if (!seriesLegend) return;
+            seriesLegend.innerHTML = '';
+            seriesSet.forEach(series => {
+                const chip = document.createElement('div');
+                chip.className = 'legend-chip';
+                chip.innerHTML = `<span class="legend-swatch" style="background:${series.color}"></span>${series.label}`;
+                seriesLegend.appendChild(chip);
+            });
+        }
+
+        function renderTrendChart(seriesSet) {
+            const width = trendChart.clientWidth || 1000;
+            const height = trendChart.clientHeight || 360;
+            const margin = { top: 24, right: 24, bottom: 42, left: 52 };
+
+            trendChart.innerHTML = '';
+            const hasPoints = Array.isArray(seriesSet) && seriesSet.some(series => Array.isArray(series.data_points) && series.data_points.length);
+            if (!hasPoints) {
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', width / 2);
+                text.setAttribute('y', height / 2);
+                text.setAttribute('fill', '#64748b');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('font-size', '16');
+                text.textContent = 'No trend points available for this tenant.';
+                trendChart.appendChild(text);
+                renderSeriesLegend([]);
+                return;
+            }
+
+            const coloredSeries = seriesSet.map((series, index) => {
+                const color = series.color || (index === 0 ? '#2563eb' : index === 1 ? '#f97316' : '#0ea5e9');
+                const points = (series.data_points || []).map(point => ({
+                    value: getDataPointValue(point),
+                    timestamp: new Date(point.timestamp).getTime(),
+                    raw: point,
+                    label: series.label,
+                    color,
+                })).filter(point => !Number.isNaN(point.timestamp));
+                return { ...series, color, points };
+            }).filter(series => series.points.length);
+
+            const allPoints = coloredSeries.flatMap(series => series.points);
+            if (!allPoints.length) {
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', width / 2);
+                text.setAttribute('y', height / 2);
+                text.setAttribute('fill', '#64748b');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('font-size', '16');
+                text.textContent = 'No trend points available for this tenant.';
+                trendChart.appendChild(text);
+                renderSeriesLegend([]);
+                return;
+            }
+
+            const times = allPoints.map(p => p.timestamp);
+            const minTime = Math.min(...times);
+            const maxTime = Math.max(...times);
+            const values = allPoints.map(p => p.value);
+            const minHealth = Math.min(...values, 0);
+            const maxHealth = Math.max(...values, 100);
+
+            const xScale = timestamp => {
+                if (maxTime === minTime) return margin.left + 10;
+                return margin.left + ((timestamp - minTime) / (maxTime - minTime)) * (width - margin.left - margin.right);
+            };
+            const yScale = value => {
+                return height - margin.bottom - ((value - minHealth) / (Math.max(maxHealth - minHealth, 1))) * (height - margin.top - margin.bottom);
+            };
+
+            trendChart.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+            const axisLine = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            axisLine.setAttribute('x', 0);
+            axisLine.setAttribute('y', 0);
+            axisLine.setAttribute('width', width);
+            axisLine.setAttribute('height', height);
+            axisLine.setAttribute('fill', 'transparent');
+            trendChart.appendChild(axisLine);
+
+            for (let i = 0; i <= 4; i++) {
+                const y = margin.top + ((height - margin.top - margin.bottom) / 4) * i;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', margin.left);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', width - margin.right);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', '#e2e8f0');
+                line.setAttribute('stroke-width', '1');
+                trendChart.appendChild(line);
+
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', margin.left - 12);
+                label.setAttribute('y', y + 4);
+                label.setAttribute('fill', '#475569');
+                label.setAttribute('font-size', '12');
+                label.setAttribute('text-anchor', 'end');
+                label.textContent = Math.round(maxHealth - ((maxHealth - minHealth) / 4) * i);
+                trendChart.appendChild(label);
+            }
+
+            const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            xAxis.setAttribute('x1', margin.left);
+            xAxis.setAttribute('y1', height - margin.bottom);
+            xAxis.setAttribute('x2', width - margin.right);
+            xAxis.setAttribute('y2', height - margin.bottom);
+            xAxis.setAttribute('stroke', '#334155');
+            xAxis.setAttribute('stroke-width', '1.5');
+            trendChart.appendChild(xAxis);
+
+            const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            yAxis.setAttribute('x1', margin.left);
+            yAxis.setAttribute('y1', margin.top);
+            yAxis.setAttribute('x2', margin.left);
+            yAxis.setAttribute('y2', height - margin.bottom);
+            yAxis.setAttribute('stroke', '#334155');
+            yAxis.setAttribute('stroke-width', '1.5');
+            trendChart.appendChild(yAxis);
+
+            coloredSeries.forEach(series => {
+                const seriesPath = series.points.map((point, index) => {
+                    const x = xScale(point.timestamp);
+                    const y = yScale(point.value);
+                    return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+                }).join(' ');
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', seriesPath);
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', series.color);
+                path.setAttribute('stroke-width', '3');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+                trendChart.appendChild(path);
+
+                series.points.forEach(point => {
+                    const x = xScale(point.timestamp);
+                    const y = yScale(point.value);
+                    const zone = getRiskZoneForPoint(point.value, Number(point.raw.volatility ?? point.raw.fleet_volatility ?? 0));
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', x);
+                    circle.setAttribute('cy', y);
+                    circle.setAttribute('r', '8');
+                    circle.setAttribute('fill', series.color);
+                    circle.setAttribute('stroke', '#fff');
+                    circle.setAttribute('stroke-width', '2');
+                    circle.style.cursor = 'pointer';
+
+                    circle.addEventListener('mouseenter', (event) => {
+                        chartTooltip.style.display = 'block';
+                        chartTooltip.innerHTML = `
+                            <strong>${formatTimestamp(point.raw.timestamp)}</strong><br/>
+                            Health: ${point.value.toFixed(1)}%<br/>
+                            Volatility: ${(point.raw.volatility ?? point.raw.fleet_volatility ?? 0).toFixed(1)}%<br/>
+                            Tenant: ${series.label}<br/>
+                            Risk: <span style="color:${zone.color}">●</span> ${zone.name}
+                        `;
+                        const rect = trendChart.getBoundingClientRect();
+                        const left = event.clientX - rect.left + 14;
+                        const top = event.clientY - rect.top - 8;
+                        chartTooltip.style.left = `${Math.min(left, rect.width - 260)}px`;
+                        chartTooltip.style.top = `${Math.max(top, 10)}px`;
+                    });
+
+                    circle.addEventListener('mouseleave', () => {
+                        chartTooltip.style.display = 'none';
+                    });
+
+                    trendChart.appendChild(circle);
+                });
+            });
+
+            const uniqueTimes = Array.from(new Set(allPoints.map(point => point.timestamp))).sort((a, b) => a - b);
+            uniqueTimes.forEach((timestamp, idx) => {
+                if (idx % Math.ceil(uniqueTimes.length / 6) !== 0 && idx !== uniqueTimes.length - 1) return;
+                const tick = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                tick.setAttribute('x', xScale(timestamp));
+                tick.setAttribute('y', height - margin.bottom + 20);
+                tick.setAttribute('fill', '#475569');
+                tick.setAttribute('font-size', '11');
+                tick.setAttribute('text-anchor', 'middle');
+                tick.textContent = formatTimestamp(timestamp);
+                trendChart.appendChild(tick);
+            });
+
+            renderSeriesLegend(coloredSeries);
+        }
+
+        function renderPointDetails(dataPoints) {
+            trendPointDetails.innerHTML = '';
+            dataPoints.slice(-5).reverse().forEach(point => {
+                const zone = getRiskZoneForPoint(point.health_score, point.volatility ?? point.fleet_volatility ?? 0);
+                const item = document.createElement('div');
+                item.className = 'detail-item';
+                item.innerHTML = `<strong>${formatTimestamp(point.timestamp)}</strong><span>${point.health_score.toFixed(1)}% / ${zone.name}</span>`;
+                trendPointDetails.appendChild(item);
+            });
+        }
+
+        function renderComparison(payload) {
+            comparisonPanel.innerHTML = '';
+            if (!payload || !Array.isArray(payload.comparisons) || payload.comparisons.length < 2) {
+                comparisonPanel.style.display = 'none';
+                return;
+            }
+
+            comparisonPanel.style.display = 'block';
+            const title = document.createElement('h3');
+            title.textContent = 'Cross-Tenant Comparison';
+            comparisonPanel.appendChild(title);
+
+            const list = document.createElement('div');
+            list.className = 'comparison-list';
+
+            payload.comparisons.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'comparison-item';
+                const health = item.statistics.current_value !== null ? `${item.statistics.current_value.toFixed(1)}%` : 'N/A';
+                const trend = (item.statistics.trend_direction || 'stable').replace(/^[a-z]/, c => c.toUpperCase());
+                const zoneName = item.latest_zone?.zone_name || 'Unknown';
+                card.innerHTML = `
+                    <div><strong>${item.tenant_id}</strong><div style="margin-top:8px;color:#475569;">Health: ${health}</div></div>
+                    <div style="text-align:right;"><div style="font-weight:700;color:#111827;">${trend}</div><div style="margin-top:8px;color:#475569;">Zone: ${zoneName}</div></div>
+                `;
+                list.appendChild(card);
+            });
+
+            comparisonPanel.appendChild(list);
+        }
+
+        function renderForecast(forecast) {
+            forecastPanel.innerHTML = '';
+            if (!Array.isArray(forecast) || forecast.length === 0) {
+                forecastPanel.style.display = 'none';
+                return;
+            }
+
+            forecastPanel.style.display = 'block';
+            const title = document.createElement('h3');
+            title.textContent = 'Forecasted Health';
+            forecastPanel.appendChild(title);
+
+            const list = document.createElement('div');
+            list.className = 'forecast-list';
+            forecast.forEach(point => {
+                const item = document.createElement('div');
+                item.className = 'forecast-item';
+                item.innerHTML = `<span>${formatTimestamp(point.timestamp)}</span><span>${point.predicted_value.toFixed(1)}%</span>`;
+                list.appendChild(item);
+            });
+
+            forecastPanel.appendChild(list);
+        }
+
+        async function renderDriftAnalysis() {
+            try {
+                const response = await fetch('/api/v1/drift-analysis?metric=health_score&days_back=7&sort_by=drift_magnitude');
+                if (!response.ok) {
+                    throw new Error(`Drift API returned ${response.status}`);
+                }
+                
+                const analysis = await response.json();
+                if (!analysis || !Array.isArray(analysis.tenants) || analysis.tenants.length === 0) {
+                    driftAnalysisPanel.style.display = 'none';
+                    return;
+                }
+
+                driftAnalysisPanel.style.display = 'block';
+                driftAnalysisPanel.innerHTML = '';
+
+                const title = document.createElement('h3');
+                title.textContent = '📊 Drift Analysis: Tenant vs Fleet Baseline';
+                title.style.marginBottom = '12px';
+                driftAnalysisPanel.appendChild(title);
+
+                const stats = document.createElement('div');
+                stats.style.cssText = 'display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap;';
+                
+                const fleetAvgCard = document.createElement('div');
+                fleetAvgCard.style.cssText = 'background: white; padding: 12px 16px; border-radius: 6px; border: 1px solid #e2e8f0; flex: 1; min-width: 150px;';
+                fleetAvgCard.innerHTML = `
+                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase;">Fleet Average</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #1e293b; margin-top: 6px;">${analysis.fleet_average.toFixed(1)}%</div>
+                `;
+                stats.appendChild(fleetAvgCard);
+
+                const anomalyCard = document.createElement('div');
+                anomalyCard.style.cssText = 'background: white; padding: 12px 16px; border-radius: 6px; border: 1px solid #e2e8f0; flex: 1; min-width: 150px;';
+                const anomalyCount = analysis.anomalous_count || 0;
+                anomalyCard.innerHTML = `
+                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase;">Anomalous Tenants</div>
+                    <div style="font-size: 18px; font-weight: 700; color: ${anomalyCount > 0 ? '#dc2626' : '#16a34a'}; margin-top: 6px;">${anomalyCount}</div>
+                `;
+                stats.appendChild(anomalyCard);
+
+                driftAnalysisPanel.appendChild(stats);
+
+                const table = document.createElement('table');
+                table.style.cssText = 'width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 6px; border: 1px solid #e2e8f0; overflow: hidden;';
+
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr style="background: #f1f5f9;">
+                        <th style="padding: 12px; text-align: left; font-weight: 600; color: #1e293b; border-bottom: 2px solid #cbd5e1;">Tenant</th>
+                        <th style="padding: 12px; text-align: left; font-weight: 600; color: #1e293b; border-bottom: 2px solid #cbd5e1;">Health</th>
+                        <th style="padding: 12px; text-align: left; font-weight: 600; color: #1e293b; border-bottom: 2px solid #cbd5e1;">Drift</th>
+                        <th style="padding: 12px; text-align: left; font-weight: 600; color: #1e293b; border-bottom: 2px solid #cbd5e1;">Sigma (σ)</th>
+                        <th style="padding: 12px; text-align: left; font-weight: 600; color: #1e293b; border-bottom: 2px solid #cbd5e1;">Anomaly</th>
+                        <th style="padding: 12px; text-align: left; font-weight: 600; color: #1e293b; border-bottom: 2px solid #cbd5e1;">Trend</th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+                analysis.tenants.slice(0, 10).forEach((tenant, idx) => {
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid #e2e8f0';
+                    if (idx % 2 === 1) tr.style.background = '#f8fafc';
+
+                    const drift = tenant.drift_magnitude || 0;
+                    const sigma = tenant.drift_sigma || 0;
+                    const isAnomalous = tenant.is_anomalous || false;
+                    const driftBg = drift > 0 ? '#dcfce7' : (drift < 0 ? '#fee2e2' : '#f1f5f9');
+                    const driftColor = drift > 0 ? '#166534' : (drift < 0 ? '#991b1b' : '#475569');
+
+                    tr.innerHTML = `
+                        <td style="padding: 12px; font-weight: 500; color: #1e293b;">${tenant.name || tenant.tenant_id}</td>
+                        <td style="padding: 12px; font-family: 'Courier New', monospace; font-weight: 600; background: #f1f5f9; border-radius: 3px; color: #0f172a;">${tenant.current_health.toFixed(1)}%</td>
+                        <td style="padding: 12px; font-family: 'Courier New', monospace; font-weight: 600; background: ${driftBg}; color: ${driftColor}; border-radius: 3px;">${drift > 0 ? '+' : ''}${drift.toFixed(2)}</td>
+                        <td style="padding: 12px; font-family: 'Courier New', monospace; font-weight: 600; background: ${driftBg}; color: ${driftColor}; border-radius: 3px;">${sigma > 0 ? '+' : ''}${sigma.toFixed(2)}σ</td>
+                        <td style="padding: 12px; text-align: center;"><span style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-weight: bold; font-size: 12px; background: ${isAnomalous ? '#fca5a5' : '#d1d5db'}; color: ${isAnomalous ? '#7f1d1d' : '#6b7280'}; opacity: ${isAnomalous ? '1' : '0.3'};">${isAnomalous ? '⚠' : '✓'}</span></td>
+                        <td style="padding: 12px;"><span style="padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: 500; background: ${tenant.trend_direction === 'improving' ? '#dcfce7' : (tenant.trend_direction === 'degrading' ? '#fee2e2' : '#e0e7ff')}; color: ${tenant.trend_direction === 'improving' ? '#166534' : (tenant.trend_direction === 'degrading' ? '#991b1b' : '#3730a3')};">${tenant.trend_direction || 'stable'}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(tbody);
+                driftAnalysisPanel.appendChild(table);
+            } catch (error) {
+                console.warn('Drift analysis unavailable:', error);
+                driftAnalysisPanel.style.display = 'none';
+            }
+        }
+
+        updateTrendView();
+    </script>
+</body>
+</html>

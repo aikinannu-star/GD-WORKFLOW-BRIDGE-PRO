@@ -1,0 +1,12 @@
+ErrorResponse:
+  type: object
+  properties:
+    error:
+      type: string
+    message:
+      type: string
+    details:
+      nullable: true
+      type: object
+  required:
+  - error

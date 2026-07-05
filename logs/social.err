@@ -1,5 +1,8 @@
-[Mon Jun 15 12:35:04 2026] PHP 8.2.31 Development Server (http://0.0.0.0:8008) started
-[Mon Jun 15 12:35:20 2026] 127.0.0.1:61471 Accepted
-[Mon Jun 15 12:35:20 2026] 127.0.0.1:61471 Closing
-[Mon Jun 15 13:11:07 2026] 127.0.0.1:62357 Accepted
-[Mon Jun 15 13:11:07 2026] 127.0.0.1:62357 Closing
+[Sun Jul  5 14:11:18 2026] PHP 8.2.31 Development Server (http://0.0.0.0:8008) started
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53673 Accepted
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::sendJson called status=200 payload={"status":"ok","service":"social","version":"1.0.0","time":"2026-07-05T14:11:26+00:00"}
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::isTestMode returning false
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId called
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId existing=empty
+[Sun Jul  5 14:11:26 2026] ServiceHelpers::getOrCreateRequestId returning new id=d736a38b0a4cf1b5
+[Sun Jul  5 14:11:26 2026] 127.0.0.1:53673 Closing

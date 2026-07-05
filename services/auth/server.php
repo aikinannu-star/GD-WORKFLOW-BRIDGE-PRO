@@ -9,11 +9,36 @@ require_once __DIR__ . '/../lib/ServiceHelpers.php';
 // Service metadata
 define('SERVICE_NAME', 'auth');
 define('SERVICE_PORT', 8002);
-define('JWT_SECRET', $_ENV['AUTH_JWT_SECRET'] ?? 'dev-auth-secret-key');
+
+$jwtSecret = $_ENV['AUTH_JWT_SECRET'] ?? null;
+if (!$jwtSecret) {
+    throw new RuntimeException('AUTH_JWT_SECRET environment variable is required. Do not use the default development secret in production.');
+}
+define('JWT_SECRET', $jwtSecret);
 
 global $method, $uri;
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+$requestId = ServiceHelpers::getOrCreateRequestId();
+$traceContext = ServiceHelpers::getTraceContext();
+if (!headers_sent()) {
+    header('X-Request-Id: ' . $requestId);
+    header('X-Trace-Id: ' . $traceContext['trace_id']);
+    header('X-Span-Id: ' . $traceContext['span_id']);
+    if (!empty($traceContext['parent_span_id'])) {
+        header('X-Parent-Span-Id: ' . $traceContext['parent_span_id']);
+    }
+}
+ServiceHelpers::emitStructuredLog('auth', 'info', 'request_received', [
+    'request_id' => $requestId,
+    'trace_id' => $traceContext['trace_id'],
+    'span_id' => $traceContext['span_id'],
+    'parent_span_id' => $traceContext['parent_span_id'],
+    'client_ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+    'method' => $method,
+    'path' => $uri,
+]);
 
 function jwtEncode(array $payload): string
 {
@@ -61,6 +86,10 @@ function saveUsers(array $users): bool
 
 function sendError(int $status, string $message): void
 {
+    $statusClass = $status >= 500 ? '5xx' : ($status >= 400 ? '4xx' : '2xx');
+    ServiceHelpers::incrementMetric('auth', 'auth_requests_total', ['method' => $_SERVER['REQUEST_METHOD'] ?? 'GET', 'route' => $_SERVER['REQUEST_URI'] ?? '/', 'status' => $statusClass]);
+    ServiceHelpers::incrementMetric('auth', 'auth_errors_total', ['method' => $_SERVER['REQUEST_METHOD'] ?? 'GET', 'route' => $_SERVER['REQUEST_URI'] ?? '/', 'status' => $statusClass]);
+    ServiceHelpers::emitStructuredLog('auth', 'warn', 'error_response', ['request_id' => $_SERVER['GDWB_REQUEST_ID'] ?? null, 'status' => $status, 'message' => $message]);
     ServiceHelpers::sendJson($status, ['error' => $message]);
 }
 
@@ -103,13 +132,20 @@ function getUserFromToken(string $token): ?array
     return $payload;
 }
 
-if ($method === 'GET' && ($uri === '/health' || $uri === '/health/')) {
+if ($method === 'GET' && in_array($uri, ['/health', '/health/', '/readyz', '/readyz/'], true)) {
+    ServiceHelpers::emitStructuredLog('auth', 'info', 'health_check', ['request_id' => $requestId]);
     ServiceHelpers::sendJson(200, [
         'status' => 'ok',
         'service' => SERVICE_NAME,
         'version' => '1.0.0',
+        'request_id' => $requestId,
         'time' => gmdate('c'),
     ]);
+}
+
+if ($method === 'GET' && in_array($uri, ['/metrics', '/metrics/'], true)) {
+    ServiceHelpers::emitStructuredLog('auth', 'info', 'metrics_requested', ['request_id' => $requestId]);
+    ServiceHelpers::sendText(200, ServiceHelpers::renderPrometheusMetrics('auth'));
 }
 
 if ($method === 'POST' && $uri === '/api/v1/auth/register') {
@@ -118,12 +154,16 @@ if ($method === 'POST' && $uri === '/api/v1/auth/register') {
     $email = filter_var($input['email'] ?? '', FILTER_VALIDATE_EMAIL);
     $password = $input['password'] ?? '';
     if (!$email || !$password) {
+        ServiceHelpers::incrementMetric('auth', 'auth_errors_total');
+        ServiceHelpers::emitStructuredLog('auth', 'warn', 'register_validation_failed', ['request_id' => $requestId, 'tenant_id' => $tenantId]);
         sendError(400, 'email and password are required');
     }
 
     $users = loadUsers();
     foreach ($users as $user) {
         if ($user['email'] === $email && $user['tenant_id'] === $tenantId) {
+            ServiceHelpers::incrementMetric('auth', 'auth_errors_total');
+            ServiceHelpers::emitStructuredLog('auth', 'warn', 'register_conflict', ['request_id' => $requestId, 'email' => $email, 'tenant_id' => $tenantId]);
             sendError(409, 'User already exists');
         }
     }
@@ -179,6 +219,8 @@ if ($method === 'POST' && $uri === '/api/v1/auth/register') {
     }
 
     $token = createToken($newUser);
+    ServiceHelpers::incrementMetric('auth', 'auth_requests_total', ['method' => $method, 'route' => $uri, 'status' => '2xx']);
+    ServiceHelpers::emitStructuredLog('auth', 'info', 'register_completed', ['request_id' => $requestId, 'trace_id' => $traceContext['trace_id'], 'span_id' => $traceContext['span_id'], 'parent_span_id' => $traceContext['parent_span_id'], 'email' => $email, 'tenant_id' => $tenantId]);
     ServiceHelpers::sendJson(201, ['success' => true, 'token' => $token, 'user' => ['id' => $userId, 'email' => $email, 'role' => $role, 'tenant_id' => $tenantId, 'license_key' => $license_key]]);
 }
 
@@ -188,6 +230,8 @@ if ($method === 'POST' && $uri === '/api/v1/auth/login') {
     $email = filter_var($input['email'] ?? '', FILTER_VALIDATE_EMAIL);
     $password = $input['password'] ?? '';
     if (!$email || !$password) {
+        ServiceHelpers::incrementMetric('auth', 'auth_errors_total');
+        ServiceHelpers::emitStructuredLog('auth', 'warn', 'login_validation_failed', ['request_id' => $requestId, 'tenant_id' => $tenantId]);
         sendError(400, 'email and password are required');
     }
 
@@ -200,10 +244,14 @@ if ($method === 'POST' && $uri === '/api/v1/auth/login') {
         }
     }
     if (!$user || !password_verify($password, $user['password_hash'])) {
+        ServiceHelpers::incrementMetric('auth', 'auth_errors_total');
+        ServiceHelpers::emitStructuredLog('auth', 'warn', 'login_failed', ['request_id' => $requestId, 'email' => $email, 'tenant_id' => $tenantId]);
         sendError(401, 'Invalid credentials');
     }
 
     $token = createToken($user);
+    ServiceHelpers::incrementMetric('auth', 'auth_requests_total', ['method' => $method, 'route' => $uri, 'status' => '2xx']);
+    ServiceHelpers::emitStructuredLog('auth', 'info', 'login_completed', ['request_id' => $requestId, 'trace_id' => $traceContext['trace_id'], 'span_id' => $traceContext['span_id'], 'parent_span_id' => $traceContext['parent_span_id'], 'email' => $user['email'], 'tenant_id' => $user['tenant_id']]);
     ServiceHelpers::sendJson(200, ['success' => true, 'token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email'], 'role' => $user['role'], 'tenant_id' => $user['tenant_id']]]);
 }
 

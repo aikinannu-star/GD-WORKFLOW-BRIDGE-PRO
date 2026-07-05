@@ -1,0 +1,23 @@
+{
+    "id": "memory_6a47fd7bf18750.06252614",
+    "tenantId": "tenant-1",
+    "userId": "user-42",
+    "conversationId": null,
+    "type": "fact",
+    "content": "Lives in London",
+    "confidence": 0.7000000000000001,
+    "tags": [
+        "location"
+    ],
+    "sourceMessages": [],
+    "createdAt": "2026-07-03T18:20:43+00:00",
+    "lastConfirmedAt": "2026-07-03T18:20:43+00:00",
+    "expiresAt": null,
+    "metadata": {
+        "source": "memory",
+        "status": "superseded",
+        "supersededById": "merged",
+        "supersededAt": "2026-07-03T22:15:13+00:00",
+        "confidenceDecayedAt": "2026-07-03T22:15:13+00:00"
+    }
+}

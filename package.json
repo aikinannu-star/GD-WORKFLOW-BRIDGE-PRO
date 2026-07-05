@@ -1,0 +1,19 @@
+{
+  "name": "gd-workflow-bridge-pro-ui-tests",
+  "private": true,
+  "scripts": {
+    "test:ui": "npx playwright test",
+    "test:ui:install": "npx playwright install chromium",
+    "snapshot": "node tools/snapshot.js",
+    "snapshot:diff": "node tools/snapshot.js diff",
+    "snapshot:approve": "node tools/snapshot.js approve",
+    "snapshot:request-approval": "node tools/snapshot.js request-approval",
+    "snapshot:list-approvals": "node tools/snapshot.js list-approvals",
+    "snapshot:history": "node tools/snapshot.js history",
+    "snapshot:analyze": "node tools/snapshot.js analyze"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.46.0",
+    "diff": "^5.1.0"
+  }
+}

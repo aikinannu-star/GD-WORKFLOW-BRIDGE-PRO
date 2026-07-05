@@ -1,0 +1,22 @@
+{
+    "id": "memory_6a44bb6ae00749.58739641",
+    "tenantId": "tenant-1",
+    "userId": "user-42",
+    "conversationId": "conv-memory-1",
+    "type": "workflow",
+    "content": "My goal is to automate the billing workflow",
+    "confidence": 0.65,
+    "tags": [
+        "workflow"
+    ],
+    "sourceMessages": [
+        "2026-01-01T00:00:02Z",
+        "user"
+    ],
+    "createdAt": "2026-07-01T07:02:02+00:00",
+    "lastConfirmedAt": "2026-07-01T07:02:02+00:00",
+    "expiresAt": null,
+    "metadata": {
+        "source": "conversation"
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "workflowId": "wf-retry",
+    "executionId": "8bcb8d52af925eb198bd4d95",
+    "action": "log",
+    "error": "temporary_error",
+    "id": "954d169eb3a20dcb",
+    "timestamp": "2026-06-29T15:08:39+00:00"
+}

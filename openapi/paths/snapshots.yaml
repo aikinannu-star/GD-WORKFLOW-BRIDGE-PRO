@@ -1,0 +1,37 @@
+/api/v1/marketplace/snapshots:
+  get:
+    summary: List saved marketplace snapshots
+    tags:
+    - Marketplace
+    responses:
+      '200':
+        description: Snapshot list
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/SnapshotListResponse
+    operationId: marketplaceListMarketplaceSnapshots
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+  post:
+    summary: Create a marketplace snapshot
+    tags:
+    - Marketplace
+    responses:
+      '201':
+        description: Snapshot created
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/Snapshot
+    operationId: marketplaceCreateMarketplaceSnapshots
+    x-maturity: stable
+    x-stabilitySince: 1.4.0
+    x-owner: Marketplace Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: false
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

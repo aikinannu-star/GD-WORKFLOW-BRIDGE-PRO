@@ -1,0 +1,10 @@
+{
+  "id": "sample-assistant",
+  "name": "Sample Assistant (dispatcher wrapper)",
+  "version": "0.1.0",
+  "author": "Platform Team",
+  "description": "Wrapper plugin to register a sample assistant with the dispatcher registrar.",
+  "entry": "SampleAssistantEntry.php",
+  "minimumRuntimeVersion": "1.0.0",
+  "minimum_runtime_version": "1.0.0"
+}

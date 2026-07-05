@@ -1,0 +1,10 @@
+{
+    "gateway-endurance-key": {
+        "id": "endurance-key",
+        "tenant_id": "endurance-tenant",
+        "scopes": [
+            "assistant:*"
+        ],
+        "owner": "operational-validation"
+    }
+}

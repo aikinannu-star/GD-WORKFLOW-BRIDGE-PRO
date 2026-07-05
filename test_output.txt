@@ -1,0 +1,59 @@
+GATEWAY_DEBUG: runGatewayServer called
+GATEWAY_DEBUG: after global registry
+GATEWAY_DEBUG: got method=POST
+GATEWAY_DEBUG: got uri=/api/v1/assistant/sessions/test-session/message
+GATEWAY_DEBUG: got queryString
+GATEWAY_DEBUG: after ob_start if block
+GATEWAY_DEBUG: registry assigned
+GATEWAY_DEBUG: about to enter sendCorsHeaders if block
+GATEWAY_DEBUG: after sendCorsHeaders if block
+GATEWAY_DEBUG: about to enter getNormalizedHeaders if block
+GATEWAY_DEBUG: after getNormalizedHeaders if block
+GATEWAY_DEBUG: about to enter resolveTargetHost if block
+GATEWAY_DEBUG: inside resolveTargetHost if block
+GATEWAY_DEBUG: leaving resolveTargetHost if block
+GATEWAY_DEBUG: after resolveTargetHost if block
+GATEWAY_DEBUG: after getRequestId helper block
+GATEWAY_DEBUG: after getClientIp helper block
+GATEWAY_DEBUG: after logRequest helper block
+GATEWAY_DEBUG: after checkRateLimit helper block
+GATEWAY_DEBUG: after getApiKeyInfo helper block
+GATEWAY_DEBUG: after getTenantQuota helper block
+GATEWAY_DEBUG: after isPublicService helper block
+GATEWAY_DEBUG: after introspectToken helper block
+GATEWAY_DEBUG: after proxyToService helper block
+GATEWAY_DEBUG: about to call sendCorsHeaders
+GATEWAY_DEBUG: after sendCorsHeaders
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=empty
+ServiceHelpers::getOrCreateRequestId returning new id=9f15073384c29c74
+GATEWAY_DEBUG: after getOrCreateRequestId, requestId=9f15073384c29c74
+GATEWAY_DEBUG: after getTraceContext
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=empty
+ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=empty
+ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+GATEWAY_DEBUG: apiKeyInfo={"id":"key-1","key":"valid-key-1","tenant_id":"tenant-allowed","owner":"test@example.com","limit":1000,"scopes":["assistant:invoke"]} target=assistant
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=empty
+ServiceHelpers::getOrCreateRequestId returning cached GDWB_REQUEST_ID
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=present
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=present
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=present
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=present
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=present
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=present
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=present
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=present
+ServiceHelpers::getOrCreateRequestId called
+ServiceHelpers::getOrCreateRequestId existing=present

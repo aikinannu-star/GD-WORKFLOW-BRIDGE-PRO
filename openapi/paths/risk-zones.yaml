@@ -1,0 +1,67 @@
+/api/v1/risk-zones:
+  get:
+    summary: List configured risk zones
+    tags:
+    - Risk Zones
+    responses:
+      '200':
+        description: Risk zone list
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/RiskZoneList
+      '500':
+        description: Internal error
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ErrorResponse
+    operationId: riskzonesListRiskzones
+    x-maturity: beta
+    x-stabilitySince: 1.4.5-beta.1
+    x-owner: Risk Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.5.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues
+/api/v1/risk-zones/classify:
+  get:
+    summary: Classify health and volatility into a risk zone
+    tags:
+    - Risk Zones
+    parameters:
+    - name: health
+      in: query
+      schema:
+        type: number
+        minimum: 0
+        maximum: 100
+        default: 50
+    - name: volatility
+      in: query
+      schema:
+        type: number
+        minimum: 0
+        maximum: 100
+        default: 50
+    responses:
+      '200':
+        description: Risk zone classification
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/RiskZone
+      '400':
+        description: Invalid request
+        content:
+          application/json:
+            schema:
+              $ref: ./components/schemas.yaml#/ErrorResponse
+    operationId: riskzonesListRiskzonesClassify
+    x-maturity: beta
+    x-stabilitySince: 1.4.5-beta.1
+    x-owner: Risk Team
+    x-reviewed: '2026-06-26'
+    x-breakingChangesAllowed: true
+    x-expectedStable: 1.5.0
+    x-feedback: https://github.com/gd-workflow-bridge-pro/api/issues

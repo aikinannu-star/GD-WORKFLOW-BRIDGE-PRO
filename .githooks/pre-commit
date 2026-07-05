@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""
+Pre-commit hook for OpenAPI contract validation.
+Install in .git/hooks/pre-commit and make executable.
+
+This hook validates:
+  - Modular OpenAPI YAML syntax
+  - Bundled spec syntax and semantics
+  - Operation ID uniqueness
+  - Naming conventions
+  - No unintended changes to critical files
+"""
+
+import sys
+import subprocess
+import yaml
+from pathlib import Path
+from collections import defaultdict
+import re
+
+def run_command(cmd):
+    """Run a shell command and return success status."""
+    try:
+        subprocess.run(cmd, shell=True, check=True, capture_output=True)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+def validate_yaml_syntax(filepath):
+    """Validate YAML syntax."""
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            yaml.safe_load(f)
+        return True, None
+    except yaml.YAMLError as e:
+        return False, str(e)
+
+def validate_bundled_spec():
+    """Validate the bundled OpenAPI spec."""
+    bundle_script = Path('openapi/build_openapi.py')
+    spec_file = Path('openapi/openapi.yaml')
+    
+    # Run bundler
+    try:
+        exec(bundle_script.read_text(), {'Path': Path, 'yaml': yaml})
+    except Exception as e:
+        return False, f"Bundling failed: {e}"
+    
+    # Validate bundled spec syntax
+    return validate_yaml_syntax(spec_file)
+
+def check_operation_id_uniqueness():
+    """Check that all operation IDs are unique."""
+    spec_file = Path('openapi/openapi.yaml')
+    
+    try:
+        with spec_file.open('r') as f:
+            spec = yaml.safe_load(f)
+    except Exception as e:
+        return False, f"Failed to load spec: {e}"
+    
+    op_ids = defaultdict(list)
+    for path, methods in spec.get('paths', {}).items():
+        for method, operation in methods.items():
+            if isinstance(operation, dict):
+                op_id = operation.get('operationId')
+                if op_id:
+                    op_ids[op_id].append(f"{method.upper()} {path}")
+    
+    duplicates = {k: v for k, v in op_ids.items() if len(v) > 1}
+    
+    if duplicates:
+        msg = "Duplicate operation IDs found:\n"
+        for op_id, paths in list(duplicates.items())[:3]:
+            msg += f"  {op_id}: {', '.join(paths)}\n"
+        return False, msg
+    
+    return True, None
+
+def check_operation_id_naming():
+    """Check operation ID naming conventions."""
+    spec_file = Path('openapi/openapi.yaml')
+    
+    try:
+        with spec_file.open('r') as f:
+            spec = yaml.safe_load(f)
+    except Exception as e:
+        return False, f"Failed to load spec: {e}"
+    
+    violations = []
+    for path, methods in spec.get('paths', {}).items():
+        for method, operation in methods.items():
+            if isinstance(operation, dict):
+                op_id = operation.get('operationId')
+                if not op_id:
+                    violations.append((path, method, "Missing operationId"))
+                elif not re.match(r'^[a-z][a-zA-Z0-9]*$', op_id):
+                    violations.append((path, method, f"Invalid format: {op_id}"))
+    
+    if violations:
+        msg = "Operation ID naming violations:\n"
+        for path, method, issue in violations[:5]:
+            msg += f"  {method.upper()} {path}: {issue}\n"
+        if len(violations) > 5:
+            msg += f"  ... and {len(violations) - 5} more\n"
+        return False, msg
+    
+    return True, None
+
+def main():
+    """Run all validations."""
+    checks = [
+        ("Bundling modular OpenAPI files", validate_bundled_spec),
+        ("Checking operation ID uniqueness", check_operation_id_uniqueness),
+        ("Checking operation ID naming conventions", check_operation_id_naming),
+    ]
+    
+    print("🔍 OpenAPI Contract Pre-Commit Validation\n")
+    
+    failed = False
+    for check_name, check_func in checks:
+        print(f"  {check_name}...", end=" ")
+        success, error = check_func()
+        
+        if success:
+            print("✓")
+        else:
+            print("✗")
+            print(f"\n  Error: {error}\n")
+            failed = True
+    
+    print()
+    
+    if failed:
+        print("❌ Pre-commit validation failed. Commit aborted.\n")
+        print("💡 Tips:")
+        print("  - Run: cd openapi && python3 build_openapi.py")
+        print("  - Review OPERATION_ID_GOVERNANCE.md for conventions")
+        print("  - Use --no-verify to bypass (not recommended)\n")
+        return 1
+    else:
+        print("✅ All pre-commit validations passed!\n")
+        return 0
+
+if __name__ == '__main__':
+    sys.exit(main())

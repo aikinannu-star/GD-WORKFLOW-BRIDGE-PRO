@@ -1,0 +1,282 @@
+Finding:
+  type: object
+  properties:
+    severity:
+      type: string
+      enum:
+      - info
+      - warning
+      - critical
+    title:
+      type: string
+    message:
+      type: string
+  required:
+  - severity
+  - title
+  - message
+IntelligenceHealthResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      enum:
+      - healthy
+      - warning
+      - critical
+    trend_confidence:
+      type: number
+      format: float
+    stable_tenants_pct:
+      type: number
+    anomaly_density:
+      type: number
+    remediation_success_rate:
+      nullable: true
+      type: number
+    average_drift_resolution_hours:
+      nullable: true
+      type: number
+    tenant_count:
+      type: integer
+    anomalous_count:
+      type: integer
+    fleet_average:
+      type: number
+    fleet_stddev:
+      type: number
+    findings:
+      type: array
+      items:
+        $ref: '#/Finding'
+    recommendations:
+      type: array
+      items:
+        type: string
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - status
+  - trend_confidence
+  - tenant_count
+  - anomalous_count
+  - computed_at
+  - findings
+  - recommendations
+RecommendationEffectivenessItem:
+  type: object
+  properties:
+    recommendation_id:
+      type: string
+    description:
+      type: string
+    effectiveness_score:
+      type: number
+    adopted_count:
+      type: integer
+    total_recommendations:
+      type: integer
+  required:
+  - recommendation_id
+  - description
+  - effectiveness_score
+EffectivenessMetric:
+  type: object
+  properties:
+    value:
+      type: number
+    unit:
+      type: string
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - value
+  - computed_at
+IntelligenceEffectivenessSummary:
+  type: object
+  properties:
+    recommendations:
+      type: array
+      items:
+        $ref: '#/RecommendationEffectivenessItem'
+    mttd:
+      $ref: '#/EffectivenessMetric'
+    mttr:
+      $ref: '#/EffectivenessMetric'
+    acceptance_rate:
+      $ref: '#/EffectivenessMetric'
+    accuracy:
+      $ref: '#/EffectivenessMetric'
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - recommendations
+  - mttd
+  - mttr
+  - acceptance_rate
+  - accuracy
+  - computed_at
+LearningPerformance:
+  type: object
+  properties:
+    total_recommendations:
+      type: integer
+    successful_outcomes:
+      type: integer
+    success_rate:
+      type: number
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - total_recommendations
+  - successful_outcomes
+  - success_rate
+  - computed_at
+AdoptionGapsResponse:
+  type: object
+  properties:
+    gaps:
+      type: array
+      items:
+        type: object
+        properties:
+          area:
+            type: string
+          count:
+            type: integer
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - gaps
+  - computed_at
+RecurringIssuesResponse:
+  type: object
+  properties:
+    issues:
+      type: array
+      items:
+        type: object
+        properties:
+          issue_id:
+            type: string
+          description:
+            type: string
+          occurrences:
+            type: integer
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - issues
+  - computed_at
+LearningTrendsResponse:
+  type: object
+  properties:
+    trends:
+      type: array
+      items:
+        type: object
+        properties:
+          metric:
+            type: string
+          delta:
+            type: number
+          direction:
+            type: string
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - trends
+  - computed_at
+LearningEffectivenessScore:
+  type: object
+  properties:
+    score:
+      type: number
+    level:
+      type: string
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - score
+  - level
+  - computed_at
+ConsolidatedLearningResponse:
+  type: object
+  properties:
+    performance:
+      $ref: '#/LearningPerformance'
+    adoption_gaps:
+      $ref: '#/AdoptionGapsResponse'
+    recurring_issues:
+      $ref: '#/RecurringIssuesResponse'
+    trends:
+      $ref: '#/LearningTrendsResponse'
+    effectiveness_score:
+      $ref: '#/LearningEffectivenessScore'
+    computed_at:
+      type: string
+      format: date-time
+  required:
+  - performance
+  - adoption_gaps
+  - recurring_issues
+  - trends
+  - effectiveness_score
+  - computed_at
+RemediationEventRequest:
+  type: object
+  properties:
+    tenant_id:
+      type: string
+    action:
+      type: string
+    recommendation_type:
+      type: string
+    details:
+      type: object
+      additionalProperties: true
+  required:
+  - tenant_id
+  - action
+RemediationEvent:
+  type: object
+  properties:
+    id:
+      type: string
+    tenant_id:
+      type: string
+    action:
+      type: string
+    details:
+      type: object
+      additionalProperties: true
+    created_at:
+      type: string
+      format: date-time
+  required:
+  - id
+  - tenant_id
+  - action
+  - created_at
+RemediationResolveRequest:
+  type: object
+  properties:
+    resolved_at:
+      type: string
+      format: date-time
+    resolution_comment:
+      type: string
+    outcome:
+      type: string
+    success:
+      type: boolean
+  required:
+  - resolved_at

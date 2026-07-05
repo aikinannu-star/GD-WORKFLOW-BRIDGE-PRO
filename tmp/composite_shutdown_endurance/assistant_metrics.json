@@ -1,0 +1,50 @@
+{
+    "assistant_active_requests": {
+        "type": "gauge",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 0,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "assistant_shutdown_in_progress_total": {
+        "type": "counter",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 5,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "assistant_shutdown_in_progress": {
+        "type": "gauge",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 0,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    },
+    "assistant_requests_rejected_during_shutdown_total": {
+        "type": "counter",
+        "samples": {
+            "[]": {
+                "labels": [],
+                "value": 5,
+                "sum": 0,
+                "count": 0,
+                "buckets": []
+            }
+        }
+    }
+}

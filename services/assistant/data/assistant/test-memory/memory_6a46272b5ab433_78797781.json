@@ -1,0 +1,24 @@
+{
+    "id": "memory_6a46272b5ab433.78797781",
+    "tenantId": "tenant-1",
+    "userId": "user-42",
+    "conversationId": "conv-memory-1",
+    "type": "fact",
+    "content": "I can help with that",
+    "confidence": 0.65,
+    "tags": [
+        "fact"
+    ],
+    "sourceMessages": [
+        "2026-01-01T00:00:01Z",
+        "assistant"
+    ],
+    "createdAt": "2026-07-02T08:54:03+00:00",
+    "lastConfirmedAt": "2026-07-02T08:54:03+00:00",
+    "expiresAt": null,
+    "metadata": {
+        "source": "conversation",
+        "sourceEvent": "conversation.completed",
+        "sourceOrigin": "runtime"
+    }
+}
