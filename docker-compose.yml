@@ -208,9 +208,9 @@ services:
       - "11434:11434"
     environment:
       OLLAMA_MODELS_PATH: /ollama/models
+      OLLAMA_HOST: 0.0.0.0:11434
     volumes:
       - ./services/assistant/ollama:/ollama
-    command: ["serve", "--listen", "0.0.0.0:11434"]
 
   assistant-service:
     build:
