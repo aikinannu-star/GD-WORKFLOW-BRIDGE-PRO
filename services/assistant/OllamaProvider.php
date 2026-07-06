@@ -10,7 +10,9 @@ class OllamaProvider implements AssistantProviderInterface
     public function __construct(array $config)
     {
         $this->config = array_merge([
-            'api_url' => 'http://ollama:11434/v1/completions',
+            // New Ollama images expose a simple /api/generate endpoint; keep
+            // v1/completions as a fallback for older test configurations.
+            'api_url' => 'http://ollama:11434/api/generate',
             'model' => 'mistral',
             'max_tokens' => 512,
             'temperature' => 0.2,
@@ -77,22 +79,64 @@ class OllamaProvider implements AssistantProviderInterface
             return ['success' => false, 'text' => '', 'raw' => $body, 'error' => $body['error'] ?? 'llm_error'];
         }
 
+        // Many providers return a `choices` array with different shapes.
+        // Attempt to extract text from common keys, then fall back to a
+        // tolerant recursive search for the first string value in the body.
         $choice = $body['choices'][0] ?? null;
-        if (!is_array($choice)) {
-            return ['success' => false, 'text' => '', 'raw' => $body, 'error' => 'missing_choice'];
+        if (is_array($choice)) {
+            if (isset($choice['message']['content'])) {
+                return ['success' => true, 'text' => trim($choice['message']['content']), 'raw' => $body, 'error' => null];
+            }
+            if (isset($choice['content'])) {
+                return ['success' => true, 'text' => trim($choice['content']), 'raw' => $body, 'error' => null];
+            }
+            if (isset($choice['text'])) {
+                return ['success' => true, 'text' => trim($choice['text']), 'raw' => $body, 'error' => null];
+            }
         }
 
-        if (isset($choice['message']['content'])) {
-            return ['success' => true, 'text' => trim($choice['message']['content']), 'raw' => $body, 'error' => null];
+        // Ollama and other runtimes sometimes return `output` or plainer shapes.
+        if (isset($body['output'])) {
+            if (is_string($body['output'])) {
+                return ['success' => true, 'text' => trim($body['output']), 'raw' => $body, 'error' => null];
+            }
+            if (is_array($body['output']) && !empty($body['output'])) {
+                $first = $body['output'][0];
+                if (is_string($first)) {
+                    return ['success' => true, 'text' => trim($first), 'raw' => $body, 'error' => null];
+                }
+                if (is_array($first)) {
+                    $s = $this->findFirstString($first);
+                    if ($s !== null) {
+                        return ['success' => true, 'text' => trim($s), 'raw' => $body, 'error' => null];
+                    }
+                }
+            }
         }
-        if (isset($choice['content'])) {
-            return ['success' => true, 'text' => trim($choice['content']), 'raw' => $body, 'error' => null];
-        }
-        if (isset($choice['text'])) {
-            return ['success' => true, 'text' => trim($choice['text']), 'raw' => $body, 'error' => null];
+
+        // Generic recursive search for the first non-empty string in the response.
+        $found = $this->findFirstString($body);
+        if ($found !== null) {
+            return ['success' => true, 'text' => trim($found), 'raw' => $body, 'error' => null];
         }
 
         return ['success' => false, 'text' => '', 'raw' => $body, 'error' => 'unknown_choice_format'];
+    }
+
+    private function findFirstString(mixed $value): ?string
+    {
+        if (is_string($value) && trim($value) !== '') {
+            return $value;
+        }
+        if (is_array($value)) {
+            foreach ($value as $v) {
+                $s = $this->findFirstString($v);
+                if ($s !== null) {
+                    return $s;
+                }
+            }
+        }
+        return null;
     }
 
     public function chat(string $prompt, array $options = []): array
