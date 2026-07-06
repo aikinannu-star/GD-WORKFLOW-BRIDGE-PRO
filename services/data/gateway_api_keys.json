@@ -1,0 +1,9 @@
+{
+  "valid-key-1": {
+    "key": "valid-key-1",
+    "id": "valid-key-1",
+    "owner": "local-test",
+    "scopes": ["assistant", "assistant:invoke"],
+    "tenant_id": null
+  }
+}
