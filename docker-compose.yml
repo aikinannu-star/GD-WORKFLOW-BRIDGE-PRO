@@ -211,6 +211,8 @@ services:
       OLLAMA_HOST: 0.0.0.0:11434
     volumes:
       - ./services/assistant/ollama:/ollama
+    entrypoint: ["/bin/ollama"]
+    command: ["serve"]
 
   assistant-service:
     build:
