@@ -4,7 +4,7 @@ services:
   # Core License Server (existing)
   license-server:
     build:
-      context: ../..
+      context: .
       dockerfile: license-server/Dockerfile
     ports:
       - "8101:8001"
@@ -19,7 +19,7 @@ services:
   # Auth Service
   auth-service:
     build:
-      context: ../..
+      context: .
       dockerfile: infra/docker/Dockerfile.auth
     ports:
       - "8102:8002"
@@ -35,7 +35,7 @@ services:
   # Billing Service
   billing-service:
     build:
-      context: ../..
+      context: .
       dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8103:8003"
@@ -50,7 +50,7 @@ services:
   # CMS Service
   cms-service:
     build:
-      context: ../..
+      context: .
       dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8104:8004"
@@ -66,7 +66,7 @@ services:
   # Domains Service
   domains-service:
     build:
-      context: ../..
+      context: .
       dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8105:8005"
@@ -83,7 +83,7 @@ services:
   marketplace-service:
     image: gdwb-marketplace-test
     build:
-      context: ../..
+      context: .
       dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8106:8006"
@@ -100,7 +100,7 @@ services:
   # Usage Service
   usage-service:
     build:
-      context: ../..
+      context: .
       dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8107:8007"
@@ -116,7 +116,7 @@ services:
   # Admin Service
   admin-service:
     build:
-      context: ../..
+      context: .
       dockerfile: infra/docker/Dockerfile.php-service
     ports:
       - "8108:8008"
