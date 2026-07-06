@@ -22,7 +22,7 @@ services:
       - ./license-server/migrations/postgres.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
 
   mysql:
-    image: mysql:8-alpine
+    image: mysql:8.0
     container_name: gdwb_mysql
     restart: unless-stopped
     environment:
@@ -155,7 +155,7 @@ services:
     container_name: gdwb_cms_service
     restart: unless-stopped
     ports:
-      - "8004:8004"
+      - "8018:8004"
     volumes:
       - ./services/cms:/app/services/cms
       - ./services/lib:/app/services/lib
@@ -210,7 +210,7 @@ services:
       OLLAMA_MODELS_PATH: /ollama/models
     volumes:
       - ./services/assistant/ollama:/ollama
-    command: ["serve", "--host", "0.0.0.0", "--port", "11434"]
+    command: ["serve", "--listen", "0.0.0.0:11434"]
 
   assistant-service:
     build:
@@ -292,7 +292,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - "8004:8004"
+      - "8018:8004"
     volumes:
       - ./services/decision-audit:/app/services/decision-audit
       - ./services/lib:/app/services/lib
