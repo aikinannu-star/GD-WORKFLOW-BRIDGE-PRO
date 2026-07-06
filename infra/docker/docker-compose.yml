@@ -5,7 +5,7 @@ services:
   license-server:
     build:
       context: ../..
-      dockerfile: ../license-server/Dockerfile
+      dockerfile: license-server/Dockerfile
     ports:
       - "8101:8001"
     environment:
