@@ -988,25 +988,34 @@ if ($method === 'GET' && $path === '/dep-graph.mmd') {
 
 if ($method === 'GET' && ($path === '/marketplace-ui' || $path === '/ui')) {
     header('Content-Type: text/html; charset=utf-8');
-    echo '<!doctype html><html><head><meta charset="utf-8"><title>Marketplace UI</title></head><body>';
-    echo '<h2>Marketplace Admin UI</h2>';
-    echo '<button onclick="refresh()">Refresh Plugins</button> <span id="status"></span>';
-    echo '<table id="plugins" border="1" cellpadding="6" style="margin-top:12px; border-collapse: collapse;"><thead><tr><th>Name</th><th>Version</th><th>Published</th><th>Actions</th></tr></thead><tbody></tbody></table>';
-    echo '<script>
-      function apiGet(p){ return fetch(p,{headers:{Accept:"application/json"}}).then(r=>r.json()); }
-      function apiPost(p,b){ return fetch(p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(r=>r.json()); }
-      function setStatus(s){ document.getElementById("status").innerText = s; }
-      async function refresh(){ setStatus("loading..."); try{ const res = await apiGet('/api/v1/marketplace/plugins'); const items = res.items || []; const tb = document.querySelector('#plugins tbody'); tb.innerHTML = ''; for(const p of items){ const tr=document.createElement('tr'); tr.innerHTML = `<td>${p.name||p.id}</td><td>${p.version||''}</td><td>${p.published?"yes":"no"}</td><td></td>`; const td = tr.querySelector('td:last-child');
-            const pubBtn = document.createElement('button'); pubBtn.innerText = p.published? 'Unpublish' : 'Publish'; pubBtn.onclick = async ()=>{ setStatus('updating...'); try{ const ep = '/api/v1/marketplace/plugins/'+encodeURIComponent(p.id)+'/'+(p.published? 'unpublish' : 'publish'); const r = await apiPost(ep,{}); alert('Result: '+JSON.stringify(r)); await refresh(); } catch(e){ alert('Error: '+e); } };
-            const rateBtn = document.createElement('button'); rateBtn.innerText='Rate'; rateBtn.onclick=async ()=>{ const rating = prompt('Rating 1-5'); if(!rating) return; const comment = prompt('Comment (optional)')||''; try{ const r = await apiPost('/api/v1/marketplace/plugins/'+encodeURIComponent(p.id)+'/ratings',{rating:parseInt(rating,10),comment}); alert('Rated: '+JSON.stringify(r)); }catch(e){ alert('Error: '+e); } };
-            const installBtn = document.createElement('button'); installBtn.innerText='Install'; installBtn.onclick=async ()=>{ const tenant = prompt('Tenant ID (required)'); if(!tenant) return; const auto = confirm('Auto-install dependencies?'); try{ const r = await apiPost('/api/v1/marketplace/plugins/'+encodeURIComponent(p.id)+'/install',{tenant_id:tenant,auto_install_dependencies: auto}); alert('Installed: '+JSON.stringify(r)); await refresh(); }catch(e){ alert('Error: '+JSON.stringify(e)); } };
-            const uninstallBtn = document.createElement('button'); uninstallBtn.innerText='Uninstall'; uninstallBtn.onclick=async ()=>{ const tenant = prompt('Tenant ID (required)'); if(!tenant) return; try{ const r = await apiPost('/api/v1/marketplace/plugins/'+encodeURIComponent(p.id)+'/uninstall',{tenant_id:tenant}); alert('Uninstalled: '+JSON.stringify(r)); await refresh(); }catch(e){ alert('Error: '+JSON.stringify(e)); } };
-            td.appendChild(pubBtn); td.appendChild(document.createTextNode(' ')); td.appendChild(rateBtn); td.appendChild(document.createTextNode(' ')); td.appendChild(installBtn); td.appendChild(document.createTextNode(' ')); td.appendChild(uninstallBtn);
-            tb.appendChild(tr);
-        }
-        setStatus('loaded '+items.length+' plugins'); }catch(e){ setStatus('error'); alert('Failed to load plugins: '+e); } }
-      window.onload=()=>refresh();
-    </script>';
-    echo '</body></html>';
+    echo <<<'HTML'
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Marketplace UI</title>
+</head>
+<body>
+<h2>Marketplace Admin UI</h2>
+<button onclick="refresh()">Refresh Plugins</button> <span id="status"></span>
+<table id="plugins" border="1" cellpadding="6" style="margin-top:12px; border-collapse: collapse;"><thead><tr><th>Name</th><th>Version</th><th>Published</th><th>Actions</th></tr></thead><tbody></tbody></table>
+<script>
+  function apiGet(p){ return fetch(p,{headers:{Accept:"application/json"}}).then(r=>r.json()); }
+  function apiPost(p,b){ return fetch(p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(r=>r.json()); }
+  function setStatus(s){ document.getElementById("status").innerText = s; }
+  async function refresh(){ setStatus("loading..."); try{ const res = await apiGet('/api/v1/marketplace/plugins'); const items = res.items || []; const tb = document.querySelector('#plugins tbody'); tb.innerHTML = ''; for(const p of items){ const tr=document.createElement('tr'); tr.innerHTML = `<td>${p.name||p.id}</td><td>${p.version||''}</td><td>${p.published?"yes":"no"}</td><td></td>`; const td = tr.querySelector('td:last-child');
+        const pubBtn = document.createElement('button'); pubBtn.innerText = p.published? 'Unpublish' : 'Publish'; pubBtn.onclick = async ()=>{ setStatus('updating...'); try{ const ep = '/api/v1/marketplace/plugins/'+encodeURIComponent(p.id)+'/'+(p.published? 'unpublish' : 'publish'); const r = await apiPost(ep,{}); alert('Result: '+JSON.stringify(r)); await refresh(); } catch(e){ alert('Error: '+e); } };
+        const rateBtn = document.createElement('button'); rateBtn.innerText='Rate'; rateBtn.onclick=async ()=>{ const rating = prompt('Rating 1-5'); if(!rating) return; const comment = prompt('Comment (optional)')||''; try{ const r = await apiPost('/api/v1/marketplace/plugins/'+encodeURIComponent(p.id)+'/ratings',{rating:parseInt(rating,10),comment}); alert('Rated: '+JSON.stringify(r)); }catch(e){ alert('Error: '+e); } };
+        const installBtn = document.createElement('button'); installBtn.innerText='Install'; installBtn.onclick=async ()=>{ const tenant = prompt('Tenant ID (required)'); if(!tenant) return; const auto = confirm('Auto-install dependencies?'); try{ const r = await apiPost('/api/v1/marketplace/plugins/'+encodeURIComponent(p.id)+'/install',{tenant_id:tenant,auto_install_dependencies: auto}); alert('Installed: '+JSON.stringify(r)); await refresh(); }catch(e){ alert('Error: '+JSON.stringify(e)); } };
+        const uninstallBtn = document.createElement('button'); uninstallBtn.innerText='Uninstall'; uninstallBtn.onclick=async ()=>{ const tenant = prompt('Tenant ID (required)'); if(!tenant) return; try{ const r = await apiPost('/api/v1/marketplace/plugins/'+encodeURIComponent(p.id)+'/uninstall',{tenant_id:tenant}); alert('Uninstalled: '+JSON.stringify(r)); await refresh(); }catch(e){ alert('Error: '+JSON.stringify(e)); } };
+        td.appendChild(pubBtn); td.appendChild(document.createTextNode(' ')); td.appendChild(rateBtn); td.appendChild(document.createTextNode(' ')); td.appendChild(installBtn); td.appendChild(document.createTextNode(' ')); td.appendChild(uninstallBtn);
+        tb.appendChild(tr);
+    }
+    setStatus('loaded '+items.length+' plugins'); }catch(e){ setStatus('error'); alert('Failed to load plugins: '+e); } }
+  window.onload=()=>refresh();
+</script>
+</body>
+</html>
+HTML;
     exit;
 }
