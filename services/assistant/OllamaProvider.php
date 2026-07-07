@@ -95,6 +95,11 @@ class OllamaProvider implements AssistantProviderInterface
             }
         }
 
+        // Ollama /api/generate returns the response in a `response` field
+        if (isset($body['response']) && is_string($body['response'])) {
+            return ['success' => true, 'text' => trim($body['response']), 'raw' => $body, 'error' => null];
+        }
+
         // Ollama and other runtimes sometimes return `output` or plainer shapes.
         if (isset($body['output'])) {
             if (is_string($body['output'])) {
