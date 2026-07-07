@@ -229,8 +229,8 @@ services:
       - ./services/lib:/app/services/lib
       - ./services/data:/app/services/data
     environment:
-      ASSISTANT_LLM_API_URL: ${ASSISTANT_LLM_API_URL:-http://ollama:11434/v1/completions}
-      ASSISTANT_LLM_MODEL: ${ASSISTANT_LLM_MODEL:-mistral}
+      ASSISTANT_LLM_API_URL: ${ASSISTANT_LLM_API_URL:-http://ollama:11434/api/generate}
+      ASSISTANT_LLM_MODEL: ${ASSISTANT_LLM_MODEL:-gemma:2b}
       SERVICE: assistant
       SERVICE_PORT: "8017"
 
