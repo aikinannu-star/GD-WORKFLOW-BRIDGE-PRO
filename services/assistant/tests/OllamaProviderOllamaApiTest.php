@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../OllamaProvider.php';
 
 $provider = new OllamaProvider([
-    'api_url' => 'http://127.0.0.1:11434/api/generate',
+    'api_url' => 'http://ollama:11434/api/generate',
     'model' => 'mistral:latest',
     'timeout' => 60,
 ]);
