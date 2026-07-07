@@ -29,8 +29,8 @@ function saveAssistantSessions(array $sessions): bool {
 
 function getAssistantProviderConfig(): array {
     return [
-        'api_url' => getenv('ASSISTANT_LLM_API_URL') ?: 'http://ollama:11434/v1/completions',
-        'model' => getenv('ASSISTANT_LLM_MODEL') ?: 'mistral',
+        'api_url' => getenv('ASSISTANT_LLM_API_URL') ?: 'http://ollama:11434/api/generate',
+        'model' => getenv('ASSISTANT_LLM_MODEL') ?: 'gemma:2b',
         'max_tokens' => (int)(getenv('ASSISTANT_LLM_MAX_TOKENS') ?: 512),
         'temperature' => (float)(getenv('ASSISTANT_LLM_TEMPERATURE') ?: 0.2),
         'timeout' => (int)(getenv('ASSISTANT_LLM_TIMEOUT_SECONDS') ?: 20),
@@ -64,7 +64,7 @@ function getAssistantStartupState(): array {
         $errors[] = sprintf('Unsupported ASSISTANT_PROVIDER value: %s', $provider);
     }
 
-    $apiUrl = getenv('ASSISTANT_LLM_API_URL') ?: 'http://ollama:11434/v1/completions';
+    $apiUrl = getenv('ASSISTANT_LLM_API_URL') ?: 'http://ollama:11434/api/generate';
     if (!filter_var($apiUrl, FILTER_VALIDATE_URL)) {
         $errors[] = 'ASSISTANT_LLM_API_URL is not a valid URL';
     }

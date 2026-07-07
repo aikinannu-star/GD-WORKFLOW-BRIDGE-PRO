@@ -25,6 +25,7 @@ class OllamaProvider implements AssistantProviderInterface
         $payload = [
             'model' => $options['model'] ?? $this->config['model'],
             'prompt' => $options['prompt'] ?? $prompt,
+            'stream' => false,
             'max_tokens' => $options['max_tokens'] ?? $this->config['max_tokens'],
             'temperature' => $options['temperature'] ?? $this->config['temperature'],
         ];
