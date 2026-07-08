@@ -210,6 +210,15 @@ function generateAssistantText(string $prompt): ?string {
 
     $provider = getAssistantProvider();
     $result = $provider->generate($prompt);
+    ServiceHelpers::emitStructuredLog(ASSISTANT_SERVICE_NAME, 'info', 'assistant_provider_result', [
+        'success' => (bool)($result['success'] ?? false),
+        'error' => $result['error'] ?? null,
+        'provider' => get_class($provider),
+        'prompt_length' => strlen($prompt),
+        'response_preview' => is_string($result['text'] ?? null) ? substr(trim($result['text']), 0, 200) : null,
+        'raw' => is_array($result['raw'] ?? null) ? array_slice($result['raw'], 0, 5, true) : $result['raw'] ?? null,
+    ]);
+
     if (!$result['success']) {
         ServiceHelpers::emitStructuredLog(ASSISTANT_SERVICE_NAME, 'warning', 'LLM provider failure', ['error' => $result['error'] ?? 'unknown']);
         return null;
