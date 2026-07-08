@@ -10,9 +10,9 @@ class OllamaProvider implements AssistantProviderInterface
     public function __construct(array $config)
     {
         $this->config = array_merge([
-            // New Ollama images expose a simple /api/generate endpoint; keep
-            // v1/completions as a fallback for older test configurations.
-            'api_url' => 'http://ollama:11434/api/generate',
+            // Most Ollama versions support /v1/completions; fall back to
+            // /api/generate when available or when using newer images.
+            'api_url' => 'http://ollama:11434/v1/completions',
             'model' => 'mistral',
             'max_tokens' => 512,
             'temperature' => 0.2,
@@ -44,7 +44,49 @@ class OllamaProvider implements AssistantProviderInterface
             return ['success' => false, 'text' => '', 'raw' => $payload, 'error' => 'invalid_request_payload'];
         }
 
-        $ch = curl_init($this->config['api_url']);
+        $urls = $this->buildCandidateApiUrls($this->config['api_url']);
+        $lastResult = ['success' => false, 'text' => '', 'raw' => null, 'error' => 'no_response_from_ollama'];
+
+        foreach ($urls as $apiUrl) {
+            $result = $this->requestOllama($apiUrl, $jsonPayload, $options);
+            $result['api_url'] = $apiUrl;
+            if ($result['success']) {
+                return $result;
+            }
+
+            $lastResult = $result;
+            $isNotFound = isset($result['http_code']) && $result['http_code'] === 404;
+            $shouldTryFallback = $isNotFound || $result['error'] === 'invalid_json_response';
+
+            if (!$shouldTryFallback) {
+                break;
+            }
+        }
+
+        return $lastResult;
+    }
+
+    private function buildCandidateApiUrls(string $apiUrl): array
+    {
+        $urls = [$apiUrl];
+
+        $alternate = null;
+        if (str_ends_with($apiUrl, '/api/generate')) {
+            $alternate = substr($apiUrl, 0, -strlen('/api/generate')) . '/v1/completions';
+        } elseif (str_ends_with($apiUrl, '/v1/completions')) {
+            $alternate = substr($apiUrl, 0, -strlen('/v1/completions')) . '/api/generate';
+        }
+
+        if ($alternate !== null && $alternate !== $apiUrl) {
+            $urls[] = $alternate;
+        }
+
+        return array_values(array_unique($urls));
+    }
+
+    private function requestOllama(string $apiUrl, string $jsonPayload, array $options): array
+    {
+        $ch = curl_init($apiUrl);
         $httpHeaders = ProviderRequestHeaders::build($options);
         if (!isset($httpHeaders['Content-Type'])) {
             $httpHeaders['Content-Type'] = 'application/json';
@@ -55,6 +97,7 @@ class OllamaProvider implements AssistantProviderInterface
         }
 
         if (!empty($options['capture_request_headers'])) {
+            curl_close($ch);
             return ['success' => true, 'text' => '', 'raw' => null, 'headers' => $httpHeaders, 'error' => null];
         }
 
@@ -64,6 +107,7 @@ class OllamaProvider implements AssistantProviderInterface
             CURLOPT_HTTPHEADER => $formattedHeaders,
             CURLOPT_POSTFIELDS => $jsonPayload,
             CURLOPT_TIMEOUT => (int)$this->config['timeout'],
+            CURLOPT_CONNECTTIMEOUT => max(1, min((int)$this->config['timeout'], 5)),
         ]);
 
         $response = curl_exec($ch);
@@ -78,11 +122,11 @@ class OllamaProvider implements AssistantProviderInterface
 
         $body = json_decode($response, true);
         if (!is_array($body)) {
-            return ['success' => false, 'text' => '', 'raw' => $response, 'error' => 'invalid_json_response'];
+            return ['success' => false, 'text' => '', 'raw' => $response, 'http_code' => $httpCode, 'error' => 'invalid_json_response'];
         }
 
         if ($httpCode < 200 || $httpCode >= 300) {
-            return ['success' => false, 'text' => '', 'raw' => $body, 'error' => $body['error'] ?? 'llm_error'];
+            return ['success' => false, 'text' => '', 'raw' => $body, 'http_code' => $httpCode, 'error' => $body['error'] ?? $body['message'] ?? 'llm_error'];
         }
 
         // Many providers return a `choices` array with different shapes.
@@ -101,12 +145,42 @@ class OllamaProvider implements AssistantProviderInterface
             }
         }
 
-        // Ollama /api/generate returns the response in a `response` field
-        if (isset($body['response']) && is_string($body['response'])) {
-            return ['success' => true, 'text' => trim($body['response']), 'raw' => $body, 'error' => null];
+        if (isset($body['response'])) {
+            if (is_string($body['response'])) {
+                return ['success' => true, 'text' => trim($body['response']), 'raw' => $body, 'error' => null];
+            }
+            if (is_array($body['response'])) {
+                $s = $this->findFirstString($body['response']);
+                if ($s !== null) {
+                    return ['success' => true, 'text' => trim($s), 'raw' => $body, 'error' => null];
+                }
+            }
         }
 
-        // Ollama and other runtimes sometimes return `output` or plainer shapes.
+        if (isset($body['results']) && is_array($body['results']) && !empty($body['results'])) {
+            $resultEntry = $body['results'][0];
+            if (is_array($resultEntry)) {
+                if (isset($resultEntry['response'])) {
+                    if (is_string($resultEntry['response'])) {
+                        return ['success' => true, 'text' => trim($resultEntry['response']), 'raw' => $body, 'error' => null];
+                    }
+                    $s = $this->findFirstString($resultEntry['response']);
+                    if ($s !== null) {
+                        return ['success' => true, 'text' => trim($s), 'raw' => $body, 'error' => null];
+                    }
+                }
+                if (isset($resultEntry['output'])) {
+                    if (is_string($resultEntry['output'])) {
+                        return ['success' => true, 'text' => trim($resultEntry['output']), 'raw' => $body, 'error' => null];
+                    }
+                    $s = $this->findFirstString($resultEntry['output']);
+                    if ($s !== null) {
+                        return ['success' => true, 'text' => trim($s), 'raw' => $body, 'error' => null];
+                    }
+                }
+            }
+        }
+
         if (isset($body['output'])) {
             if (is_string($body['output'])) {
                 return ['success' => true, 'text' => trim($body['output']), 'raw' => $body, 'error' => null];
@@ -125,13 +199,25 @@ class OllamaProvider implements AssistantProviderInterface
             }
         }
 
-        // Generic recursive search for the first non-empty string in the response.
+        if (isset($body['generation']) && is_array($body['generation']) && !empty($body['generation'])) {
+            $generation = $body['generation'][0];
+            if (is_array($generation)) {
+                if (isset($generation['text']) && is_string($generation['text'])) {
+                    return ['success' => true, 'text' => trim($generation['text']), 'raw' => $body, 'error' => null];
+                }
+                $s = $this->findFirstString($generation);
+                if ($s !== null) {
+                    return ['success' => true, 'text' => trim($s), 'raw' => $body, 'error' => null];
+                }
+            }
+        }
+
         $found = $this->findFirstString($body);
         if ($found !== null) {
             return ['success' => true, 'text' => trim($found), 'raw' => $body, 'error' => null];
         }
 
-        return ['success' => false, 'text' => '', 'raw' => $body, 'error' => 'unknown_choice_format'];
+        return ['success' => false, 'text' => '', 'raw' => $body, 'http_code' => $httpCode, 'error' => 'unknown_choice_format'];
     }
 
     private function findFirstString(mixed $value): ?string

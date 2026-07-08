@@ -29,7 +29,7 @@ function saveAssistantSessions(array $sessions): bool {
 
 function getAssistantProviderConfig(): array {
     return [
-        'api_url' => getenv('ASSISTANT_LLM_API_URL') ?: 'http://ollama:11434/api/generate',
+        'api_url' => getenv('ASSISTANT_LLM_API_URL') ?: 'http://ollama:11434/v1/completions',
         'model' => getenv('ASSISTANT_LLM_MODEL') ?: 'gemma:2b',
         'max_tokens' => (int)(getenv('ASSISTANT_LLM_MAX_TOKENS') ?: 512),
         'temperature' => (float)(getenv('ASSISTANT_LLM_TEMPERATURE') ?: 0.2),
@@ -64,7 +64,7 @@ function getAssistantStartupState(): array {
         $errors[] = sprintf('Unsupported ASSISTANT_PROVIDER value: %s', $provider);
     }
 
-    $apiUrl = getenv('ASSISTANT_LLM_API_URL') ?: 'http://ollama:11434/api/generate';
+    $apiUrl = getenv('ASSISTANT_LLM_API_URL') ?: 'http://ollama:11434/v1/completions';
     if (!filter_var($apiUrl, FILTER_VALIDATE_URL)) {
         $errors[] = 'ASSISTANT_LLM_API_URL is not a valid URL';
     }
@@ -221,6 +221,7 @@ function generateAssistantText(string $prompt): ?string {
         'success' => (bool)($result['success'] ?? false),
         'error' => $result['error'] ?? null,
         'provider' => get_class($provider),
+        'api_url' => $result['api_url'] ?? null,
         'prompt_length' => strlen($prompt),
         'response_preview' => is_string($result['text'] ?? null) ? substr(trim($result['text']), 0, 200) : null,
         'raw_preview' => $rawPreview,
