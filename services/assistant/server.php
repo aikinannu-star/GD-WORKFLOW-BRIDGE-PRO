@@ -210,13 +210,20 @@ function generateAssistantText(string $prompt): ?string {
 
     $provider = getAssistantProvider();
     $result = $provider->generate($prompt);
+    $rawPreview = null;
+    if (is_array($result['raw'] ?? null)) {
+        $rawPreview = json_encode(array_slice($result['raw'], 0, 5, true), JSON_UNESCAPED_SLASHES);
+    } elseif (!empty($result['raw'])) {
+        $rawPreview = substr((string)$result['raw'], 0, 1000);
+    }
+
     ServiceHelpers::emitStructuredLog(ASSISTANT_SERVICE_NAME, 'info', 'assistant_provider_result', [
         'success' => (bool)($result['success'] ?? false),
         'error' => $result['error'] ?? null,
         'provider' => get_class($provider),
         'prompt_length' => strlen($prompt),
         'response_preview' => is_string($result['text'] ?? null) ? substr(trim($result['text']), 0, 200) : null,
-        'raw' => is_array($result['raw'] ?? null) ? array_slice($result['raw'], 0, 5, true) : $result['raw'] ?? null,
+        'raw_preview' => $rawPreview,
     ]);
 
     if (!$result['success']) {
@@ -224,7 +231,13 @@ function generateAssistantText(string $prompt): ?string {
         return null;
     }
 
-    return trim((string)($result['text'] ?? ''));
+    $text = trim((string)($result['text'] ?? ''));
+    if ($text === '') {
+        ServiceHelpers::emitStructuredLog(ASSISTANT_SERVICE_NAME, 'warning', 'LLM provider returned empty text', ['provider' => get_class($provider), 'error' => $result['error'] ?? null]);
+        return null;
+    }
+
+    return $text;
 }
 
 function parseStructuredAssistantOutput(string $text): array {
@@ -389,8 +402,13 @@ if ($method === 'POST' && preg_match('#^/api/v1/assistant/sessions/([^/]+)/messa
                 ];
                 $assistantText = generateAssistantText($message['text']);
                 if (empty($assistantText)) {
-                    $assistantText = 'This is a placeholder AI response for: ' . ($message['text'] ?? '');
+                    ServiceHelpers::emitStructuredLog(ASSISTANT_SERVICE_NAME, 'error', 'assistant.session_message.llm_failure', [
+                        'session_id' => $sessionId,
+                        'input_text' => $message['text'] ?? null,
+                    ]);
+                    ServiceHelpers::sendJson(502, ['error' => 'llm_unavailable', 'message' => 'Assistant provider returned no response.']);
                 }
+
                 $assistantReply = [
                     'role' => 'assistant',
                     'text' => $assistantText,

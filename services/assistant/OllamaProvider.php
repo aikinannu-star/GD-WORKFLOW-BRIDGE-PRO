@@ -39,6 +39,11 @@ class OllamaProvider implements AssistantProviderInterface
             $payload = $options['post_data'];
         }
 
+        $jsonPayload = json_encode($payload);
+        if ($jsonPayload === false) {
+            return ['success' => false, 'text' => '', 'raw' => $payload, 'error' => 'invalid_request_payload'];
+        }
+
         $ch = curl_init($this->config['api_url']);
         $httpHeaders = ProviderRequestHeaders::build($options);
         if (!isset($httpHeaders['Content-Type'])) {
@@ -57,7 +62,7 @@ class OllamaProvider implements AssistantProviderInterface
             CURLOPT_POST => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => $formattedHeaders,
-            CURLOPT_POSTFIELDS => json_encode($payload),
+            CURLOPT_POSTFIELDS => $jsonPayload,
             CURLOPT_TIMEOUT => (int)$this->config['timeout'],
         ]);
 
