@@ -84,15 +84,47 @@ class OllamaProvider implements AssistantProviderInterface
     {
         $urls = [$apiUrl];
 
+        // Add alternate endpoint paths commonly exposed by different
+        // Ollama image versions.
         $alternate = null;
         if (str_ends_with($apiUrl, '/api/generate')) {
             $alternate = substr($apiUrl, 0, -strlen('/api/generate')) . '/v1/completions';
         } elseif (str_ends_with($apiUrl, '/v1/completions')) {
             $alternate = substr($apiUrl, 0, -strlen('/v1/completions')) . '/api/generate';
         }
-
         if ($alternate !== null && $alternate !== $apiUrl) {
             $urls[] = $alternate;
+        }
+
+        // If the api host is the Docker service name (commonly 'ollama'),
+        // also try localhost and 127.0.0.1 as fallbacks. This helps when
+        // the assistant is run outside the compose network (e.g., host
+        // dev or codespace) where the 'ollama' hostname is not
+        // resolvable.
+        $parts = parse_url($apiUrl);
+        if ($parts && !empty($parts['host'])) {
+            $host = $parts['host'];
+            $scheme = $parts['scheme'] ?? 'http';
+            $port = isset($parts['port']) ? ':' . $parts['port'] : '';
+            $path = $parts['path'] ?? '';
+            $query = isset($parts['query']) ? '?' . $parts['query'] : '';
+
+            $fallbackHosts = [];
+            if ($host === 'ollama' || str_starts_with($host, 'ollama')) {
+                $fallbackHosts = ['localhost', '127.0.0.1'];
+            }
+
+            foreach ($fallbackHosts as $fbHost) {
+                $candidate = $scheme . '://' . $fbHost . $port . $path . $query;
+                $urls[] = $candidate;
+                // also add alternate path for each fallback host
+                if ($alternate !== null) {
+                    $altParts = parse_url($alternate);
+                    $altPath = $altParts['path'] ?? $path;
+                    $altQuery = isset($altParts['query']) ? '?' . $altParts['query'] : '';
+                    $urls[] = $scheme . '://' . $fbHost . $port . $altPath . $altQuery;
+                }
+            }
         }
 
         return array_values(array_unique($urls));
