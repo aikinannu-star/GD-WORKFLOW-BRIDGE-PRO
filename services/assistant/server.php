@@ -69,9 +69,11 @@ function getAssistantStartupState(): array {
         $errors[] = 'ASSISTANT_LLM_API_URL is not a valid URL';
     }
 
-    if ($provider === 'ollama' && getenv('ASSISTANT_LLM_HEALTH_CHECK')) {
-        if (!checkUrlReachable($apiUrl, 1)) {
-            $errors[] = sprintf('Assistant provider host is unreachable at %s', $apiUrl);
+    if ($provider === 'ollama') {
+        $providerInstance = getAssistantProvider();
+        $health = $providerInstance->health();
+        if (($health['status'] ?? 'unavailable') !== 'ok') {
+            $errors[] = sprintf('Assistant provider is not ready at %s: %s', $apiUrl, $health['error'] ?? 'unavailable');
         }
     }
 

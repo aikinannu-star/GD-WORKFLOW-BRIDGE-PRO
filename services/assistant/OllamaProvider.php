@@ -17,6 +17,8 @@ class OllamaProvider implements AssistantProviderInterface
             'max_tokens' => 512,
             'temperature' => 0.2,
             'timeout' => 20,
+            'max_retries' => 2,
+            'retry_delay_ms' => 200,
         ], $config);
     }
 
@@ -48,15 +50,27 @@ class OllamaProvider implements AssistantProviderInterface
         $lastResult = ['success' => false, 'text' => '', 'raw' => null, 'error' => 'no_response_from_ollama'];
 
         foreach ($urls as $apiUrl) {
-            $result = $this->requestOllama($apiUrl, $jsonPayload, $options);
-            $result['api_url'] = $apiUrl;
-            if ($result['success']) {
-                return $result;
+            $attemptCount = max(1, (int)($this->config['max_retries'] ?? 0) + 1);
+            $result = null;
+
+            for ($attempt = 0; $attempt < $attemptCount; $attempt++) {
+                $result = $this->requestOllama($apiUrl, $jsonPayload, $options);
+                $result['api_url'] = $apiUrl;
+                if ($result['success']) {
+                    return $result;
+                }
+
+                $lastResult = $result;
+                $shouldRetry = $attempt + 1 < $attemptCount && $this->shouldRetryRequest($result);
+                if (!$shouldRetry) {
+                    break;
+                }
+
+                $this->sleepBeforeRetry();
             }
 
-            $lastResult = $result;
             $isNotFound = isset($result['http_code']) && $result['http_code'] === 404;
-            $shouldTryFallback = $isNotFound || $result['error'] === 'invalid_json_response';
+            $shouldTryFallback = $isNotFound || ($result['error'] ?? null) === 'invalid_json_response';
 
             if (!$shouldTryFallback) {
                 break;
@@ -82,6 +96,53 @@ class OllamaProvider implements AssistantProviderInterface
         }
 
         return array_values(array_unique($urls));
+    }
+
+    public function shouldRetryRequest(array $result): bool
+    {
+        $error = strtolower((string)($result['error'] ?? ''));
+        if ($error === '') {
+            return false;
+        }
+
+        $httpCode = isset($result['http_code']) ? (int)$result['http_code'] : 0;
+        if ($httpCode >= 500) {
+            return true;
+        }
+
+        $transientMarkers = [
+            'temporarily_unavailable',
+            'timed out',
+            'timeout',
+            'connection reset',
+            'connection refused',
+            'could not resolve host',
+            'network is unreachable',
+            'service unavailable',
+            'rate limit',
+            'too many requests',
+            'temporarily unavailable',
+            'try again later',
+            'operation timed out',
+            'econnrefused',
+            'econnreset',
+        ];
+
+        foreach ($transientMarkers as $marker) {
+            if (str_contains($error, $marker)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function sleepBeforeRetry(): void
+    {
+        $delayMs = max(0, (int)($this->config['retry_delay_ms'] ?? 0));
+        if ($delayMs > 0) {
+            usleep($delayMs * 1000);
+        }
     }
 
     private function requestOllama(string $apiUrl, string $jsonPayload, array $options): array
