@@ -8,30 +8,28 @@ fail() {
   exit 1
 }
 
-curl -fsS "$BASE_URL/health/ready" >/tmp/assistant-ready.json 2>/dev/null || fail "health endpoint not reachable"
-python - <<'PY' /tmp/assistant-ready.json
-import json, sys
-from pathlib import Path
-path = Path('/tmp/assistant-ready.json')
-data = json.loads(path.read_text())
-if data.get('ready') is not True:
-    raise SystemExit('health endpoint did not report ready')
-print('[smoke] health ready confirmed')
-PY
+# Require jq
+command -v jq >/dev/null 2>&1 || fail "jq is required for this script"
+
+if ! curl -fsS "$BASE_URL/health/ready" -o /tmp/assistant-ready.json; then
+  fail "health endpoint not reachable"
+fi
+
+if [ "$(jq -r '.ready' /tmp/assistant-ready.json 2>/dev/null)" != "true" ]; then
+  fail "health endpoint did not report ready"
+fi
+echo "[smoke] health ready confirmed"
 
 SESSION_RESPONSE=$(curl -fsS -X POST "$BASE_URL/api/v1/assistant/sessions" -H 'Content-Type: application/json' -d '{"user_id":"smoke-test"}') || fail "session creation failed"
-SESSION_ID=$(printf '%s' "$SESSION_RESPONSE" | python -c 'import json,sys; data=json.load(sys.stdin); print(data["session"]["id"])') || fail "could not parse session id"
+SESSION_ID=$(printf '%s' "$SESSION_RESPONSE" | jq -r '.session.id' 2>/dev/null) || fail "could not parse session id"
+[ -n "$SESSION_ID" ] || fail "empty session id"
 
 MESSAGE_RESPONSE=$(curl -fsS -X POST "$BASE_URL/api/v1/assistant/sessions/$SESSION_ID/message" -H 'Content-Type: application/json' -d '{"text":"smoke test"}') || fail "message request failed"
-printf '%s
-' "$MESSAGE_RESPONSE" | python - <<'PY'
-import json, sys
-payload = json.load(sys.stdin)
-reply = payload.get('reply', {})
-text = reply.get('text', '')
-if not isinstance(text, str) or not text.strip():
-    raise SystemExit('assistant reply was empty')
-print('[smoke] assistant replied successfully')
-PY
 
+REPLY_TEXT=$(printf '%s' "$MESSAGE_RESPONSE" | jq -r '.reply.text' 2>/dev/null) || fail "could not parse reply"
+if [ -z "$REPLY_TEXT" ] || [ "$REPLY_TEXT" = "null" ]; then
+  fail "assistant reply was empty"
+fi
+
+echo "[smoke] assistant replied successfully"
 echo "[smoke] completed successfully"
