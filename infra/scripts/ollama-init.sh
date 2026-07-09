@@ -48,8 +48,27 @@ if curl -X POST "$OLLAMA_URL/api/pull" \
     -d "{\"name\":\"$MODEL\",\"stream\":false}" \
     2>/dev/null | grep -q '"status":"success"'; then
     echo "[ollama-init] Successfully pulled $MODEL"
-    exit 0
 else
     echo "[ollama-init] ERROR: Failed to pull $MODEL"
     exit 1
 fi
+
+# Wait until the model can answer a minimal prompt.
+echo "[ollama-init] Waiting for $MODEL to become responsive..."
+PROBE_PAYLOAD="{\"model\":\"$MODEL\",\"prompt\":\"ping\",\"stream\":false}"
+ELAPSED=0
+while [ "$ELAPSED" -lt "$MAX_WAIT" ]; do
+    if curl -sf -X POST "$OLLAMA_URL/api/generate" \
+        -H "Content-Type: application/json" \
+        -d "$PROBE_PAYLOAD" > /dev/null 2>&1; then
+        echo "[ollama-init] Model $MODEL is now responding"
+        exit 0
+    fi
+
+    echo "[ollama-init] Model $MODEL still warming up... (${ELAPSED}s/${MAX_WAIT}s)"
+    sleep "$WAIT_INTERVAL"
+    ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+done
+
+echo "[ollama-init] ERROR: Model $MODEL did not become responsive within ${MAX_WAIT}s"
+exit 1
