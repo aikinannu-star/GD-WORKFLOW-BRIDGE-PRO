@@ -16,7 +16,7 @@ class OllamaProvider implements AssistantProviderInterface
             'model' => 'mistral',
             'max_tokens' => 512,
             'temperature' => 0.2,
-            'timeout' => 20,
+            'timeout' => 60,
             'max_retries' => 2,
             'retry_delay_ms' => 200,
         ], $config);

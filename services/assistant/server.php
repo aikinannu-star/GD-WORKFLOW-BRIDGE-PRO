@@ -33,7 +33,7 @@ function getAssistantProviderConfig(): array {
         'model' => getenv('ASSISTANT_LLM_MODEL') ?: 'gemma:2b',
         'max_tokens' => (int)(getenv('ASSISTANT_LLM_MAX_TOKENS') ?: 512),
         'temperature' => (float)(getenv('ASSISTANT_LLM_TEMPERATURE') ?: 0.2),
-        'timeout' => (int)(getenv('ASSISTANT_LLM_TIMEOUT_SECONDS') ?: 20),
+        'timeout' => (int)(getenv('ASSISTANT_LLM_TIMEOUT_SECONDS') ?: 60),
     ];
 }
 
